@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>已出库详情</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/already-out-details.css" />
+	</head>
+
+	<body id="body_outing_details">
+		<div>
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title" style="margin:0px 0px 0px -5px;">已出库详情</span>
+				</div>
+			</header>
+			<div id="slider" class="mui-content mui-slider" style="background-color: #FFFFFF;">
+				<div class="fixed-top">
+					<div class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="height: 40px; line-height:40px;border-bottom: 1px solid #ebebeb;">
+						<a class="mui-control-item" href="#div_basic_info" @tap="onItemSliderClick($event,0)">基本信息</a>
+						<a class="mui-control-item" href="#div_attach" @tap="onItemSliderClick($event,1)">附件</a>
+					</div>
+					<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+				</div>
+				<div id="sliderContent" class="mui-slider-group" style="top: -2px;">
+					<!--基本信息-->
+					<div id="div_basic_info" class="mui-slider-item mui-control-content mui-active">
+						<div id="queryContent">
+							<ul class="query-list">
+								<li class="item"></li>
+								<li class="item">
+									<span class="title">
+										出库单号
+									</span>
+									<input type="text" readonly :value="outDetails.outputCode" />
+								</li>
+								<li class="item">
+									<span class="title">
+										发货单号
+									</span>
+									<input type="text" readonly :value="outDetails.sendCode" />
+								</li>
+								<li class="item">
+									<span class="title">
+										出库时间
+									</span>
+									<input type="text" readonly :value="outDetails.outputDate" />
+								</li>
+								<li class="item">
+									<span class="title">提单号</span>
+									<input type="text" readonly :value="outDetails.ladingCode" />
+								</li>
+								<li class="item">
+									<span class="title">货主单位</span>
+									<input type="text" readonly :value="outDetails.ownerName" />
+								</li>
+								<li class="item">
+									<span class="title">结算单位</span>
+									<input type="text" readonly :value="outDetails.spenderName" />
+								</li>
+								<li class="item">
+									<span class="title">结算方式</span>
+									<input type="text" readonly :value="outDetails.paymentModeStr" />
+								</li>
+								<li class="item">
+									<span class="title">车牌号</span>
+									<input type="text" readonly :value="outDetails.carPlateNo" />
+								</li>
+							</ul>
+						</div>
+						<div style="  height: 38px; line-height: 38px;  background: #fafafa; text-align: center;">
+							<div style="float:left; margin:0px auto; font-size:14px;  color: #333; font-weight: bold;display: block;width: 100%; ">物料信息</div>
+						</div>
+						
+						<div class="public-list">
+							<ul class="public-list-wrapper">
+								<li class="item"  v-for="(index,item) in materielList" style="position: relative;"><!-- v-for="(index,item) in materielList"  -->
+									<span v-bind:class="[item.isScan == '1' ? 'mui-icon mui-icon-paperclip material-tag-active' : 'mui-icon mui-icon-paperclip material-tag']" style="width: 30px; height: 30px; position: absolute; right:10px; top:10px; border: 1px solid #ebebeb; border-radius: 50%;"></span>
+									<ul>
+										<li><em style="width:8em;display: inline-block; text-align: right; vertical-align:top;">物料描述:</em><span style="width:calc(100% - 10.5em); display: inline-block;"  v-text="item.materialDesc"></span></li>
+										<li><em style="width:8em;display: inline-block; text-align: right;">捆包号:</em><span v-text="item.packageNo"></span></li>
+										<li><em style="width:8em;display: inline-block; text-align: right;"> 库位:</em><span v-text="item.warehousePlaceName"></span></li>
+										<li><em style="width:8em;display: inline-block; text-align: right;">实提数量/重量:</em><span v-text="item.realPickInfo"></span>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<!--附件-->
+					<div id="div_attach" class="mui-slider-item mui-control-content content m-list-time-line">
+						<div style="width: 100%; margin: 48px auto;">
+							<!--文件区域-->
+							<div v-cloak>
+								<ul class="mui-table-view">
+									<div id="reader"></div>
+									<li class="mui-table-view-cell mui-media" v-for="(index, file) in files">
+										<a class="" @tap="openFile(file.id, file.baidudocId)">
+											<img class="mui-media-object mui-pull-left" style="width:2.5em;" :src="getcoverUrl(index)">
+											<div class="mui-media-body">
+												{{file.fileName.length
+												<18?file.fileName:file.fileName.substring(0,5)+ '...'+file.fileName.substr(-9)}} <!-- <p class="mui-ellipsis" >
+													</p> -->
+													
+													<!--<div class="delete" @click="delete(file, 1)">删除</div>-->
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<!--图片区域-->
+							<div v-clock>
+								<ul class="mui-table-view mui-grid-view">
+									<li class="mui-table-view-cell mui-media mui-col-xs-3" v-for="image in imageFiles" style="height: 80px;margin:10px 0;position: relative;">
+										<!--<div class="close" style="background: red; color:#fff; width: 18px; height:18px; position: absolute;top:2px;right: 4px;z-index: 1;border-radius:4px;" @click="delete(image, 2)" id="{{image.id}}">X</div>-->
+										<img class="" data-preview-src="{{image.previewFileUrl}}" data-preview-group="1" style="position: absolute;top:0;right: 2%; border-radius:4px;margin: 0 auto;width: 96%;" src="{{image.fileUrl}}">
+
+									</li>
+									<!--<li class="mui-table-view-cell mui-media mui-col-xs-3" id="addFile" style="height: 80px; margin-left: 2px;">
+										<a style=" line-height: 60px; font-size: 38px; padding-left: 0px; border-radius:4px;">+</a>
+									</li>-->
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<nav id="nav_footer" class="mui-bar mui-bar-tab">
+			<div class="nav-left" v-html="totalInfo"></div>
+			<div class="nav-right" @tap="close">关闭</div>
+		</nav>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/already-out-details.js");
+	</script>
+	<style>
+		.mui-table-view.mui-grid-view {
+			width: 92%;
+			margin: 0px auto;
+		}
+	</style>
+
+</html>

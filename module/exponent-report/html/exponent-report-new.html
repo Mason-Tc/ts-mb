@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>指数分析</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link href="../css/exponent-report-new.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/dAHFZjuHwkWsorioAuKK.css" />
+		<link rel="stylesheet" href="../../../css/element.css" />
+		<style>
+			canvas#mountNode {
+				/* background-color: #50577D; */
+				background-color: #fff;
+			}
+		</style>
+		<style type="text/css">
+			.icon {
+				width: 1.8em;
+				height: 1.8em;
+				vertical-align: -0.15em;
+				fill: currentColor;
+				overflow: hidden;
+				margin-right: 33px;
+				color: #738ffe;
+			}
+			
+			.mui-backdrop {
+				position: fixed;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: 500;
+				background-color: rgba(0, 0, 0, .3);
+			}
+			
+			.mui-input-group .mui-input-row:after {
+				height: 0px;
+			}
+			
+			.mui-segmented-control {
+				font-size: 15px;
+				font-weight: 400;
+				position: relative;
+				display: table;
+				overflow: hidden;
+				width: 100%;
+				table-layout: fixed;
+				border: 0px solid #007aff;
+				border-radius: 0px;
+				background-color: #ffffff;
+				-webkit-touch-callout: none;
+			}
+			
+			.mui-segmented-control .mui-control-item {
+				line-height: 38px;
+				display: table-cell;
+				overflow: hidden;
+				width: 1%;
+				-webkit-transition: background-color .1s linear;
+				transition: background-color .1s linear;
+				text-align: center;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				color: #555;
+				border-color: #007aff;
+				border-left: 0px solid #fff;
+			}
+			
+			.mui-segmented-control .mui-control-item.mui-active {
+				color: #333;
+				background-color: #efeff4;
+			}
+			select, textarea, input[type='text'], input[type='search'], input[type='password'], input[type='datetime'], input[type='datetime-local'], input[type='date'], input[type='month'], input[type='time'], input[type='week'], input[type='number'], input[type='email'], input[type='url'], input[type='tel'], input[type='color']{
+			   border: 1px solid rgba(0, 0, 0, .1);	
+			}
+		</style>
+		<script src="../css/font_size/iconfont.js"></script>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in">
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<!-- 主页面标题 -->
+					<header class="mui-bar mui-bar-nav" id="warehousePosition">
+						<div class="back-area mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title" v-text="warehouseName" :style="{ width: warehouseName.length+'em'} margin-top:1px;"></h1>
+						</div>
+
+						<span id="query-btn" v-on:tap="showOffExponentQuery" class="mui-btn mui-btn-outlined query-btn mui-pull-right" style=" width: 68px; border:0px;">
+							<!--<span class="mui-icon  mui-icon-search" style="font-weight: bold; right:18px"></span>-->
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#icon-shaixuan"></use>
+						</svg>
+
+						<span class="query-btn-label" style="margin-top:-5px; display: inline-block; position: absolute; top:12px; right: 10px; ">筛选</span>
+						</span>
+					</header>
+
+					<div id="slider" class="mui-content mui-slider">
+						<div id="menuSliderControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style=" background: #ffffff;height: 40px; line-height:40px;">
+							<a class="mui-control-item" href="#iteminventoryexp" @tap="onItemSliderClick($event,0)">库存指数</a>
+							<a class="mui-control-item" href="#itemcustomerexp" @tap="onItemSliderClick($event,1)">客户指数</a>
+							<a class="mui-control-item" href="#itemioexp" @tap="onItemSliderClick($event,2)">出入库指数</a>
+							<a class="mui-control-item" @tap="toCamera($event)">在线监控</a>
+						</div>
+						<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-3"></div>
+
+						<div class="mui-slider-group" style="position: relative; top: -2px;">
+							<div id="iteminventoryexp" class="mui-slider-item mui-control-content mui-active">
+								<div id="inventoryWeight">
+									<h5>库存量</h5>
+									<div v-text="inventoryWeight" class="counter"></div>
+								</div>
+								<div class="chart-wrapper">
+									<h5>物料分布</h5>
+									<div id="pieChart" style="width: 600px;height:400px;"></div>
+									<canvas id="mountNode"></canvas>
+								</div>
+							</div>
+
+							<div id="itemcustomerexp" class="mui-slider-item ">
+								<!--
+								<div id="ownerfilter" class="mui-content" style="width: 96%; margin: 5px auto;border-radius: 18px; ">
+									<form class="mui-input-group" style="border-radius:8px;">
+										<div class="mui-input-row" style="height:28px;">
+											<span class="mui-icon mui-icon-search" style="position: absolute; z-index: 100; right:8px; top:6px" @tap="globalDoQuery(warehouseID, warehouseName);"></span>
+											<input id="ownerName" v-model="ownerName" type="search" onkeydown='if(event.keyCode==13){ return false;}' v-on:keydown="searchDoQuery($event)" placeholder="货主单位" style="text-align: left; padding-left:10px; ">
+										</div>
+									</form>
+								</div>
+								-->
+								<table class="m-main-table">
+									<tbody>
+										<tr>
+											<td class="td-left">
+												<table class="td-left-wrap" style="width: 100%;">
+													<tr>
+														<th class="td1">
+															排名
+														</th>
+														<th class="td2">
+															货主单位
+														</th>
+													</tr>
+												</table>
+											</td>
+											<td class="td-right">
+												<div class="t-header">
+													<table class="header-table">
+														<tr>
+															<th @tap="cstmrInventorySort($event)">
+																<div v-bind:class="[cstmrSortColumns[0] == cstmrSortColumn?'f-sort-active': '']">{{cstmrSortColumns[0]}}<span class="mui-icon" v-bind:class="[inventorySort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+															</th>
+															<th @tap="cstmrRatioSort($event)">
+																<div v-bind:class="[cstmrSortColumns[1] == cstmrSortColumn?'f-sort-active': '']">{{cstmrSortColumns[1]}}<span class="mui-icon" v-bind:class="[ratioSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+															</th>
+														</tr>
+													</table>
+												</div>
+											</td>
+										</tr>
+										<tr class="mainBody">
+											<td class="td-top">
+												<div class="t-left">
+													<table class="left-table">
+														<tr v-for="exp in customerExpPage.list">
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerName.length/12)>0?'duohang'+parseInt(exp.ownerName.length/12) + ' b-td1' : 'b-td1']">{{exp.ranks}}</div>
+															</td>
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerName.length/12)>0?'duohang'+parseInt(exp.ownerName.length/12) + ' td2' : 'td2']" style="text-align: left;width: 100%;">
+																	<div class="help-tip">
+																		<p>{{exp.ownerName}}</p>
+																	</div>
+																	{{exp.ownerNameAbb}}
+																</div>
+															</td>
+														</tr>
+														<tr>
+															<td class="td1">总计</td>
+															<td class="td2"></td>
+														</tr>
+													</table>
+												</div>
+											</td>
+											<td class="td-content">
+												<div class="t-content">
+													<table class="content-table">
+														<tr v-for="exp in customerExpPage.list">
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerName.length/12)>0?'duohang'+parseInt(exp.ownerName.length/12): '']" style="text-align: center; color: #129BFF;" @tap="toCstmrIvntDetail(exp.id,warehouseID)">
+																	<div class="limitNum13">{{exp.inventoryWeight}}</div>
+																</div>
+																<!--<div style="text-align: right;padding-right: 2px;">{{exp.inventoryWeight}}</div>-->
+															</td>
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerName.length/12)>0?'duohang'+parseInt(exp.ownerName.length/12): '']" style="text-align: center;">{{format(exp.ratio)}}</div>
+															</td>
+														</tr>
+														<tr>
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerName.length/12)>0?'duohang'+parseInt(exp.ownerName.length/12): '']" style="text-align: center; color: #129BFF;" @tap="toCstmrIvntDetail(exp.id,warehouseID)">
+																	<div class="limitNum13">{{ customerExpPage.totalInventoryWeight }}</div>
+																</div>
+																<!--<div style="text-align: right;padding-right: 2px;">{{exp.inventoryWeight}}</div>-->
+															</td>
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerName.length/12)>0?'duohang'+parseInt(exp.ownerName.length/12): '']" style="text-align: center;"></div>
+															</td>
+														</tr>
+													</table>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<div id="itemioexp" class="mui-slider-item mui-control-content">
+								<div id="inventoryWeight">
+									<div class="ioexp-top" style="padding-left: 18px;">
+										<span>时间</span>&nbsp;&nbsp;<input style="width: 100px; font-weight: normal; font-size: 16px;height: 32px" type="text" readonly placeholder="年-月-日" :value="ioExpPage.beginDate" @tap="pickBeginDate" />&nbsp;&nbsp;--&nbsp;&nbsp;<input style="width: 100px;height: 32px; font-weight: normal; font-size: 16px;" type="text" readonly placeholder="年-月-日" :value="ioExpPage.endDate" @tap="pickEndDate" />&nbsp;&nbsp;<button class="sure" @tap="seachIoExp()" style="padding: 5px 12px; height: 32px;border: 1px solid rgba(0, 0, 0, .1);">查询</button>
+									</div>
+								</div>
+								<div id="periodSlider" class="mui-slider">
+									<!--<div id="periodSliderControl" class="mui-segmented-control">
+										<a class="mui-control-item" v-bind:class="periodType==0?'mui-active':''" href="#item1" @tap="onItemPeriodSliderClick($event,0)">今日</a>
+										<a class="mui-control-item" v-bind:class="periodType==1?'mui-active':''" href="#item2" @tap="onItemPeriodSliderClick($event,1)">本月</a>
+										<a class="mui-control-item" v-bind:class="periodType==2?'mui-active':''" href="#item3" @tap="onItemPeriodSliderClick($event,2)">本年</a>
+									</div>
+									<div id="sliderperiodselectorBar" class="mui-slider-progress-bar mui-col-xs-4"></div>-->
+									<div id="ioExp" class="mui-slider-group" style="position: relative; top: -2px;">
+										<div class="mui-slider-item mui-control-content">
+											<table class="m-main-table m-main-table1">
+												<tbody>
+													<tr>
+														<td class="td-left td-left1">
+															<table class="td-left-wrap" style="width: 100%;">
+																<tr>
+																	<th class="td1">
+																		序
+																	</th>
+																	<th class="td2">
+																		货主单位
+																	</th>
+																</tr>
+															</table>
+														</td>
+														<td class="td-right">
+															<div class="t-header t-header1">
+																<table class="header-table">
+																	<tr>
+																		<th>
+																			<div>入库量</div>
+																		</th>
+																		<th>
+																			<div>出库量</div>
+																		</th>
+																		<th>
+																			<div>吞吐量</div>
+																		</th>
+																	</tr>
+																</table>
+															</div>
+														</td>
+													</tr>
+													<tr>
+														<td class="td-top">
+															<div class="t-left t-left1">
+																<table class="left-table">
+																	<tr v-for="expd in ioExpPage.list">
+																		<td>
+																			<div v-bind:class="[parseInt(expd.ownerName.length/12)>0?'duohang'+parseInt(expd.ownerName.length/12) + ' b-td1': 'b-td1']">{{$index+1}}</div>
+																		</td>
+																		<td style="position: relative;">
+																			<div v-bind:class="[parseInt(expd.ownerName.length/12)>0?'duohang'+parseInt(expd.ownerName.length/12) + ' td2' : 'td2']" style="text-align:left;width: 100%;">
+																			<div class="help-tip">
+																				<p>{{expd.ownerName}}</p>
+																			</div>
+																			
+																				{{expd.ownerNameAbb}}
+																			</div>
+																		</td>
+																	</tr>
+																	<tr>
+																		<td class="td1">总计</td>
+																		<td class="td2"></td>
+																	</tr>
+																</table>
+															</div>
+														</td>
+														<td class="td-content">
+															<div class="t-content t-content1">
+																<table class="content-table">
+																	<tr v-for="expd in ioExpPage.list">
+																		<td>
+																			<div v-bind:class="[parseInt(expd.ownerName.length/12)>0?'duohang'+parseInt(expd.ownerName.length/12): '']" style="text-align: center;">
+																				<div class="limitNum12">{{expd.enterWeight}}</div>
+																			</div>
+																		</td>
+																		<td>
+																			<div v-bind:class="[parseInt(expd.ownerName.length/12)>0?'duohang'+parseInt(expd.ownerName.length/12): '']" style="text-align: center;">
+																				<div class="limitNum12">{{expd.outputWeight}}</div>
+																			</div>
+																		</td>
+																		<td>
+																			<div v-bind:class="[parseInt(expd.ownerName.length/12)>0?'duohang'+parseInt(expd.ownerName.length/12): '']" style="text-align: center;">
+																				<div class="limitNum12">{{expd.throughputWeight}}</div>
+																			</div>
+																		</td>
+																	</tr>
+																	<tr>
+																		<td>
+																			<div v-bind:class="[parseInt(expd.ownerName.length/12)>0?'duohang'+parseInt(expd.ownerName.length/12): '']" style="text-align: center;">
+																				<div class="limitNum12">{{ioExpPage.totalEnterWeight}}</div>
+																			</div>
+																		</td>
+																		<td>
+																			<div v-bind:class="[parseInt(expd.ownerName.length/12)>0?'duohang'+parseInt(expd.ownerName.length/12): '']" style="text-align: center;">{{ioExpPage.totalOutputWeight}}</div>
+																		</td>
+																		<td>
+																			<div v-bind:class="[parseInt(expd.ownerName.length/12)>0?'duohang'+parseInt(expd.ownerName.length/12): '']" style="text-align: center;">{{ioExpPage.totalThroughputWeight}}</div>
+																		</td>
+																	</tr>
+																</table>
+															</div>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop" @tap="hideOffCanvaQuery"></div>
+				</div>
+				<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-right" id="searchVue">
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area" v-on:tap="hideOffCanvaQuery">
+							<a id="back-cust-list-btn" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title" style="left:40px;width: 4em;">仓库选择</h1>
+						</div>
+					</header>
+					<div class="mui-scroll-wrapper" id="munuScrollDiv" style="top:48px">
+						<div class="mui-scroll">
+							<!-- 菜单具体展示内容 -->
+							<div class="mui-content">
+								<ul class="mui-content-padded">
+									<li v-for="warehouse in warehouseList" :class={selectedTD:warehouseID==warehouse.id} v-text="warehouse.warehouseShortName" v-on:tap="globalDoQuery(warehouse.id, warehouse.warehouseShortName);" style="font-size:1rem; list-style:none; background: #fff; display: block; width: 100%; height: 38px; line-height: 38px; padding: 0px 20px;"></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/exponent-report-new.js");
+
+		/*export default {
+			data() {
+				return {
+					activeNames: ['1']
+				};
+			},
+			methods: {
+				handleChange(val) {
+					console.log(val);
+				}
+			}
+		}*/
+	</script>
+	<style>
+		table tr td,
+		table tr th {
+			border: 1px solid #ebebeb;
+		}
+		
+		table tr th {
+			background: #fafafa;
+		}
+		
+		.ap_word {
+			margin: 5px;
+		}
+	</style>
+
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>指数分析</title> 
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link href="../css/exponent-report-new.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/dAHFZjuHwkWsorioAuKK.css" />
+		
+		<style>
+	        canvas#mountNode {
+	            /* background-color: #50577D; */
+	            background-color: #fff;
+	        }
+	        #item1mobile td{
+	            word-wrap:break-word;
+	        }
+	    </style>
+	    <style type="text/css">
+			.icon {
+			   width: 1.8em; height: 1.8em;
+			   vertical-align: -0.15em;
+			   fill: currentColor;
+			   overflow: hidden;
+			   margin-right: 33px;
+			   color:#738ffe;
+			}
+			.selectedTD{ color: #738ffe; font-weight: bold;}
+			.sxing{font-size:1rem; list-style:none; float: left; height: 30px; line-height:30px; margin-top: 10px; padding: 0px 10px; border: 1px solid #bbb; border-radius: 4px; margin: 5px;}
+		</style>
+	    <script src="../css/font_size/iconfont.js"></script>
+</head> 
+<body>
+	<div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-slide-in">
+		<div class="cyq_mask"></div>
+		<!--弹出仓库选择菜单-->
+		<div id="warhouse-menu">
+			<div class="title">
+				<span class="mui-icon mui-icon-home"></span>客户选择
+			</div>
+		  	<ul>
+		  		<li 
+		  			:class="cyqCstmrAClass(cidx)"
+		  			v-for="(cidx,cstmr) in cstmrList" 
+		  			:mtxId="cstmr.id"
+		  			@tap="searchIvntDetail($event, cstmr.id, warehouseId, cstmr.ownerName);"
+		  			>
+		  				<a href="#" v-text="cstmr.ownerName"></a>
+		  		</li>
+		  		<!--<li class="active"><a href="#">item1</a></li>
+		  		<li class=""><a href="#">item1</a></li> 
+		  		<li class=""><a href="#">item1</a></li>
+		  		<li class=""><a href="#">item1</a></li>-->
+		  	</ul>
+		</div>
+		<!-- 筛选菜单容器 -->
+		<aside class="mui-off-canvas-right" id="searchVue">
+			<header class="mui-bar mui-bar-nav">
+				<div class="back-area" v-on:tap="hideOffCanvaQuery">
+					<a id="back-cust-list-btn" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title" style="left:40px; width: 4em;">物料属性</h1>
+				</div>
+			</header>
+			<div style="margin-top: 48px;height: 80px; background:#fff; border-bottom: #ebebeb solid 1px;">
+				<div class="mui-scroll-wrapper" style="height: 94px;top:32px" id="mtxScrollDiv">
+					<div class="mui-scroll">
+						<ul>
+							<li v-for="mtx in selectedMtxs" :id="mtx.id" :tagId="mtx.tagId" @tap="removeSltMtx($event,mtx.type,mtx.id)" class="sxing">{{mtx.name}}<span class=" mui-icon mui-icon-closeempty" style="width:16px;"></span></li>
+						</ul>
+					</div>
+				</div>
+			</div>  
+			<div class="mui-clearfix"></div>
+			<div class="mui-card" style="margin: 0;">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-collapse mui-active">
+						<a class="mui-navigate-right" href="#">品名</a>
+						<div class="mui-collapse-content mtx-content-div">
+							<div class="mui-scroll-wrapper mtx-scroll-div" id="brandScrollDiv">
+								<div class="mui-scroll">
+									<ul style=" background: #fff;">
+										<li v-for="brand in conditions.brandList" class="brandA" v-text="brand.text" :id="'brand_'+brand.id" :mtxId="brand.id" v-on:tap="searchIvntDetail($event,brand.id,warehouseId,seWarehouseName);" style="font-size:1rem; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right" href="#">材质</a>
+						<div class="mui-collapse-content mtx-content-div">
+							<div class="mui-scroll-wrapper mtx-scroll-div" id="textureScrollDiv">
+								<div class="mui-scroll">
+									<ul>
+										<li v-for="texture in textureList" class="textureA" v-text="texture.text" :id="'texture_'+texture.id" :mtxId="texture.id" v-on:tap="searchIvntDetail($event,texture.id,warehouseId,seWarehouseName);" style="font-size:1rem; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right" href="#">规格</a>
+						<div class="mui-collapse-content mtx-content-div">
+							<div class="mui-scroll-wrapper mtx-scroll-div" id="specificationScrollDiv">
+								<div class="mui-scroll">
+									<ul>
+										<li v-for="specification in conditions.specificationList" class="specificationA" v-text="specification.text" :id="'specification_'+specification.id" :mtxId="specification.id" v-on:tap="searchIvntDetail($event,specification.id,warehouseId,seWarehouseName);" style="font-size:1rem; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right" href="#">产地</a>
+						<div class="mui-collapse-content mtx-content-div">
+							<div class="mui-scroll-wrapper mtx-scroll-div" id="placesteelScrollDiv">
+								<div class="mui-scroll">
+									<ul>
+										<li v-for="placesteel in conditions.placesteelList" class="placesteelA" v-text="placesteel.text" :id="'placesteel_'+placesteel.id" :mtxId="placesteel.id" v-on:tap="searchIvntDetail($event,placesteel.id,warehouseId,seWarehouseName);" style="font-size:1rem; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</aside>
+		<!-- 主页面容器 -->
+		<div class="mui-inner-wrap" id="contentDiv">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back back-area">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title" style="width: 4em;">库存明细</h1>
+				</div>
+				<span id="query-btn" @tap="showOffExponentQuery" class="mui-btn mui-btn-outlined query-btn mui-pull-right" style=" width: 68px; border:0px;">
+					 
+					<svg class="icon" aria-hidden="true">
+					  <use xlink:href="#icon-shaixuan"></use>
+					</svg>
+					<span class="query-btn-label" style="margin-top:-5px; display: inline-block; position: absolute; top:12px; right: 10px; ">筛选</span>
+				</span>
+			</header>
+			
+			<div id="slider1" class="mui-slider" style="position: fixed;left:0;z-index:9;top:48px;bottom: 0px;">
+				<!--<div class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" id="segmented">
+					<div class="mui-scroll">
+						<span v-for="(cidx,cstmr) in cstmrList" :class="cstmrAClass(cidx)" :mtxId="cstmr.id" v-text="cstmr.ownerName" @tap="searchIvntDetail($event,cstmr.id,warehouseId,seWarehouseName);"></span>
+					</div> 
+				</div> -->
+				<div class="warehouseSelector">
+					<a class="select-area show-menu" href="#" id="openWarehouseMenu">
+						<span class="select-notify">选择客户：</span>
+						<em class="select-warehouse-name" v-text="seWarehouseName+'&nbsp;&nbsp;&gt;'"></em>
+					</a>
+				</div>
+				
+				<div class="mui-slider-group"> 
+					<table style="font-size: 12px; table-layout: fixed;">
+						<!--<tr >
+							<th style="width: 18%;">品名</th>
+							<th style="width: 20%;">材质</th>
+							<th style="width: 20%;">规格</th>
+							<th style="width: 17%;">产地</th>
+							<th style="width: 25%;">库存量（吨）</th>
+						</tr>-->
+						<tr v-cloak>
+							<th style="width: 18%;" @tap="brandSortMth($event)">
+								<div v-bind:class="[sortColumns[0] == sortColumn?'f-sort-active': '']">{{sortColumns[0]}}<span class="mui-icon" v-bind:class="[brandSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+							</th>
+							<th style="width: 20%;" @tap="textureSortMth($event)">
+								<div v-bind:class="[sortColumns[1] == sortColumn?'f-sort-active': '']">{{sortColumns[1]}}<span class="mui-icon" v-bind:class="[textureSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+							</th>
+							<th style="width: 20%;" @tap="specificationSortMth($event)">
+								<div v-bind:class="[sortColumns[2] == sortColumn?'f-sort-active': '']">{{sortColumns[2]}}<span class="mui-icon" v-bind:class="[specificationSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+							</th>
+							<th style="width: 17%;">
+								<div>{{sortColumns[3]}}</div>
+							</th>
+							<th style="width: 25%;" @tap="inventorySortMth($event)">
+								<div v-bind:class="[sortColumns[4] == sortColumn?'f-sort-active': '']">{{sortColumns[4]}}<span class="mui-icon" v-bind:class="[inventorySort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+							</th> 
+						</tr>
+					</table>  
+					<div id="item1mobile" class="mui-slider-item mui-control-content" style="margin-top:-1px;">
+						<div class="mui-scroll-wrapper mui-content" id="ivntScrollDiv">
+							<div class="mui-scroll">
+								<table style="table-layout: fixed;">
+									<tr v-for="exp in ivntList"> 
+										<td v-text="exp.brandName" style="width: 18%;"></td>
+										<td v-text="exp.textureName" style="width: 20%;"></td>
+										<td v-text="exp.specificationName" style="width: 20%;"></td>
+										<td v-text="exp.placesteelName" style="width: 17%;"></td>
+										<td v-text="exp.weight" style="width: 25%;text-align: right;"></td>
+									</tr>
+									<tr> 
+										<td style="width: 18%;">总计</td>
+										<td style="width: 20%;"></td>
+										<td style="width: 20%;"></td>
+										<td style="width: 17%;"></td>
+										<td v-text="totalWeight" style="width: 25%;text-align: right;"></td>
+									</tr>
+								</table>
+								<!--<table style="table-layout: fixed;" class='cyq-test'> 
+									<tr>
+										<td style="width: 18%;">hello sscsacs</td>
+										<td style="width: 20%;">2</td>
+										<td style="width: 20%;">12</td>
+										<td style="width: 17%;">12</td>
+										<td style="width: 25%;text-align: right;">1</td>
+									</tr>
+									<tr>
+										<td style="width: 18%;">2</td>
+										<td style="width: 20%;">2</td>
+										<td style="width: 20%;">12</td>
+										<td style="width: 17%;">12</td>
+										<td style="width: 25%;text-align: right;">1</td>
+									</tr>
+									<tr>
+										<td style="width: 18%;">hello sscsacs</td>
+										<td style="width: 20%;">2</td>
+										<td style="width: 20%;">12</td>
+										<td style="width: 17%;">12</td>
+										<td style="width: 25%;text-align: right;">1</td>
+									</tr>
+									<tr>
+										<td style="width: 18%;">2</td>
+										<td style="width: 20%;">2</td>
+										<td style="width: 20%;">12</td>
+										<td style="width: 17%;">12</td>
+										<td style="width: 25%;text-align: right;">1</td>
+									</tr>
+									<tr>
+										<td style="width: 18%;">hello sscsacs</td>
+										<td style="width: 20%;">2</td>
+										<td style="width: 20%;">12</td>
+										<td style="width: 17%;">12</td>
+										<td style="width: 25%;text-align: right;">1</td>
+									</tr>
+									<tr>
+										<td style="width: 18%;">2</td>
+										<td style="width: 20%;">2</td>
+										<td style="width: 20%;">12</td>
+										<td style="width: 17%;">12</td>
+										<td style="width: 25%;text-align: right;">1</td>
+									</tr>
+									<tr>
+										<td style="width: 18%;">hello sscsacs</td>
+										<td style="width: 20%;">2</td>
+										<td style="width: 20%;">12</td>
+										<td style="width: 17%;">12</td>
+										<td style="width: 25%;text-align: right;">1</td>
+									</tr>
+									<tr>
+										<td style="width: 18%;">2</td>
+										<td style="width: 20%;">2</td>
+										<td style="width: 20%;">12</td>
+										<td style="width: 17%;">12</td>
+										<td style="width: 25%;text-align: right;">1</td>
+									</tr>
+									<tr>
+										<td style="width: 18%;">hello sscsacs</td>
+										<td style="width: 20%;">2</td>
+										<td style="width: 20%;">12</td>
+										<td style="width: 17%;">12</td>
+										<td style="width: 25%;text-align: right;">1</td>
+									</tr>
+									<tr>
+										<td style="width: 18%;">总计</td>
+										<td style="width: 20%;"></td>
+										<td style="width: 20%;"></td>
+										<td style="width: 17%;"></td>
+										<td style="width: 25%;text-align: right;"></td>
+									</tr>
+								</table>-->
+							</div>
+						</div>
+					</div>
+					
+				</div>
+	
+			</div>
+		</div>
+		
+	</div>
+	
+</body> 
+<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/cstmrIvntDetail.js"); 
+	</script>
+</html>

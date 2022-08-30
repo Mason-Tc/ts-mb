@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<title>在线仓库</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link href="../css/warehouse-online.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/zmd.css">
+	</head>
+
+	<body>
+		<div id="warehouse-online-report"  class="mui-off-canvas-wrap mui-draggable mui-slide-in">
+			<!-- 主页面标题 -->
+			<header  id="header" class="mui-bar mui-bar-nav">
+				<div class="mui-action-back back-area">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title" style="text-align: left; width: 4em;">在线仓库</h1>
+				</div>   
+			</header>
+			<!-- 主界面具体展示内容 -->
+			<div id="slider" class="mui-content mui-slider"  style="padding-top: 48px;">
+				<div id="menuSliderControl"  v-cloak class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-segmented-control-primary" style=" background: #ffffff;height: 40px; line-height:40px;">
+					<a class="mui-control-item" href="#warehouseDistribution" >
+						仓库分布
+					</a> 
+					<a class="mui-control-item"  href="#inventoryExponent" >
+						库存指数
+					</a>
+					<a class="mui-control-item"  href="#inOutputExponent">
+						吞吐量指数
+					</a>
+				</div>
+
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>
+
+				<div class="mui-slider-group"  style="position: relative; top: -2px;">
+					<div id="warehouseDistribution" v-if="distributAuth" class="mui-slider-item mui-control-content">
+						<div id="mapDiv" style="width: 100%;min-height:950px;padding-right:0px;"></div>
+					</div>
+
+					<div id="inventoryExponent" v-if="inventoryAuth" class="mui-slider-item mui-control-content" >
+						<p class="ap_word" style="margin-left: 20px; display: block;">仓库库存排名<span class="bule" v-text="reportDate"></span></p>
+						<table class="m-main-table">  
+							<tr>
+								<th style="width: 20%;">排名</th>
+								<th style="width: 40%;">仓库名称</th>
+								<th style="width: 40%;">库存量（吨）</th>
+							</tr>
+						</table> 
+						<div id="inventoryExpPullRefresh" class="relative mui-scroll-wrapper" :style="invListStyle">
+							<div class="relative mui-scroll">
+								<table class="m-main-table">
+									<tbody>      
+									<tr v-for="exp in inventoryExpPage.inventoryExpList">
+										<td v-text="$index+1" style="width: 20%;"></td>
+										<td v-text="exp.warehouseShortName" style="width: 40%; color: #129BFF;" @tap="toExponentReport(exp.warehouseId, exp.warehouseShortName)"></td>
+										<td v-text="exp.inventoryWeight" style="width: 40%;text-align:right; padding:10px;"></td>
+									</tr>
+									<tr> 
+										<td style="width: 20%;">总计</td>
+										<td style="width: 40%;"></td> 
+										<td style="width: 40%;text-align: right;padding:10px;">{{ inventoryExpPage.totalInventoryWeight }}</td>
+									</tr> 
+									</tbody>   
+								</table> 
+							</div> 
+						</div> 
+					</div>  
+
+					<div id="inOutputExponent" v-if="ioAuth" class="mui-slider-item mui-control-content" >
+						<p class="ap_word" style="margin-left: 20px;">本年度吞吐排名<span class="bule" v-text="reportDate"></span></p>
+						<table class="m-main-table">
+							<tr>
+								<th style="width: 20%;">排名</th>
+								<th style="width: 40%;">仓库名称</th>
+								<th style="width: 40%;">吞吐量（吨）</th>
+							</tr> 
+						</table>
+						<div id="inOutExpPullRefresh" class="relative mui-scroll-wrapper" :style="invListStyle">
+							<div class="relative mui-scroll">
+								<table class="m-main-table">
+									<tbody>
+										<tr v-for="exp in warehouseIOExpPage.warehouseIOExpList">
+											<td v-text="$index+1" style="width: 20%;"></td>
+											<td v-text="exp.warehouseShortName" style="width: 40%;"></td>
+											<td v-text="exp.inOutputWeight" style="width: 40%;text-align: right;padding:10px;"></td>
+										</tr>  
+										<tr> 
+											<td style="width: 20%;">总计</td>
+											<td style="width: 40%;"></td>  
+											<td style="width: 40%;text-align: right;padding:10px;">{{ warehouseIOExpPage.totalInOutputWeight }}</td>
+										</tr> 
+									</tbody> 
+								</table> 
+							</div>
+						</div>
+					</div> 
+				</div>  
+			</div>     
+		</div>
+		<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+		<script>  
+			//加载主模块
+			seajs.use("../js/warehouse-online.js");
+		</script>
+		<style>
+			table tr td,table tr th{ border: 1px solid #ebebeb;}
+			table tr th{background: #fafafa; }
+			.ap_word{ margin:5px;}
+			
+		</style>
+	</body>
+</html>

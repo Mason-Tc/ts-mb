@@ -1,0 +1,9 @@
+.mui-content{width:96%;margin:50px auto;}
+.mui-btn-primary{width: 96%;margin: 0 auto;padding: 10px 0;background-color:#738FFE;border: 1px solid #738FFE;}
+.mui-button-row{margin-top:35px ;}
+.error{color:#E51C23;font-size: 12px;left:35% ;position:absolute;bottom:-30px;display: none;}
+.mui-input-group{position: relative;}
+label{color:#B6B6B6;font-size: 12px;height: 40px;line-height: 40px;}
+.mui-input-group {width:96%;border-radius: 4px; margin: 0px auto; }
+.mui-input-row input{border-radius: 4px; border: 0px;} 
+.mui-input-group:before,.mui-input-group:after,.mui-input-group .mui-input-row:after{height:0px;}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/zmd.css" />
+		<link href="../css/input-dialog.css" rel="stylesheet" />
+	</head>
+
+	<body id="body_input_dialog" style="background-color:rgba(0,0,0,0.5);">
+		<div class="mui-content-padded">
+			<form class="mui-input-group">
+				<div class="mui-input-row" style="padding-top: 10px;">
+					<label style="width: 100%; text-align: left;" v-text="title"></label>
+				</div>
+				<div class="split"></div>
+				<div style="padding-top: 10px;padding-bottom: 15px;">
+					<div class="mui-input-row" style="margin-top: 10px; text-align: center;">
+						<span style="position: absolute;left:8px; top:6px;"><span style="color: red;">*&nbsp;</span>行车名称</span>
+						<input type="text" style="width:70%; border: 1px solid #EBEBEB; margin-left:85px;" placeholder="请输入行车名称" v-model="bridgeCraneName">
+					</div>
+					<div class="mui-input-row" style="margin-top: 10px; text-align: center;">
+						<span style="position: absolute;left:54px;">说明</span>
+						<textarea id="txt_info" rows="3" cols="20" style="width:70%; height: 120px; border: 1px solid #EBEBEB; margin-left:85px;" maxlength="50" v-model="bridgeCraneDesc" placeholder="请输入说明, 限50字"></textarea>
+					</div>
+					<div class="mui-input-row" style="margin-top: 15px; text-align: left;">
+						<span style="position: absolute;left:15px;">说明: 如需按行车进行排队，请准确配置行车信息！</span>
+					</div>
+				</div>
+				<div class="mui-button-row" style=" margin: 0px auto; padding: 0px 0px 10px 0px;">
+					<button type="button" style="width: 70px;" class="mui-btn mui-btn-mini" @tap="cancel">取消</button>&nbsp;&nbsp;&nbsp;
+					<button type="button" style="width: 70px;" class="mui-btn mui-btn-primary" @tap="confirm">确认</button>
+				</div>
+			</form>
+		</div>
+		<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+		<script>
+			//加载主模块
+			seajs.use("../js/input-dialog.js", function() {});
+		</script>
+	</body>
+
+</html>

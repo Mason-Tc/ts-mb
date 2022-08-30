@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>指数分析</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link href="../css/exponent-report-new.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/dAHFZjuHwkWsorioAuKK.css" />
+		
+		<style>
+	        canvas#mountNode {
+	            /* background-color: #50577D; */
+	            background-color: #fff;
+	        }
+	    </style>
+	    <style type="text/css">
+			.icon {
+			   width: 1.8em; height: 1.8em;
+			   vertical-align: -0.15em;
+			   fill: currentColor;
+			   overflow: hidden;
+			   margin-right: 33px;
+			   color:#738ffe;
+			}
+		</style>
+	    <script src="../css/font_size/iconfont.js"></script>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title" >库存明细</h1>
+			<span id="query-btn" v-on:tap="showOffExponentQuery" class="mui-btn mui-btn-outlined query-btn mui-pull-right" style=" width: 68px; border:0px;">
+				 
+				<svg class="icon" aria-hidden="true">
+				  <use xlink:href="#icon-shaixuan"></use>
+				</svg>
+				  <span class="query-btn-label" style="margin-top:-5px; display: inline-block; position: absolute; top:12px; right: 10px; ">筛选</span>
+			</span>
+	</header>
+	 
+    <div id="slider1" class="mui-slider" style="position: fixed;left:0;z-index:9;top:48px;bottom: 0px;">
+    <div class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" id="segmented">
+        <div class="mui-scroll">
+            <a v-for="cstmr in cstmrList" class="mui-control-item cstmrA" v-text="cstmr.ownerName" @tap="searchIvntDetail(this,cstmr.id,warehouseId)"></a>
+    	</div>
+	</div>
+	<div class="mui-slider-group"> 
+        <div id="item1mobile"  class="mui-slider-item mui-control-content" style="height: 100%; ">
+            <table class="m-main-table">
+				<tr>
+					<th style="width: 18%;">品名</th>
+					<th style="width: 20%;">材质</th>
+					<th style="width: 20%;">规格</th>
+					<th style="width: 17%;">产地</th>
+					<th style="width: 25%;">库存量（吨）</th>
+				</tr>
+			</table> 
+			<div class="mui-scroll-wrapper" id="ivntScrollDiv" >
+				
+			<div class="relative mui-scroll" >
+				<table class="m-main-table" >
+					<tr v-for="exp in ivntList">
+						<td v-text="exp.brandName" style="width: 18%;"></td>
+						<td v-text="exp.textureName" style="width: 20%;"></td>
+						<td v-text="exp.specificationName" style="width: 20%;"></td>
+						<td v-text="exp.placesteelName" style="width: 17%;"></td>
+						<td v-text="exp.weight" style="width: 25%;text-align: right;"></td>
+					</tr>
+				</table>
+			</div>
+			</div>
+        </div>
+        
+    </div>
+<!-- 菜单容器 -->
+			<aside class="mui-off-canvas-right" id="searchVue">
+				<div class="mui-scroll-wrapper" id="munuScrollDiv" style="top:48px">
+					<div class="mui-scroll">
+						<div class="title">品名</div>
+						
+						<div class="mui-content">
+							<ul class="mui-content-padded">
+								<li v-for="warehouse in warehouseList" :class={selectedTD:warehouseID==warehouse.id} v-text="warehouse.warehouseName" v-on:tap="globalDoQuery(warehouse.id, warehouse.warehouseName);" style="font-size:1rem; list-style:none; background: #fff; display: block; width: 100%; height: 38px; line-height: 38px; padding: 0px 20px;"></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</aside>
+            
+    </div>
+</body>
+<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/cstmrIvntDetail.js"); 
+	</script>
+</html>

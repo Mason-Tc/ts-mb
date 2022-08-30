@@ -1,0 +1,51 @@
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: none;
+}
+html,
+body {
+  overflow: hidden;
+  margin: 0;
+  font-family: "Helvetica Neue", "San Francisco", Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", sans-serif;
+}
+.header {
+  padding: 16px;
+  font-size: 16px;
+  line-height: 22.5px;
+}
+.icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  
+  background-size: cover;
+  vertical-align: -1px;
+  margin-right: 25px;
+  position: relative;
+}
+.selectedTD{color: #738ffe !important;font-weight: bold;}
+.icon:after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  right: -12px;
+  width: 1px;
+  height: 16px;
+  background-color: #979797;
+}
+.chart-wrapper {
+  background-color: #fff;
+}
+canvas {
+  display: block;
+}
+.selectedTD{color: #738ffe;font-weight: bold;}

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>公告详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<!--<link rel="stylesheet" href="../../../css/zmd.css">-->
+		<link rel="stylesheet" href="../../../css/mui.css">
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/icons-extra.css" />
+		<style>
+			img {
+				width: 96%;
+				margin: 0 auto;
+			}
+			
+			.wms-title {
+				font-size: 17px;
+				/*font-weight: bold;*/
+				color: #666666;
+				display: inline-block;
+				position: absolute;
+				left: 20%;
+				top: 20px;
+				-webkit-transform: translateX(-50%);
+				-moz-transform: translateX(-50%);
+				-ms-transform: translateX(-50%);
+				-o-transform: translateX(-50%);
+				transform: translateX(-50%);
+			}
+			
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20000;
+				background-color: #000;
+			}
+			
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto 4;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+		</style>
+	</head>
+
+	<body id="m-riskCtrl-detail" v-cloak>
+		<!--导航栏-->
+		<!--<header class="mui-bar mui-bar-nav">
+			<button @click="back()" class="mui-action-back mui-btn mui-btn-blue mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+				<span style="color:#fff;">公告详情</span>	
+			</button>
+		</header>-->
+		<header class="mui-bar mui-bar-nav">
+			<div class="mui-action-back">
+				<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<span class="wms-title">公告详情</span>
+			</div>
+		</header>
+
+		<div style="margin-top: 50px;overflow-x: hidden; overflow-y: auto;">
+			<div style="text-align: center;padding: 8px 0; position: fixed; top:48px; width: 100%; background: #ebebeb;" v-html="notice.title">
+			</div>
+			<div class="" style="text-align:left;min-height: 500px;background:#FFF; padding:60px 10px 10px 10px;" v-html="notice.content">
+			</div>
+			<div style="color: #000;  background: #fff; font-size: 14px; color: #bbb; padding: 10px; margin-bottom: 8px; border-top: 1px solid #ebebeb;">
+				<span style="float: left;">{{{notice.msgUserName}}}</span>
+				<span style="margin-left: 25%;">{{notice.msgDate}}</span>
+				<span style="float: right;"> {{notice.msgType}}</span>
+			</div>
+		</div>
+		<table class="mui-table-view grid mui-row margin-top-55">
+
+			<tr>
+				<div class="detail-content" style="margin-bottom: 8px;">
+					<div class="meeting-title" style="height: 34px; line-height: 34px; font-size: 14px; padding-left: 8px;" v-if="files.length>0||imageFiles.length">附件资料</div>
+					<!--附件区域 -->
+					<div style="width: 100%;margin: 0 auto; font-size: 13px;" v-if="files.length>0||imageFiles.length">
+						<!--文件区域-->
+						<div v-cloak>
+							<ul class="mui-table-view ">
+								<li class="mui-table-view-cell mui-media" v-for="file in files" style="z-index:999">
+									<a class="">
+										<img class="mui-media-object mui-pull-left" style="width:2.5em;" src="../../../images/file.jpg">
+										<div class="mui-media-body" @tap="openFile(file)">{{file.fileName}}
+											<p class="mui-ellipsis">{{file.fileSize}}</p>
+										</div>
+									</a>
+								</li>
+								<li class="mui-table-view-cell mui-media" v-cloak v-for="f in imageFiles" style="z-index:999">
+									<a class="">
+										<img class="mui-media-object mui-pull-left" style="width:4em;" data-preview-src="{{f.previewFileUrl}}" src="{{f.fileUrl}}"/>
+										<div class="mui-media-body" >{{f.fileName}}
+											<p class="mui-ellipsis">{{f.fileSize}}</p>
+										</div>
+									</a>
+								</li>
+							</ul>
+						</div>
+						<!--<div v-clock>
+							<ul class="mui-table-view mui-grid-view">
+								<li class="mui-table-view-cell mui-media mui-col-xs-3" v-for="image in imageFiles" style="height: 80px;margin:10px 0;position: relative;">
+									<img @tap="openFile(file.id)"  data-preview-src="{{apiUrl+''+'api/sys/file/download?isOnLine=true&fileId='+''+image.id+'&token='+token}}" data-preview-group="1" style="position: absolute;top:0;right: 2%; border-radius:4px;margin: 0 auto;width: 96%;" src="{{apiUrl+''+'api/sys/file/downloads?isOnLine=true&isCompress=true&imgWidth=120&imgHeight=120&fileId='+''+image.id+'&token='+token}}">
+								</li>
+							</ul>
+						</div>-->
+					</div>
+				</div>
+			</tr>
+		</table>
+		<!--<div class="mui-content-list">
+			<div id="slider" class="mui-slider">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="border: 0px;">
+					<a class="mui-control-item" href="#item1mobile" style="text-align: left; padding-left: 8px; ">
+						阅读记录({{browsePage.totalCount}})
+					</a>
+				</div>
+
+				<div class="mui-slider-group">
+					<div id="item1mobile" class="mui-slider-item mui-control-content" style="background: white;min-height: 400px;  overflow:scroll;">
+						<div id="div_notice_empty" class="empty">
+							<div>没有查询到相关数据</div>
+						</div>
+						<div id="div_notice_pull_refresh" class="mui-content mui-scroll-wrapper" style="background: white;height: 100%;">
+							<div class="mui-scroll">
+								<div class="mui-media-body mui-media-body-cutom" v-cloak>
+									<div class="message" v-for="(index,e) in browsePage.listData" 　>
+										<div class="message-header">
+											<span>{{e.browserName}}</span>
+											<span class="message-datetime">{{e.source}} / {{e.createDate.substr(0,16)}}</span>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>-->
+		<style>
+			.mui-control-item,
+			.meeting-title {
+				background: #fff;
+				border-bottom: 1px solid #ebebeb;
+				text-align: left;
+				font-weight: bold;
+			}
+			
+			.message-header {
+				height: 38px;
+				line-height: 38px;
+				padding: 0px 10px;
+				border-bottom: 1px solid #ebebeb;
+			}
+			
+			.message-datetime {
+				float: right;
+				color: #bbb;
+			}
+		</style>
+	</body>
+	<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		//加载主模板块
+		seajs.use("../js/information-details.js", function() {
+
+		});
+	</script>
+
+</html>

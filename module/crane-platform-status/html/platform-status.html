@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>月台应急</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+		<link rel="stylesheet" type="text/css" href="../css/platform-status.css" />
+		<style>
+			.layui-layer-content {
+			    font-size: 16px;
+				text-align: left;
+				padding-top:10px;
+				padding-left:10px;
+			}
+			.textr{
+				text-align: right;
+			}
+			.textl{
+				text-align: left;
+			}
+			.mui-switch:before{
+				line-height: 20px;
+			}
+			.mui-switch{
+				margin-bottom: -10px;
+				width: 100px;
+			}
+			.mui-switch .mui-switch-handle{
+				margin: -1px 0 0 1px;
+				width: 55px;
+				height: 30px;
+			}
+		</style>
+	</head> 
+	
+	<body>
+		<div id="off-canvas" class="">
+			
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="left: 100px;margin: 1px 0px 0px -3px;color:#FFFFFF;">月台应急</span>
+						</div>
+					</header>
+					<div id="slider" class="mui-content mui-slider">
+						<div id="sliderContent" class="mui-slider-group" style="top: 1px;">
+							<div id="div_list" class="mui-slider-item mui-control-content">
+								<div class="search-wrap" style="height: 100%;">
+									<div class="search-item" style="    margin-left: 10px;">
+										<span >仓库:</span>
+										<select style="width: 150px;    height: 28px;" v-model="dataPage.filterConditions.warehouseId" >   
+											<option value="">请选择</option>
+											<option :value="wa.id" v-for="wa in warehouseList" >{{wa.text}}</option>                                    
+										</select>
+										
+									</div>
+									<div class="search-item" style="height: 30px;padding: 6px 20px;background: royalblue;color:white;border: 1px solid #ccc;border-radius: 3px;" @tap="complete">查 询</span>
+								</div>
+								<div class="public-list mui-scroll-wrapper" style="top: 60px !important;overflow-y: auto;">
+									<ul class="public-list-wrapper  mui-row">
+										<li v-for="listItem in dataPage.dataList"  style="margin-bottom: 10px;" class="mui-col-sm-12 mui-col-xs-12">
+											<div style="background: #fff;padding: 5px 20px;">
+												<div style="width:100%;" class="span-r">
+													<table style="width:100%;line-height: 54px;">
+														<tr style="">
+															<td class="textr" style="width:100px;">月台名称：</td>
+															<td class="textl" style="width:100px;" v-text="listItem.platformName"></td>
+															<td class="textr" style="width:100px;" >月台状态：</td>
+															<td class="textl" style="width:100px;" v-text="listItem.nowStatus"></td>
+															<td class="textr" style="width:100px;" >月台叫号启停：</td>
+															<td  style="width:150px;" >
+																<div :id="listItem.id+'isOpenCall'" class="mui-switch mui-switch-blue" :class="{'mui-active':listItem.isOpenCall==1}">
+																  <div class="mui-switch-handle"></div>
+																</div>
+															</td>
+															<td class="textr" style="width:150px;" >月台相机启停：</td>
+															<td   style="width:150px;">
+																<div :id="listItem.id+'cameraId'"  class="mui-switch mui-switch-blue" :class="{'mui-active':listItem.status==1}">
+																  <div class="mui-switch-handle"></div>
+																</div>
+															</td>
+														</tr>
+													</table>
+												</div> 
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop"></div>
+				</div>
+			</div>
+		</div>
+		
+	</body>
+	
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/platform-status.js");
+	</script>
+
+</html>

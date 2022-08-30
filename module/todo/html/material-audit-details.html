@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>审核详情</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/material-audit-details.css" />
+	</head>
+
+	<body id="body_details">
+		<div class="main">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title" v-text='title'></span>
+				</div>
+			</header>
+			<div id="div_details" class="mui-content">
+				<ul class="info-list">
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;</span>审核流程:
+						</span>
+						<input type="text" readonly placeholder="" :value="processText" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;</span>单据号:
+						</span>
+						<input type="text" readonly placeholder="" :value="dataItem.auditCode" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;</span>{{typeTitle }}
+						</span>
+						<input type="text" readonly placeholder="" :value="dataItem.name" />
+					</li>
+					<li v-if="dataItem.materialType == '1' || dataItem.materialType == '2'" class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;</span>{{subordinateTitle}}
+						</span>
+						<input type="text" readonly placeholder="" :value="subordinateName" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;</span>助记码:
+						</span>
+						<input type="text" readonly :value="dataItem.mnemonicCode" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;</span>状态:
+						</span>
+						<input type="text" readonly placeholder="" :value="dataItem.statusDesc" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;</span>备注:
+						</span>
+						<input type="text" readonly placeholder="" :value="dataItem.remarks" />
+					</li>
+					<li v-if="processType == '2'" class="item" style="position: relative; margin-top: 15px; border-bottom-width: 4px;">
+						<span style="font-size: 18px; margin-top: 15px; margin-left: 5px;">修改原因</span>
+					</li>
+					<li v-if="processType == '2'" class="item" style="position: relative;border-bottom: none; margin-top: 10px; margin-bottom: 50px;">
+						<textarea rows="3" cols="20" style="width: 92%; height: 80px; border: 1px solid #EBEBEB; margin-left: 16px;" readonly :value="dataItem.updateDesc"></textarea>
+					</li>
+					<li class="item" style="position: relative; margin-top: 15px; border-bottom-width: 4px;">
+						<span style="font-size: 18px; margin-top: 15px; margin-left: 5px;">审核处理</span>
+					</li>
+					<li class="item" style="position: relative; border-bottom: none;">
+						<span class="title">
+							<span style="color: red;">&nbsp;</span>审核意见:
+						</span>
+					</li>
+					<li class="item" style="position: relative;border-bottom: none;">
+						<textarea id="txt_info" rows="3" cols="20" style="width: 92%; height: 100px; border: 1px solid #EBEBEB; margin-left: 16px;" maxlength="50" v-model="auditInfo" placeholder="限制输入50字"></textarea>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<nav id="nav_footer" class="mui-bar mui-bar-tab">
+			<div class="nav-left" @tap="edit('3')">拒绝&nbsp;<span style="font-size: 15px;">(流程自动结束)</span></div>
+			<div class="nav-right" @tap="edit('2')">确定</div>
+		</nav>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/material-audit-details.js");
+	</script>
+
+</html>

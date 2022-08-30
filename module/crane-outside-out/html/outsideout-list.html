@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>室外出库作业列表</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+		<link rel="stylesheet" type="text/css" href="../css/outsideout-list.css" />
+		
+		<link rel="stylesheet" href="../../../js/select2/select2.min.css" />
+		
+		<style>
+			
+			
+			.layui-layer-setwin {
+			    padding-top: 15px;
+			    width: 50px;
+			    height: 40px;
+			    right: 0 !important;
+			    top: 0 !important
+			}
+			
+			.layui-layer-setwin .layui-layer-close1 {
+			    transform: scale(1.2) !important;
+			    height: 100%;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		
+		<div id="off-canvas" class="">
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="left: 100px;margin: 1px 0px 0px -3px;color: #FFFFFF;">室外出库作业</span>
+						</div>
+					</header>
+					<div id="slider" class="mui-content mui-slider">
+						<div id="sliderContent" class="mui-slider-group" style="top: 1px;">
+							<div id="div_list" class="mui-slider-item mui-control-content">
+								<div ></div>
+								<div class="search-wrap" style="height: 100%;">
+									<div class="search-item" style="margin-left:10px;display: inline-block;">
+										<span >车牌号:</span>
+										<input type="text" style="border:0;width: 150px;    height: 28px;" v-model="dataPage.filterConditions.carPlateNo" />
+									</div>
+									<div class="search-item" style="display: inline-block;">
+										<span >仓库:</span>
+										<select style="width: 150px;    height: 28px;" v-model="dataPage.filterConditions.warehouseId" >   
+											<option value="">请选择</option>
+											<option :value="wa.id" v-for="wa in warehouseList"  >{{wa.text}}</option>                                    
+										</select>
+									</div>
+									
+									<div style="margin-top: 10px;font-size: 14px;display: inline;margin-left: 15px;">
+										<span style="margin-left: 2px;">规格：</span>
+										<select id="specificationId" class="q-specification" style="font-size: 5px;margin-left: 5px;width: 20%;">
+										</select>
+									</div>
+									
+									<div class="" style="height: 30px;display:inline;padding: 6px 20px;background: royalblue;color:white;border: 1px solid #ccc;border-radius: 3px;margin-left: 15px;" @tap="complete">查 询</div>
+									
+								<div class="public-list mui-scroll-wrapper" style="top: 60px !important;">
+									<ul class="public-list-wrapper  mui-row">
+										<li v-for="(index,listItem) in dataPage.dataList" class="mui-col-sm-6 mui-col-xs-12">
+											<div style="display: flex;background: #fff;padding: 10px 20px;">
+												<div style="flex: 0.9;" class="span-r">
+													<table style="width:100%;line-height: 24px;text-align: left;">
+														<tr style="">
+															<td class="title">车牌号：</td>
+															<td style="width:120px;"  v-text="listItem.carPlateNo" ></td>
+															<td class="title">任务单号：</td>
+															<td style="width:120px;text-align: left;" v-text="listItem.taskCode" ></td>
+															<td class="title">货主单位：</td>
+															<td style="width:220px;text-align: left;"  v-text="listItem.ownerName" ></td>
+														</tr>
+														<tr>
+															<td class="title">库位：</td>
+															<td style="width:120px;text-align: left;" v-text="listItem.placeNames"></td>
+															<td class="title" style="width: 120px;">应发总件数/重量：</td>
+															<td style="width:120px;text-align: left;">{{listItem.ladingNum}}件/{{listItem.ladingWeight}}吨</td>
+															<td class="title" style="width: 120px;">实提总件数/重量：</td>
+															<td style="width:120px;" >{{listItem.craneNum}}件/{{listItem.craneWeight}}吨</td>
+														</tr>
+														<tr>															
+															<td class="title">提单号：</td>
+															<td colspan="5" v-text="listItem.ladingCode"></td>
+														</tr>
+														<tr>
+															<td class="title">物料描述：</td>
+															<td colspan="5" v-text="listItem.materialDesc"></td>
+														</tr>
+													</table>											
+												</div>
+												<div style="flex:0.1"> 
+													<button @tap="checkWork(listItem)" v-if="listItem.status=='145' || listItem.status=='150'" style="padding:20px 20px;background: #007DDB;width:100px;">领取作业 </button>
+													<button @tap="checkWork(listItem)" v-if="listItem.status=='151' || listItem.status=='152' || listItem.status=='154'" style="padding:20px 20px;background: #3cdb84;width:100px;">作业中</button>
+													<button @tap="checkWork(listItem)" v-if="listItem.status=='153'" style="padding:20px 20px;background: #007DDB;width:100px;">继续作业 </button>
+												</div>
+											</div>
+										</li>
+									
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/outsideout-list.js");
+	</script>
+
+</html>

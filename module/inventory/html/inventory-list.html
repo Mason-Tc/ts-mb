@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>物资盘点</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/inventory-list.css" />
+	</head>
+
+	<body>
+		<div id="div_inventory_list">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title">物资盘点</h1>
+				</div>
+			</header>
+			<div id="slider" class="mui-content mui-slider">
+				<div id="menuSliderControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #ffffff;height: 40px; line-height:40px;">
+					<a class="mui-control-item" href="#pendingList" @tap="onItemSliderClick($event,0)">盘点任务列表</a>
+					<a class="mui-control-item" href="#alreadyList" @tap="onItemSliderClick($event,1)">已盘点任务列表</a>
+				</div>
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+				<div id="sliderContent" class="mui-slider-group" style="top: -2px;">
+					<!--盘点任务列表页面-->
+					<div id="pendingList" class="mui-slider-item mui-control-content mui-active">
+						<div class="public-list mui-scroll-wrapper">
+							<ul class="public-list-wrapper mui-scroll">
+								<li class="item" v-for="(index,listItem) in pendingPage.pendingList" @tap="openDetail(0,listItem.id)">
+								<!--<li class="item" v-for="n in 20" @tap="openDetail(1,listItem.id)">-->
+									<ul style="padding-left: 20px;padding-right: 20px;">
+										<li><em class="bold">盘点单号:</em><span class="bold" v-text="listItem.checkCode"></span><span style="margin-right: 2px;" class="time" v-text="listItem.checkDate"></span></li>
+										<li>
+											<em>盘点主题:</em><span v-text="listItem.checkSubject"></span>
+											<span style="position: absolute;right: 1px;width: 150px;">
+												<em>仓库:</em>
+												<span v-text="listItem.warehouseName"></span>
+											</span>
+											<!-- <span style="float: right;margin-right: 10px;" v-text="listItem.warehouseName"></span><em style="display: inline-block; text-align: right;float: right;">仓库:</em> -->
+										</li>
+										<li style="margin-bottom: 8px;">
+											<em style="display: inline-block; text-align: right;">原总数量:</em><span v-if="listItem.checkType === '1'" v-text="listItem.numTotal"></span>
+											<span style="position: absolute;right: 1px;width: 150px;">
+												<!-- <em>状态:</em> -->
+												<span class="mui-h5" v-bind:class="[listItem.status == 2 ? 'mui-h5 tip-complete' : 'mui-h5 tip-pendding']" style="color: #FFFFFF;height: 22px;padding-left: 22px;padding-right: 22px;padding-top: 3px;padding-bottom: 3px;" v-text="listItem.status === '2'?'开始盘点':'继续盘点'"></span>
+											</span>
+											<!-- <span class="mui-h5" v-bind:class="[listItem.status == 2 ? 'mui-h5 tip-complete' : 'mui-h5 tip-pendding']" style="color: #FFFFFF;float: right;margin-right: 10px;height: 22px;" v-text="listItem.status === '2'?'开始盘点':'继续盘点'"></span><em style="display: inline-block; float: right;">状态:</em> -->
+										</li>
+									
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<!--已盘点任务列表页面-->
+					<div id="alreadyList" class="mui-slider-item mui-control-content">
+						<div class="public-list mui-scroll-wrapper">
+							<ul class="public-list-wrapper mui-scroll">
+								<li class="item" v-for="(index,listItem) in alreadyPage.alreadyList" @tap="openDetail(1,listItem.id)">
+									<!--<li class="item" v-for="n in 20" @tap="openDetail(1,listItem.id)">-->
+									<ul style="padding-left: 20px;padding-right: 20px;">
+										
+										<li><em class="bold">盘点单号:</em><span class="bold" v-text="listItem.checkCode"></span><span style="margin-right: 2px;" class="time" v-text="listItem.checkDate"></span></li>
+										<li>
+											<em style="display: inline-block; text-align: right;">盘点主题:</em><span v-text="listItem.checkSubject"></span>
+											
+											<span style="position: absolute;right: 1px;width: 150px;">
+												<em>仓库:</em>
+												<span v-text="listItem.warehouseName"></span>
+											</span>
+											
+											<!-- <span style="float: right;margin-right: 10px;" v-text="listItem.warehouseName"></span><em style="display: inline-block; text-align: right;float: right;">仓库:</em> -->
+										</li>
+										<li style="margin-bottom: 8px;">
+											<em style="display: inline-block; text-align: right;">原总数量:</em><span v-text="listItem.numTotal"></span>
+											
+											<span style="position: absolute;right: 0px;width: 150px;">
+												<!-- <em>状态:</em> -->
+												<!-- <span class="mui-h5 tip-complete" style="color: #FFFFFF;height: 22px;padding-left: 22px;padding-right: 22px;padding-top: 3px;padding-bottom: 3px;">盘点完成</span> -->
+												<span style="color: #1566d2;">盘点完成</span>
+											</span>
+											
+										</li>
+										
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/inventory-list.js");
+	</script>
+
+</html>

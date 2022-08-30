@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>移库详情</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/move-detail.css" />
+	</head>
+
+	<body>
+		<div id="div_detail">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title" style="margin-left: 10px;" v-text="moveCodeStr"></span>
+				</div>
+			</header>
+			<div id="slider" class="mui-content mui-slider">
+				<div class="fixed-top">
+					<div class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="height: 40px; line-height:40px; border-bottom: 1px solid #ebebeb;">
+						<a class="mui-control-item" href="#div_basic_info" @tap="onItemSliderClick($event,0)">基本信息</a>
+						<a class="mui-control-item" href="#div_cost" @tap="onItemSliderClick($event,1)">费用明细</a>
+					</div>
+					<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+				</div>
+				<div id="sliderContent" class="mui-slider-group" style="top: -2px;">
+					<!--基本信息-->
+					<div id="div_basic_info" class="mui-slider-item mui-control-content mui-active">
+						<div id="div_basic_info_scroll" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<div id="queryContent">
+									<ul class="query-list">
+										<li class="item" style="position: relative;">
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title">
+										移库时间
+									</span>
+											<input type="text" readonly placeholder="" :value="detailsInfo.moveDate" />
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title">货主单位</span>
+											<input style=" display: inline-block;  width:calc(100% - 8em);" type="text" readonly placeholder="" :value="detailsInfo.ownerName" />
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title">结算单位</span>
+											<input style=" display: inline-block;  width:calc(100% - 8em);" type="text" readonly placeholder="" :value="detailsInfo.spenderName" />
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title">计费合同</span>
+											<input style=" display: inline-block;  width:calc(100% - 8em);" type="text" readonly placeholder="" :value="detailsInfo.contractOwnerName" />
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title">结算方式</span>
+											<input style="display: inline-block;  width:calc(100% - 8em);" type="text" readonly placeholder="" :value="detailsInfo.paymentModeStr" />
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title">仓库</span>
+											<input type="text" readonly placeholder="" :value="detailsInfo.warehouseName" />
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title">移库原因</span>
+											<input style="display: inline-block;  width:calc(100% - 8em);" type="text" readonly placeholder="" :value="detailsInfo.reason" />
+										</li>
+									</ul>
+								</div>
+								<div style="height: 38px; line-height: 38px;  background: #fafafa; text-align: center;">
+									<div style="float:left; margin:0px auto; font-size:14px;  color: #333; font-weight: bold;display: block;width: 100%; ">物料信息</div>
+								</div>
+								<div class="public-list">
+									<ul class="public-list-wrapper">
+										<li class="item" v-for="(index,item) in materielList">
+											<!--<li class="item" v-for="(index,item) in 21">-->
+											<ul>
+												<li class="materialDes">
+													<em style="width:9em;display: inline-block; text-align: right; vertical-align:top;">物料描述:</em><span style=" display: inline-block;  width:calc(100% - 9em);" v-text="item.materialDesc"></span>
+												</li>
+												<li><em style="width:9em; display: inline-block; text-align: right;">捆包号:</em><span v-text="item.packageNo"></span></li>
+												<li><em style="width:9em; display: inline-block; text-align: right;">新库位/层号:</em><span v-text="item.warehouseInfo"></span></li>
+												<li><em style="width:9em; display: inline-block; text-align: right;">移库数量/重量:</em><span v-text="item.moveInfo"></span></li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--费用明细-->
+					<div id="div_cost" class="mui-slider-item mui-control-content">
+						<div class="cost-top">
+							<!-- <input name="contractFit" type="radio" style="width: 20px; height: 20px; margin-left: 20px;" value="0" disabled="disabled" v-model="contractFit" /><span>&nbsp;&nbsp;按结算单位</span><input name="contractFit" type="radio" style="width: 20px; height: 20px; margin-left: 30px;" value="1" disabled="disabled" v-model="contractFit" /><span>&nbsp;&nbsp;按货主单位</span> -->
+						</div>
+						<div id="div_cost_scroll" class="public-list mui-scroll-wrapper" style="margin-top: -11px;">
+							<ul class="public-list-wrapper mui-scroll">
+								<li class="item" v-for="(index,item) in accountDueDetailList">
+									<!--<li class="item" v-for="(index,item) in 21">-->
+									<ul>
+										<li class="materialDes">
+											<em style="width:8em;display: inline-block; text-align: right; vertical-align:top;">费用项目:</em><span style=" display: inline-block;  width:calc(100% - 8em);" v-text="item.spendItemName"></span>
+										</li>
+										<li><em style="width:8em; display: inline-block; text-align: right;">结算单位:</em><span v-text="item.spenderName"></span></li>
+										<li><em style="width:8em; display: inline-block; text-align: right;">结算方式:</em><span v-text="item.paymentModeDesc"></span></li>
+										<li><em style="width:8em; display: inline-block; text-align: right;">结算量:</em><span v-text="item.settlementWeight"></span></li>
+										<li><em style="width:8em; display: inline-block; text-align: right;">计价方式:</em><span v-text="item.priceModeDesc"></span></li>
+										<li><em style="width:8em; display: inline-block; text-align: right;">单价:</em><span v-text="item.unitPrice"></span></li>
+										<li><em style="width:8em; display: inline-block; text-align: right;">金额:</em><span v-text="item.detailMoney"></span></li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<nav id="nav_footer" class="mui-bar mui-bar-tab">
+				<div class="nav-right" @tap="close">关闭</div>
+			</nav>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/move-detail.js");
+	</script>
+
+</html>

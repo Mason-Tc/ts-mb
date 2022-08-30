@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>排队登记</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+		<link rel="stylesheet" type="text/css" href="../css/queue-register-list.css" />
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in">
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="margin: 1px 0px 0px -3px;" v-text="headTitle"></span>
+						</div>
+						<input type='text' id='txt_scanner' style="width:0px; background:none; border:none;"></input>
+						<span v-if="!isPDA" @tap="scannerQRCode" class="mui-btn-outlined mui-pull-right" style="margin-top: 13px;margin-right: 5px;">
+							<span class="mui-icon-extra mui-icon-extra-sweep"></span>
+						</span>
+					</header>
+					<div id="slider" class="mui-content mui-slider">
+						<div class="fixed-top" style="border-bottom: 1px solid #ebebeb;">
+							<div class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="height: 40px; line-height:40px;">
+								<a class="mui-control-item slider-bottom" v-bind:class="[queuePage.orderType == 1 ? 'mui-control-item slider-bottom' : 'mui-control-item']" @tap="onItemSortClick($event,1)">按排号</a>
+								<a class="mui-control-item" v-bind:class="[queuePage.orderType == 2 ? 'mui-control-item slider-bottom' : 'mui-control-item']" @tap="onItemSortClick($event,2)">按时间</a>
+								<a class="mui-control-item" v-bind:class="[queuePage.orderType == 3 ? 'mui-control-item slider-bottom' : 'mui-control-item']" @tap="onItemSortClick($event,3)">按类型</a>
+							</div>
+							<!--<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>-->
+						</div>
+						<div id="sliderContent" class="mui-slider-group" style="top: 1px;">
+							<div id="queueList" class="mui-slider-item mui-control-content">
+								<div class="search-wrap">
+									<div class="search" @tap="showOffExponentQuery">
+										<span class="mui-icon mui-icon-search"></span>
+									</div>
+								</div>
+								<div class="public-list mui-scroll-wrapper">
+									<ul class="public-list-wrapper mui-scroll">
+										<li class="item" v-for="(index,listItem) in queueList" @tap="openEditHTML(2, listItem)">
+											<!--<li class="item" v-for="n in 21">-->
+											<ul>
+												<li><em class="bold">排队号码:</em><span class="bold" v-text="listItem.queueCodeInfo"></span><span class="time" v-text="listItem.checkinDate"></span></li>
+												<template v-if="listItem.businessType=='1'">
+													<li><em style="width:118px;display: inline-block; text-align: right;vertical-align:top;">物料描述:</em><span v-text="listItem.materialDesc" style="display: inline-block;  width:calc(100% - 118px);"></span></li>
+													<li><em style="width:118px;display: inline-block; text-align: right;">提单数量/重量:</em><span v-text="listItem.ladingInfo"></span></li>
+													<li><em style="width:118px;display: inline-block; text-align: right;vertical-align:top;">提单号/发货单号:</em><span v-text="listItem.ladingCodeInfo" style="display: inline-block;  width:calc(100% - 118px);"></span></li>
+													<li><em style="width:118px;display: inline-block; text-align: right;">车牌号:</em><span v-text="listItem.carPlateNo"></span><span class="mui-icon mui-icon-phone" @tap="anyCall($event, listItem.phone)"></span></li>
+												</template>
+												<template v-if="listItem.businessType=='2'">
+													<li><em style="width:118px;display: inline-block; text-align: right;">登记车辆数:</em><span v-text="listItem.carNum"></span></li>
+													<li><em style="width:118px;display: inline-block; text-align: right;">状态:</em><span v-text="listItem.enterBusinessStatusDesc"></span></li>
+													<li><em style="width:118px;display: inline-block; text-align: right;">有效起始时间:</em><span v-text="listItem.valideDateFrom"></span></li>
+													<li><em style="width:118px;display: inline-block; text-align: right;">有效截止时间:</em><span v-text="listItem.valideDateTo"></span></li>
+												</template>
+											</ul>
+											<span class="mui-icon mui-icon-close" @tap="processListItem($event, listItem.id)" style="position: absolute; right:10px; bottom: 8px;"></span>
+											<span v-if="listItem.businessType=='1'&& (listItem.status == '2' || listItem.status == '5')" class="mui-h5 tip-pendding" style="position: absolute; top:10px;right:2px;color: #FFFFFF;" v-text="listItem.status == '2' ? '激活中' : '已进入'"></span>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="footer">
+								<span class="total">合计排队:</span>
+								<em style="margin-left: 8px;" v-text="queueTotalShow"></em>
+								<input type="button" value="排队登记" @tap="openEditHTML(1)" />
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop"></div>
+				</div>
+				<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-right" id="searchVue" style="width: 90%; background: #F0F0F0;">
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area" @tap="hideOffCanvaQuery">
+							<a id="back-cust-list-btn" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title" style="left:40px; width: 4em; top:3px;">查询条件</h1>
+						</div>
+					</header>
+					<div id="div_search_summary" class="mui-scroll-wrapper" style="margin-bottom: 43px;">
+						<div class="mui-scroll">
+							<div style="margin-top: 38px;height: 5px; background:#fff;">
+							</div>
+							<div class="mui-clearfix"></div>
+							<div class="mui-card" style="margin: 0;">
+								<ul class="info-list">
+									<li class="item" style="position: relative;">
+										<span class="title">车牌号:</span>
+										<input type="text" style="width: 170px;" v-model="queuePage.filterConditions.carPlateNo" />
+									</li>
+									<li class="item" style="position: relative;">
+										<span class="title">提单号:</span>
+										<input type="text" style="width: 170px;" v-model="queuePage.filterConditions.ladingCode" />
+									</li>
+								</ul>
+								<div id="div_search_top" class="ioexp-top">
+									<span style="margin-left: 10px; font-size: 14px;">业务类型：</span>&nbsp;&nbsp;<input type="button" value="入库业务" class="unselected-business" v-bind:class="[queuePage.filterConditions.businessType=='2' ? 'selected-business' : 'unselected-business']" style="width: 80px;" @tap="changeBusinessType('2')" /><input type="button" value="出库业务" class="unselected-business" v-bind:class="[queuePage.filterConditions.businessType=='1' ? 'selected-business' : 'unselected-business']" style="width: 80px; margin-left: 15px;" @tap="changeBusinessType('1')" />
+								</div>
+								<ul class="mui-table-view" style="margin-top: 10px;">
+									<li id="li_warehouse" class="mui-table-view-cell mui-collapse mui-active">
+										<a class="mui-navigate-right" href="#">仓库</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="warehouseScrollDiv">
+												<div class="mui-scroll">
+													<ul style="background: #fff;">
+														<li v-for="warehouse in conditions.warehouseList" class="warehouseA" v-text="warehouse.text" :id="'warehouse_'+warehouse.id" :mtxId="warehouse.id" @tap="searchIvntDetail($event,warehouse.id);" style="font-size:1em; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="btnList">
+						<button class="reset" @tap="resetFilter">重置</button>
+						<button class="sure" @tap="complete">完成</button>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/queue-register-list.js");
+	</script>
+
+</html>

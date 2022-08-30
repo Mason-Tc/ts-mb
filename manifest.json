@@ -1,0 +1,1048 @@
+{
+    "@platforms" : [ "android", "iPhone", "iPad" ],
+    "id" : "ht.wms.mb", /*应用的标识，创建应用时自动生成，勿手动修改*/
+    "name" : "中拓综合体", /*应用名称，程序桌面图标名称*/
+    "version" : {
+        "name" : "1.0.0", /*应用版本名称*/
+        "code" : 100
+    },
+    "description" : "", /*应用描述信息*/
+    "icons" : {
+        "72" : "icon.png"
+    },
+    "launch_path" : "module/default/html/defualt.html", /*应用的入口页面，默认为根目录下的index.html；支持网络地址，必须以http://或https://开头*/
+    "developer" : {
+        "name" : "", /*开发者名称*/
+        "email" : "", /*开发者邮箱地址*/
+        "url" : ""
+    },
+    "permissions" : {
+        "Accelerometer" : {
+            "description" : "访问加速度感应器"
+        },
+        "Audio" : {
+            "description" : "访问麦克风"
+        },
+        "Messaging" : {
+            "description" : "短彩邮件插件"
+        },
+        "Cache" : {
+            "description" : "管理应用缓存"
+        },
+        "Camera" : {
+            "description" : "访问摄像头"
+        },
+        "Console" : {
+            "description" : "跟踪调试输出日志"
+        },
+        "Contacts" : {
+            "description" : "访问系统联系人信息"
+        },
+        "Device" : {
+            "description" : "访问设备信息"
+        },
+        "Downloader" : {
+            "description" : "文件下载管理"
+        },
+        "Events" : {
+            "description" : "应用扩展事件"
+        },
+        "File" : {
+            "description" : "访问本地文件系统"
+        },
+        "Gallery" : {
+            "description" : "访问系统相册"
+        },
+        "Geolocation" : {
+            "description" : "访问位置信息"
+        },
+        "Invocation" : {
+            "description" : "使用Native.js能力"
+        },
+        "Orientation" : {
+            "description" : "访问方向感应器"
+        },
+        "Proximity" : {
+            "description" : "访问距离感应器"
+        },
+        "Storage" : {
+            "description" : "管理应用本地数据"
+        },
+        "Uploader" : {
+            "description" : "管理文件上传任务"
+        },
+        "Runtime" : {
+            "description" : "访问运行期环境"
+        },
+        "XMLHttpRequest" : {
+            "description" : "跨域网络访问"
+        },
+        "Zip" : {
+            "description" : "文件压缩与解压缩"
+        },
+        "Barcode" : {
+            "description" : "管理二维码扫描插件"
+        },
+        "Maps" : {
+            "description" : "管理地图插件"
+        },
+        "Speech" : {
+            "description" : "管理语音识别插件"
+        },
+        "Webview" : {
+            "description" : "窗口管理"
+        },
+        "NativeUI" : {
+            "description" : "原生UI控件"
+        },
+        "Navigator" : {
+            "description" : "浏览器信息"
+        },
+        "NativeObj" : {
+            "description" : "原生对象"
+        },
+        "Share" : {},
+        "Push" : {},
+        "VideoPlayer" : {}
+    },
+    //		"Push": {
+    //			"description": "消息推送"
+    //		},
+    //		"Share": {
+    //			"description": "分享"
+    //		}
+    "plus" : {
+        "splashscreen" : {
+            "autoclose" : true, /*是否自动关闭程序启动界面，true表示应用加载应用入口页面后自动关闭；false则需调plus.navigator.closeSplashscreen()关闭*/
+            "waiting" : true,
+            "event" : "render"
+        },
+        "popGesture" : "close", /*设置应用默认侧滑返回关闭Webview窗口，"none"为无侧滑返回功能，"hide"为侧滑隐藏Webview窗口。参考http://ask.dcloud.net.cn/article/102*/
+        "runmode" : "liberate", /*应用的首次启动运行模式，可取liberate或normal，liberate模式在第一次启动时将解压应用资源（Android平台File API才可正常访问_www目录）*/
+        "signature" : "Sk9JTiBVUyBtYWlsdG86aHIyMDEzQGRjbG91ZC5pbw==", /*可选，保留给应用签名，暂不使用*/
+        "distribute" : {
+            "plugins" : {
+                "maps" : {
+                    "baidu" : {
+                        "appkey_ios" : "vESge0SgMzkdfThefGaGW5DsCez9Bb14",
+                        "appkey_android" : "szfo1Fb6Mgugoybvm5h8nn0McQCvZNZj",
+                        "appkey" : "",
+                        "description" : ""
+                    }
+                },
+                "share" : {
+                    "weixin" : {
+                        "appid" : "wx7b3ec411822ba01e",
+                        "appsecret" : "d5e069ffb6aff271db92ee05b86d359e",
+                        "description" : "可选，微信分享"
+                    },
+                    "qq" : {
+                        "appid" : "1105830930",
+                        "description" : "QQ分享"
+                    }
+                },
+                "speech" : {
+                    "ifly" : {}
+                },
+                "ad" : {}
+            },
+            //				"push": {
+            //					"igexin": {
+            //						"appid": "1PRoXK5wbx8j2cvJYhe277",
+            //						"appkey": "g6XWFKISYl70AkpDGd3BB2",
+            //						"appsecret": "wixlNOQbYq6c8okRTmyRz6"
+            //					}
+            //				}
+            "apple" : {
+                "appid" : "ht.wms.mb", /*iOS应用标识，苹果开发网站申请的appid，如io.dcloud.HelloH5*/
+                "mobileprovision" : "", /*iOS应用打包配置文件*/
+                "password" : "", /*iOS应用打包个人证书导入密码*/
+                "p12" : "", /*iOS应用打包个人证书，打包配置文件关联的个人证书*/
+                "devices" : "universal", /*iOS应用支持的设备类型，可取值iphone/ipad/universal*/
+                "frameworks" : []
+            },
+            /**,
+				"plistcmds":[
+					"Set :NSAppTransportSecurity:NSAllowsArbitraryLoadsInWebContent NO",
+				    "Set :NSAppTransportSecurity:NSAllowsLocalNetworking NO"
+				],**/
+            "debug" : true,
+            "google" : {
+                "targetSdkVersion" : 28,
+                "packagename" : "ht.wms.mb", /*Android应用包名，如io.dcloud.HelloH5*/
+                "keystore" : "", /*Android应用打包使用的密钥库文件*/
+                "password" : "", /*Android应用打包使用密钥库中证书的密码*/
+                "aliasname" : "android.keystore", /*Android应用打包使用密钥库中证书的别名*/
+                "permissions" : [
+                    "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
+                    "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+                    "<uses-permission android:name=\"android.permission.GET_TASKS\"/>",
+                    "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
+                    "<uses-permission android:name=\"android.permission.BLUETOOTH_PRIVILEGED\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+                    "<uses-feature android:name=\"android.hardware.camera.autofocus\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\"/>",
+                    "<uses-permission android:name=\"android.permission.BLUETOOTH\"/>",
+                    "<uses-permission android:name=\"android.permission.CAMERA\"/>",
+                    "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
+                    "<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
+                    "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
+                    "<uses-permission android:name=\"android.permission.SEND_SMS\"/>",
+                    "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\"/>",
+                    "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
+                    "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
+                    "<uses-permission android:name=\"android.permission.CALL_PHONE\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
+                    "<uses-feature android:name=\"android.hardware.camera\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
+                    "<uses-permission android:name=\"android.permission.RECEIVE_USER_PRESENT\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_SMS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_SMS\"/>",
+                    "<uses-permission android:name=\"android.permission.REQUEST_INSTALL_PACKAGES\"/>"
+                ],
+                "autoSdkPermissions" : false,
+                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ]
+            },
+            "orientation" : [ "portrait-primary" ], /*应用支持的方向，portrait-primary：竖屏正方向；portrait-secondary：竖屏反方向；landscape-primary：横屏正方向；landscape-secondary：横屏反方向*/
+            "icons" : {
+                "ios" : {
+                    "prerendered" : true, /*应用图标是否已经高亮处理，在iOS6及以下设备上有效*/
+
+                    /*应用图标，分辨率：512x512，用于自动生成各种尺寸程序图标*/
+                    "iphone" : {
+                        "normal" : "unpackage/res/icons/57x57.png", /*iPhone3/3GS程序图标，分辨率：57x57*/
+                        "retina" : "unpackage/res/icons/114x114.png", /*iPhone4程序图标，分辨率：114x114*/
+
+                        /*iPhone4S/5/6程序图标，分辨率：120x120*//*iPhone6 Plus程序图标，分辨率：180x180*/
+                        "spotlight-normal" : "unpackage/res/icons/29x29.png", /*iPhone3/3GS Spotlight搜索程序图标，分辨率：29x29*/
+                        "spotlight-retina" : "unpackage/res/icons/58x58.png", /*iPhone4 Spotlight搜索程序图标，分辨率：58x58*/
+
+                        /*iPhone4S/5/6 Spotlight搜索程序图标，分辨率：80x80*/
+                        "settings-normal" : "unpackage/res/icons/29x29.png", /*iPhone4设置页面程序图标，分辨率：29x29*/
+
+                        /*iPhone4S/5/6设置页面程序图标，分辨率：58x58*/
+                        "app@2x" : "unpackage/res/icons/120x120.png",
+                        "app@3x" : "unpackage/res/icons/180x180.png",
+                        "settings@3x" : "unpackage/res/icons/87x87.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
+                        "spotlight@3x" : "unpackage/res/icons/120x120.png",
+                        "notification@3x" : "unpackage/res/icons/60x60.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png"
+                    },
+                    "ipad" : {
+                        "normal" : "unpackage/res/icons/72x72.png", /*iPad普通屏幕程序图标，分辨率：72x72*/
+                        "retina" : "unpackage/res/icons/144x144.png", /*iPad高分屏程序图标，分辨率：144x144*/
+
+                        /*iPad iOS7程序图标，分辨率：76x76*//*iPad iOS7高分屏程序图标，分辨率：152x152*/
+                        "spotlight-normal" : "unpackage/res/icons/50x50.png", /*iPad Spotlight搜索程序图标，分辨率：50x50*/
+                        "spotlight-retina" : "unpackage/res/icons/100x100.png", /*iPad高分屏Spotlight搜索程序图标，分辨率：100x100*/
+
+                        /*iPad iOS7 Spotlight搜索程序图标，分辨率：40x40*//*iPad iOS7高分屏Spotlight搜索程序图标，分辨率：80x80*//*iPad设置页面程序图标，分辨率：29x29*/
+                        "app" : "unpackage/res/icons/76x76.png",
+                        "app@2x" : "unpackage/res/icons/152x152.png",
+                        "settings" : "unpackage/res/icons/29x29.png",
+                        "proapp@2x" : "unpackage/res/icons/167x167.png",
+                        "spotlight" : "unpackage/res/icons/40x40.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
+                        "notification" : "unpackage/res/icons/20x20.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png"
+                    },
+                    "appstore" : "unpackage/res/icons/1024x1024.png"
+                },
+                "android" : {
+                    "mdpi" : "unpackage/res/icons/48x48.png", /*普通屏程序图标，分辨率：48x48*/
+                    "ldpi" : "unpackage/res/icons/48x48.png", /*大屏程序图标，分辨率：48x48*/
+                    "hdpi" : "unpackage/res/icons/72x72.png", /*高分屏程序图标，分辨率：72x72*/
+                    "xhdpi" : "unpackage/res/icons/96x96.png", /*720P高分屏程序图标，分辨率：96x96*/
+                    "xxhdpi" : "unpackage/res/icons/144x144.png",
+                    "xxxhdpi" : "unpackage/res/icons/192x192.png"
+                }
+            },
+            "splashscreen" : {
+                "ios" : {
+                    "iphone" : {
+                        "default" : "unpackage/res/lauchscreen/welcome1242_2208.png",
+                        "retina55" : "module/default/images/new_sloging.png",
+                        "retina47" : "module/default/images/new_sloging.png",
+                        "retina40" : "module/default/images/new_sloging.png",
+                        "retina35" : "module/default/images/new_sloging.png",
+                        "retina55l" : "module/default/images/new_sloging.png"
+                    },
+                    "ipad" : {
+                        "portrait" : "unpackage/res/lauchscreen/welcome1242_2208.png",
+                        "portrait7" : "module/default/images/new_sloging.png",
+                        "landscape" : "unpackage/res/lauchscreen/welcome_ipad_1004_748.png",
+                        "landscape7" : "module/default/images/new_sloging.png",
+                        "landscape-retina" : "unpackage/res/lauchscreen/welcome_ipad_1004_748.png",
+                        "portrait-retina7" : "module/default/images/new_sloging.png",
+                        "landscape-retina7" : "module/default/images/new_sloging.png"
+                    }
+                },
+                "android" : {
+                    "hdpi" : "module/default/images/new_sloging.png",
+                    "ldpi" : "unpackage/res/lauchscreen/welcome1242_2208.png",
+                    "mdpi" : "unpackage/res/lauchscreen/welcome1242_2208.png",
+                    "xhdpi" : "module/default/images/new_sloging.png",
+                    "xxhdpi" : "module/default/images/new_sloging.png"
+                }
+            }
+        },
+        "ads" : {
+            "rp" : false,
+            "splash" : false,
+            "push" : false,
+            "spot" : false
+        }
+    },
+    "dependencies" : {
+        "pages" : {
+            "module/login/html/login.html" : {
+                "href" : "module/login/html/login.html",
+                "resources" : [
+                    "css/mui.min.css",
+                    "fonts/mui.ttf",
+                    "module/login/css/login.css",
+                    "js/seajs/sea-all.js",
+                    "module/login/js/login.js",
+                    "js/common/App.js",
+                    "js/mui/mui.js",
+                    "module/login/images/login_bg.png",
+                    "js/mui/mui.min.js",
+                    "js/seajs/sea-all.min.js",
+                    "module/login/images/zl_login_bg.png"
+                ],
+                "refer" : [
+                    "index.html",
+                    "module/main/html/main.html",
+                    "module/forget-password/html/forget-password.html",
+                    "module/main-chart/html/chart.html",
+                    "module/login/html/privacyProtocol.html",
+                    "module/login/html/userProtocol.html"
+                ],
+                "priority" : 0
+            },
+            "module/main/html/main.html" : {
+                "resources" : [
+                    "module/main/js/main.js",
+                    "module/main/css/main.css",
+                    "module/camera/html/camera.html",
+                    "fonts/mui.ttf",
+                    "module/chart/html/chart.html",
+                    "js/common/App.js",
+                    "js/mui/mui.js",
+                    "module/baidu-map/html/baidu-map.html",
+                    "js/seajs/sea-all.js",
+                    "css/mui.min.css",
+                    "js/mui/mui.min.js",
+                    "module/main-chart/html/chart.html",
+                    "css/mui.css",
+                    "js/seajs/sea-all.min.js",
+                    "module/main/js/init-data.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "module/my-profile/html/my-profile.html",
+                    "module/camera/html/cameraList.html"
+                ],
+                "refer" : [
+                    "module/login/html/login.html",
+                    "module/customer/customer-list/html/customer-list.html",
+                    "module/credit/html/credit.html",
+                    "module/client-overdue-mgt/client-overdue-sum/html/client-overdue-sum.html",
+                    "module/credit/html/credit-list.html",
+                    "module/main-chart/html/charttest.html",
+                    "module/index/index-stat/html/index-stat.html",
+                    "module/project/project-nav/html/project-nav.html",
+                    "module/customer/customer-nav/html/customer-nav.html",
+                    "module/camera/html/cameraList_back.html"
+                ],
+                "priority" : 0
+            },
+            "module/my-profile/html/my-profile.html" : {
+                "resources" : [
+                    "module/my-profile/css/my-profile.css",
+                    "module/my-profile/js/my-profile.js",
+                    "images/ic_launcher.png",
+                    "js/mui/mui.min.js",
+                    "js/seajs/sea-all.js",
+                    "js/common/App.js",
+                    "css/mui.min.css",
+                    "js/vue/vue-1.0.26.min.js",
+                    "module/my-profile/images/use_icon.png",
+                    "css/zmd.css",
+                    "js/seajs/sea-all.min.js",
+                    "js/vue/vue-2.0.5.min.js",
+                    "fonts/mui.ttf"
+                ],
+                "refer" : [
+                    "module/login/html/login.html",
+                    "module/about/html/about.html",
+                    "module/my-profile/html/modify-password.html",
+                    "module/my-profile/html/myPicture.html",
+                    "module/my-profile/html/myVideo.html"
+                ],
+                "priority" : 0
+            },
+            "idle" : {
+                "resources" : [ "js/common/String.js" ]
+            },
+            "module/index/index-stat/html/index-stat.html" : {
+                "resources" : [
+                    "module/index/index-stat/css/index-stat.css",
+                    "js/seajs/sea-all-debug.min.js",
+                    "js/common/App.js",
+                    "module/index/index-stat/js/index-stat.js",
+                    "css/zmd.css",
+                    "css/mui.min.css",
+                    "module/index/index-stat/images/logo.png",
+                    "fonts/mui.ttf",
+                    "css/mui.css",
+                    "js/mui/mui.js",
+                    "js/vue/vue-1.0.26.js",
+                    "fonts/mui-icons-extra.ttf",
+                    "css/icons-extra.css",
+                    "module/index/index-stat/images/zt_crm_logob_2x.png",
+                    "module/index/index-stat/images/icon_ai_contract_on.svg",
+                    "module/index/index-stat/images/icon_ai_Rentreceivable_on.svg",
+                    "module/index/index-stat/images/icon_ai_Insurancereminder_on.svg",
+                    "module/index/index-stat/images/icon_ai_Overduerent_on.svg",
+                    "module/index/index-stat/images/icon_ai_Oninsurance_on.svg",
+                    "module/index/index-stat/images/icon_ai_mortgage_on.svg",
+                    "fonts/mui.woff",
+                    "js/vue/vue-1.0.26.min.js",
+                    "js/mui/mui.min.js",
+                    "module/index/index-stat/images/shuju.png",
+                    "module/index/index-stat/images/jiankong.png",
+                    "module/index/index-stat/images/cangchu.png"
+                ],
+                "refer" : [
+                    "module/index/rent-calculator/html/rent-calculator.html",
+                    "module/index/rent/html/rent-list.html",
+                    "module/index/yq-rent/html/yq-rent-list.html",
+                    "module/index/contract-remind/html/list.html",
+                    "module/index/renewal-remind/html/list.html",
+                    "module/index/card-remind/html/list.html",
+                    "module/index/mortgage-remind/html/list.html",
+                    "module/camera/html/cameraList.html",
+                    "module/warehouse-online-report/html/warehouse-online.html",
+                    "module/exponent-report/html/exponent-report.html",
+                    "module/exponent-report/html/exponent-report-new.html",
+                    "module/camera/html/cameraList_back.html",
+                    "module/warehouse-outing-management/html/warehouse-outing-management.html",
+                    "module/barcode/html/read-qrcode.html",
+                    "module/warehouse-entering-management/html/warehouse-entering-management.html",
+                    "module/inventory/html/inventory-list.html",
+                    "module/stock-query/html/stock-query.html",
+                    "module/put-in-analysis/html/put-in-analysis.html",
+                    "module/material-query/html/material-query.html",
+                    "module/inventory-report/html/inventory-report.html",
+                    "module/out-put-analysis/html/out-put-analysis.html",
+                    "module/customer-analysis/html/customer-analysis.html",
+                    "module/settlement-analysis/html/settlement-analysis.html",
+                    "module/move-register/html/move-register-list.html",
+                    "module/throughput-analysis/html/throughput-analysis.html",
+                    "module/material-inventory-analysis/html/material-inventory-analysis.html",
+                    "module/queue-register/html/queue-register-list.html",
+                    "module/queue-register/html/queue-register-edit.html",
+                    "module/todo/html/todo-list.html",
+                    "module/print-label/html/print-label-list.html",
+                    "module/tag-discern/html/tag-discern-list.html"
+                ],
+                "priority" : 0
+            },
+            "module/project/project-nav/html/project-nav.html" : {
+                "resources" : [
+                    "module/project/project-nav/css/project-nav.css",
+                    "css/zmd.css",
+                    "css/mui.min.css",
+                    "module/project/project-nav/js/project-nav.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "js/select2/select2.js",
+                    "js/jquery/2.1.1/jquery-2.1.1.js",
+                    "js/common/App.js",
+                    "module/project/project-nav/images/icon_ai_appproject_on.svg",
+                    "module/project/project-nav/images/icon_ai_Newproject_on.svg",
+                    "fonts/mui.ttf",
+                    "module/project/project-nav/images/icon_ai_Data upload_on.svg",
+                    "js/vue/vue-1.0.26.js",
+                    "js/mui/mui.js"
+                ],
+                "refer" : [
+                    "module/project/project-manage/html/project-manage.html",
+                    "module/project/project-new/html/project-new.html",
+                    "module/project/project-data-supplement/html/project-data-supplement.html",
+                    "module/project/project-data-supplement/project-data-supplement-nav/html/project-data-supplement.html",
+                    "module/project/project-edit/html/project-edit.html",
+                    "module/project/staging-project-list/html/staging-project-list.html"
+                ],
+                "priority" : 0
+            },
+            "module/customer/customer-nav/html/customer-nav.html" : {
+                "resources" : [
+                    "module/customer/customer-nav/css/customer-nav.css",
+                    "module/customer/customer-nav/js/customer-nav.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "css/mui.min.css",
+                    "module/customer/customer-nav/images/icon_ai_naturalperson_on.svg",
+                    "fonts/mui.ttf",
+                    "module/customer/customer-nav/images/icon_ai_GPS_on.svg",
+                    "js/vue/vue-1.0.26.js",
+                    "module/customer/customer-nav/images/icon_ai_legalperson_on.svg",
+                    "js/mui/mui.js",
+                    "module/customer/customer-nav/images/icon_ai_insurance_on.svg",
+                    "js/vue/vue-2.0.5.js"
+                ],
+                "refer" : [
+                    "module/customer/legalPerson/html/legalPersonList.html",
+                    "module/customer/insuranceCompany/html/insuranceCompanyList.html",
+                    "module/customer/naturalPerson/html/naturalPersonList.html",
+                    "module/customer/GPSCompany/html/gpsCompanyList.html",
+                    "module/customer/gps-company/html/gps-company-list.html",
+                    "module/customer/legal-person-list/html/legal-person-list.html",
+                    "module/customer/insurance-company/html/insurance-company-list.html",
+                    "module/customer/legal-person/legal-person-list/html/legal-person-list.html",
+                    "module/customer/natural-person/html/natural-person-list.html",
+                    "module/customer/natural-person/natural-person-list/html/natural-person-list.html"
+                ],
+                "priority" : 0
+            },
+            "module/default/html/defualt.html" : {
+                "resources" : [
+                    "js/seajs/sea-all.min.js",
+                    "js/mui/mui.min.js",
+                    "js/common/App.js",
+                    "module/default/js/defualt.js"
+                ],
+                "refer" : [ "module/login/html/login.html", "module/main/html/main.html" ],
+                "priority" : 0
+            },
+            "module/index/rent-calculator/html/rent-calculator.html" : {
+                "resources" : [
+                    "module/index/rent-calculator/js/rent-calculator.js",
+                    "module/index/rent-calculator/css/rent-calculator.css",
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "js/mui/mui.js",
+                    "css/mui.css",
+                    "module/index/rent-calculator/js/rent-calculator-vue.js",
+                    "js/mui/mui.view.js",
+                    "js/common/String.js",
+                    "css/icons-extra.css"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/customer/legalPerson/html/legalPersonList.html" : {
+                "resources" : [
+                    "css/mui.css",
+                    "module/customer/legalPerson/css/legalPersonList.css",
+                    "module/customer/legalPerson/js/legalPersonList.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "js/mui/mui.js"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/customer/insuranceCompany/html/insuranceCompanyList.html" : {
+                "resources" : [
+                    "module/customer/insuranceCompany/js/insuranceCompanyList.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "js/mui/mui.js",
+                    "module/customer/insuranceCompany/css/insuranceCompanyList.css",
+                    "css/mui.css"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/customer/naturalPerson/html/naturalPersonList.html" : {
+                "resources" : [
+                    "module/customer/naturalPerson/js/naturalPersonList.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "module/customer/naturalPerson/css/naturalPersonList.css",
+                    "css/zmd.css",
+                    "js/mui/mui.js",
+                    "css/mui.css"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/customer/GPSCompany/html/gpsCompanyList.html" : {
+                "resources" : [
+                    "module/customer/GPSCompany/js/gpsCompanyList.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "js/mui/mui.js",
+                    "css/mui.css",
+                    "module/customer/GPSCompany/css/gpsCompanyList.css"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/index/rent/html/rent-list.html" : {
+                "resources" : [
+                    "js/common/Date.js",
+                    "module/index/rent/js/rent-list.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/common/App.js",
+                    "js/vue/vue-1.0.26.js",
+                    "js/mui/mui.js",
+                    "css/mui.css",
+                    "module/index/rent/js/rent-query-vue.js",
+                    "module/index/rent/css/rent-list.css",
+                    "css/mui.dtpicker.css",
+                    "js/mui/mui.picker.min.js",
+                    "css/mui.picker.css",
+                    "js/mui/mui.dtpicker.min.js"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/project/project-manage/html/project-manage.html" : {
+                "resources" : [
+                    "module/project/project-manage/css/project-manage.css",
+                    "module/project/project-manage/js/project-manage.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "js/mui/mui.js",
+                    "css/mui.css"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/project/project-new/html/project-new.html" : {
+                "resources" : [
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "module/project/project-new/css/project-new.css",
+                    "js/mui/mui.js",
+                    "css/mui.css",
+                    "module/project/project-new/js/project-new.js"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/project/project-data-supplement/html/project-data-supplement.html" : {
+                "resources" : [
+                    "js/seajs/sea-all-debug.min.js",
+                    "module/project/project-data-supplement/css/project-data-supplement.css",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "js/mui/mui.js",
+                    "css/mui.css",
+                    "module/project/project-data-supplement/js/project-data-supplement.js"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/customer/gps-company/html/gps-company-list.html" : {
+                "resources" : [
+                    "module/customer/gps-company/js/gps-company-list-vue.js",
+                    "module/customer/gps-company/js/gps-company-list.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "js/mui/mui.js",
+                    "module/customer/gps-company/css/gps-company-list.css",
+                    "css/mui.css"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/customer/legal-person-list/html/legal-person-list.html" : {
+                "resources" : [
+                    "js/vue/vue-1.0.26.min.js",
+                    "js/common/Date.js",
+                    "fonts/mui.ttf",
+                    "css/mui.css",
+                    "css/mui.picker.css",
+                    "js/mui/mui.dtpicker.min.js",
+                    "js/mui/mui.min.js",
+                    "module/customer/legal-person-list/js/legal-person-list-vue.js",
+                    "css/mui.dtpicker.css",
+                    "js/mui/mui.picker.min.js",
+                    "css/zmd.css",
+                    "js/common/App.js",
+                    "module/customer/legal-person-list/js/legal-person-list.js",
+                    "module/customer/legal-person-list/css/legal-person-list.css",
+                    "js/seajs/sea-all.min.js"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/customer/insurance-company/html/insurance-company-list.html" : {
+                "resources" : [
+                    "module/customer/insurance-company/css/insurance-company-list.css",
+                    "module/customer/insurance-company/js/insurance-company-list-vue.js",
+                    "module/customer/insurance-company/js/insurance-company-list.js",
+                    "css/mui.css",
+                    "js/seajs/sea-all-debug.min.js",
+                    "fonts/mui.ttf",
+                    "js/vue/vue-1.0.26.js",
+                    "js/common/App.js",
+                    "css/zmd.css",
+                    "js/mui/mui.js"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/customer/legal-person/legal-person-list/html/legal-person-list.html" : {
+                "resources" : [
+                    "js/vue/vue-1.0.26.min.js",
+                    "js/common/Date.js",
+                    "fonts/mui.ttf",
+                    "css/mui.css",
+                    "css/mui.picker.css",
+                    "js/mui/mui.dtpicker.min.js",
+                    "js/mui/mui.min.js",
+                    "module/customer/legal-person/legal-person-list/js/legal-person-list.js",
+                    "css/mui.dtpicker.css",
+                    "js/mui/mui.picker.min.js",
+                    "css/zmd.css",
+                    "js/common/App.js",
+                    "module/customer/legal-person/legal-person-list/js/legal-person-list-vue.js",
+                    "module/customer/legal-person/legal-person-list/css/legal-person-list.css",
+                    "js/seajs/sea-all.min.js"
+                ],
+                "refer" : [
+                    "module/customer/legal-person/legal-person-detail/html/legal-person-details.html",
+                    "module/customer/legal-person/legal-person-add/html/legal-person-add.html"
+                ],
+                "priority" : 0
+            },
+            "module/customer/legal-person/legal-person-detail/html/legal-person-details.html" : {
+                "resources" : [
+                    "module/customer/legal-person/legal-person-detail/js/legal-person-details-vue.js",
+                    "module/customer/legal-person/legal-person-detail/js/legal-person-details.js",
+                    "module/customer/legal-person/legal-person-detail/css/legal-person-details.css",
+                    "js/vue/vue-1.0.26.min.js",
+                    "js/mui/mui.min.js",
+                    "js/common/App.js",
+                    "js/seajs/sea-all.min.js"
+                ],
+                "refer" : [
+                    "module/customer/legal-person/business-list/html/business-list.html",
+                    "module/customer/legal-person/manage-person-list/html/manage-person-list.html",
+                    "module/customer/legal-person/data-list/html/data-list.html"
+                ],
+                "priority" : 0
+            },
+            "module/customer/natural-person/html/natural-person-list.html" : {
+                "resources" : [
+                    "js/common/Date.js",
+                    "module/customer/natural-person/css/natural-person-list.css",
+                    "module/customer/natural-person/js/natural-person-list-vue.js",
+                    "js/mui/mui.picker.js",
+                    "fonts/mui.ttf",
+                    "css/mui.css",
+                    "css/mui.picker.css",
+                    "js/seajs/sea-all-debug.min.js",
+                    "css/mui.dtpicker.css",
+                    "css/zmd.css",
+                    "js/common/App.js",
+                    "js/vue/vue-1.0.26.js",
+                    "module/customer/natural-person/js/natural-person-list.js",
+                    "js/mui/mui.dtpicker.js",
+                    "js/mui/mui.js"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/customer/legal-person/business-list/html/business-list.html" : {
+                "resources" : [
+                    "module/customer/legal-person/business-list/js/business-list.js",
+                    "js/common/Date.js",
+                    "js/seajs/sea-all-debug.min.js",
+                    "js/common/App.js",
+                    "js/vue/vue-1.0.26.js",
+                    "js/mui/mui.js",
+                    "module/customer/legal-person/business-list/css/business-list.css",
+                    "fonts/mui.ttf",
+                    "css/zmd.css",
+                    "css/mui.css"
+                ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/project/staging-project-list/html/staging-project-list.html" : {
+                "resources" : [],
+                "refer" : [ "module/project/project-detail/html/project-detail.html" ],
+                "priority" : 0
+            },
+            "module/index/contract-remind/html/list.html" : {
+                "resources" : [],
+                "refer" : [ "module/index/contract-remind/html/contract-remind-detail.html" ],
+                "priority" : 0
+            },
+            "module/index/renewal-remind/html/list.html" : {
+                "resources" : [],
+                "refer" : [ "module/index/renewal-remind/html/renewal-remind-list-detail.html" ],
+                "priority" : 0
+            },
+            "module/index/yq-rent/html/yq-rent-list.html" : {
+                "resources" : [],
+                "refer" : [ "module/index/yq-rent/html/yq-rent-contract-detail.html" ],
+                "priority" : 0
+            },
+            "module/my-profile/html/myVideo.html" : {
+                "resources" : [],
+                "refer" : [ "module/my-profile/html/playVideo.html" ],
+                "priority" : 0
+            },
+            "module/exponent-report/html/exponent-report.html" : {
+                "resources" : [],
+                "refer" : [ "module/exponent-report/html/exponent-report.html" ],
+                "priority" : 0
+            },
+            "module/exponent-report/html/exponent-report-new.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/exponent-report/html/cstmrIvntDetail.html",
+                    "module/camera/html/cameraList_back.html"
+                ],
+                "priority" : 0
+            },
+            "module/warehouse-outing-management/html/warehouse-outing-management.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/warehouse-outing-management/html/outing-details.html",
+                    "module/warehouse-outing-management/html/pending-list-query.html",
+                    "module/warehouse-outing-management/html/already-out-details.html",
+                    "module/warehouse-outing-management/html/output-list-query.html"
+                ],
+                "priority" : 0
+            },
+            "module/warehouse-outing-management/html/outing-details.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/barcode/html/read-qrcode.html",
+                    "module/warehouse-outing-management/html/material-details.html",
+                    "module/warehouse-outing-management/html/batch-add.html",
+                    "module/warehouse-outing-management/html/input-dialog.html",
+                    "module/warehouse-outing-management/html/image-preview.html"
+                ],
+                "priority" : 0
+            },
+            "module/warehouse-outing-management/html/input-dialog.html" : {
+                "resources" : [],
+                "refer" : [ "module/warehouse-outing-management/html/input-dialog.html" ],
+                "priority" : 0
+            },
+            "module/warehouse-entering-management/html/warehouse-entering-management.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/warehouse-entering-management/html/receiving-register.html",
+                    "module/warehouse-entering-management/html/received-list-query.html",
+                    "module/warehouse-entering-management/html/modify-list-edit.html",
+                    "module/warehouse-entering-management/html/receive-list-detail.html",
+                    "module/warehouse-entering-management/html/pending-list-query.html"
+                ],
+                "priority" : 0
+            },
+            "module/warehouse-entering-management/html/receive-list-detail.html" : {
+                "resources" : [],
+                "refer" : [ "module/warehouse-entering-management/html/material-details.html" ],
+                "priority" : 0
+            },
+            "module/warehouse-entering-management/html/receiving-register.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/warehouse-entering-management/html/material-details.html",
+                    "module/warehouse-entering-management/html/batch-add.html",
+                    "module/warehouse-entering-management/html/image-preview.html",
+                    "module/barcode/html/read-qrcode.html"
+                ],
+                "priority" : 0
+            },
+            "module/warehouse-online-report/html/warehouse-online.html" : {
+                "resources" : [],
+                "refer" : [ "module/exponent-report/html/exponent-report-new.html" ],
+                "priority" : 0
+            },
+            "module/inventory/html/inventory-list.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/inventory/html/inventory-register.html",
+                    "module/inventory/html/inventory-detail.html"
+                ],
+                "priority" : 0
+            },
+            "module/inventory/html/inventory-register.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/barcode/html/read-qrcode.html",
+                    "module/inventory/html/material-details.html"
+                ],
+                "priority" : 0
+            },
+            "module/inventory-report/html/inventory-report.html" : {
+                "resources" : [],
+                "refer" : [ "module/inventory-report/html/inventory-report-detail.html" ],
+                "priority" : 0
+            },
+            "module/stock-query/html/stock-query.html" : {
+                "resources" : [],
+                "refer" : [ "module/exponent-report/html/exponent-report-new.html" ],
+                "priority" : 0
+            },
+            "module/customer-analysis/html/customer-analysis.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/customer-analysis/html/customer-analysis-detail.html",
+                    "module/settlement-analysis/html/settlement-analysis.html",
+                    "module/settlement-analysis/html/settlement-analysis-detail.html"
+                ],
+                "priority" : 0
+            },
+            "module/settlement-analysis/html/settlement-analysis.html" : {
+                "resources" : [],
+                "refer" : [ "module/settlement-analysis/html/settlement-analysis-detail.html" ],
+                "priority" : 0
+            },
+            "module/move-register/html/move-register-list.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/move-register/html/move-detail.html",
+                    "module/move-register/html/move-edit.html"
+                ],
+                "priority" : 0
+            },
+            "module/move-register/html/move-edit.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/barcode/html/read-qrcode.html",
+                    "module/move-register/html/input-dialog.html",
+                    "module/move-register/html/material-details.html",
+                    "module/move-register/html/cost-details.html"
+                ],
+                "priority" : 0
+            },
+            "module/material-query/html/material-query.html" : {
+                "resources" : [],
+                "refer" : [ "module/barcode/html/read-qrcode.html" ],
+                "priority" : 0
+            },
+            "module/queue-register/html/queue-register-list.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/queue-register/html/queue-register-edit.html",
+                    "module/barcode/html/read-qrcode.html"
+                ],
+                "priority" : 0
+            },
+            "module/queue-register/html/queue-register-edit.html" : {
+                "resources" : [],
+                "refer" : [ "module/queue-register/html/bridge-crane-edit.html" ],
+                "priority" : 0
+            },
+            "module/queue-register/html/bridge-crane-edit.html" : {
+                "resources" : [],
+                "refer" : [ "module/queue-register/html/input-dialog.html" ],
+                "priority" : 0
+            },
+            "module/todo/html/todo-list.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/todo/html/customer-audit-details.html",
+                    "module/todo/html/material-audit-details.html"
+                ],
+                "priority" : 0
+            },
+            "module/forget-password/html/forget-password.html" : {
+                "resources" : [],
+                "refer" : [ "module/forget-password/html/update-password.html" ],
+                "priority" : 0
+            },
+            "module/tag-discern/html/tag-discern-list.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/tag-discern/html/tag-discern-edit.html",
+                    "module/tag-discern/html/tag-discern-detail.html"
+                ],
+                "priority" : 0
+            },
+            "module/tag-discern/html/tag-discern-edit.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/tag-discern/html/input-dialog.html",
+                    "module/barcode/html/read-qrcode.html"
+                ],
+                "priority" : 0
+            }
+        },
+        "unpackage" : [],
+        "idle" : {
+            "resources" : [
+                "js/mui/mui.zoom.js",
+                "js/mui/mui.listpicker.min.js",
+                "js/g2/g2-1.2.6.js",
+                "js/dot/doT.js",
+                "js/g2/g2-1.2.6.min.js",
+                "js/select2/select2.min.css",
+                "js/zepto/zepto.min.js",
+                "js/mui/mui.previewimage.min.js",
+                "module/test/js/test.js",
+                "js/common/fixed-left-header-table.js",
+                "js/mui/mui.listpicker.js",
+                "module/about/js/about.js",
+                "module/my-profile/images/jxw.png",
+                "module/my-profile/images/ydsz.jpg",
+                "css/mui.poppicker.css",
+                "js/dot/doT.min.js",
+                "js/mui/mui.poppicker.js",
+                "README.md",
+                "js/select2/select2.min.js",
+                "js/mui/mui.previewimage.js",
+                "module/test/html/test.html",
+                "module/my-profile/images/go.png",
+                "js/mui/mui.poppicker.min.js",
+                "css/mui.listpicker.css",
+                "js/mui/mui.view.min.js",
+                "module/my-profile/images/entertainment.gif",
+                "js/mui/mui.zoom.min.js",
+                "js/zepto/zepto.js",
+                "js/jquery/2.1.1/jquery-2.1.1.min.js",
+                "module/about/css/about.css"
+            ]
+        }
+    },
+    "screenOrientation" : [ "portrait-primary" ]
+}

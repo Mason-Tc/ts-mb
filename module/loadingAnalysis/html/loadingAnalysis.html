@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>装卸统计</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link href="../css/loadingAnalysis.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../exponent-report/css/dAHFZjuHwkWsorioAuKK.css" />
+		<style type="text/css">
+			.icon {
+				width: 1.8em;
+				height: 1.8em;
+				vertical-align: -0.15em;
+				fill: currentColor;
+				overflow: hidden;
+				margin-right: 33px;
+				color: #738ffe;
+			}
+			
+			.selectedTD {
+				color: #738ffe;
+				font-weight: bold;
+			}
+			
+			.sxing {
+				font-size: 1rem;
+				list-style: none;
+				float: left;
+				height: 30px;
+				line-height: 30px;
+				margin-top: 10px;
+				padding: 0px 10px;
+				border: 1px solid #bbb;
+				border-radius: 4px;
+				margin: 5px;
+			}
+		</style>
+		<script src="../../exponent-report/css/font_size/iconfont.js"></script>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in" v-cloak>
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<!-- 主页面标题 -->
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title">装卸统计</h1>
+						</div>
+
+						<span id="query-btn" v-on:tap="showOffExponentQuery" class="mui-btn mui-btn-outlined query-btn mui-pull-right" style="width: 68px; border:0px;">
+							<svg class="icon" aria-hidden="true">
+								<use xlink:href="#icon-shaixuan"></use>
+							</svg>
+	
+							<span class="query-btn-label" style="margin-top:-5px; display: inline-block; position: absolute; top:12px; right: 10px; ">筛选</span>
+						</span>
+					</header>
+					<div class="mui-content">
+						<div id="contentId" class="mui-scroll-wrapper">
+							<div class="mui-scroll" style="padding-bottom: 50px;">
+								<div class="top-counter">
+<!-- 									<div class="page-title">
+										<div class="tip-first">入库量</div>
+										<div class="tip-first" style="margin-left: 50%;">出库量</div>
+										<div class="top-div-left" v-text="realNumTotalForSummaryStr"></div>
+										<div class="top-div-right" v-text="realWeightTotalForSummaryStr"></div>
+									</div> -->
+								</div>
+								<!-- <div style="text-align: right; margin-right: 5px; height: 18px; line-height: 20px; font-size: 12px;">取数说明：前100条</div> -->
+								
+								<div style="background-color: #ffffff;margin-top: 5px;
+									padding-top: 12px;padding-bottom: 12px;padding-left: 12px;" v-for="(index,item) in summaryList">
+									
+									<div>
+										<span style="width: 32%;display: inline-block;" class="spanFontSize">
+											{{item.createDate}}
+										</span>
+										<span style="width: 32%;display: inline-block;">
+											<span style="" class="spanFontSize">作业人员:</span>
+											<span class="spanFontSize" v-text="item.usersName"></span>
+										</span>
+									</div>
+									
+									<div style="margin-top: 5px;">
+										<span style="width: 32%;display: inline-block;">
+											<span style="" class="spanFontSize">车牌号:</span>
+											<span class="spanFontSize" v-text="item.carPlateNo"></span>
+										</span>
+										
+										<span style="width: 32%;display: inline-block;">
+											<span style="" class="spanFontSize">提单号:</span>
+											<span class="spanFontSize" v-text="item.ladingCode"></span>
+										</span>
+										
+										<span style="width: 32%;display: inline-block;">
+											<span class="spanFontSize">业务类型:</span>
+											<span class="spanFontSize" v-text="item.taskType === 1 ? '入库' : '出库'"></span>
+										</span>
+										
+									</div>
+									
+									<div style="margin-top: 5px;">
+										<span style="width: 32%;display: inline-block;">
+											<span style="" class="spanFontSize">任务单号:</span>
+											<span class="spanFontSize" v-text="item.taskCode"></span>
+										</span>
+										
+										<span style="width: 32%;display: inline-block;">
+											<span style="" class="spanFontSize">作业月台:</span>
+											<span class="spanFontSize" v-text="item.platformName"></span>
+										</span>
+										
+										<span style="width: 32%;display: inline-block;">
+											<span style="" class="spanFontSize">装卸件数/重量:</span>
+											<span class="spanFontSize">{{item.num}}件/{{item.weight}}吨</span>
+										</span>
+										
+									</div>
+									
+									
+								</div>
+										
+								
+								
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop" @tap="hideOffCanvaQuery"></div>
+					
+					<nav id="nav_footer" class="mui-bar mui-bar-tab">
+						<span class="nav-left" style="width: 50%;">总计: {{numTotal}}件/{{weightTotal}}吨</span>
+						<span class="nav-right" style="width: 50%;" @tap="onCloseClick">关闭</span>
+					</nav>
+					
+				</div>
+				<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-right" id="searchVue">
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area" @tap="hideOffCanvaQuery">
+							<a id="back-cust-list-btn" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title" style="left:40px; width: 4em; top:2px;">查询条件</h1>
+						</div>
+					</header>
+					<div id="div_search_summary" class="mui-scroll-wrapper" style="margin-bottom: 43px;">
+						<div class="mui-scroll">
+							<div style="margin-top: 48px; background:#fff;">
+							</div>
+							<div class="mui-clearfix"></div>
+							<div class="mui-card" style="margin: 0;">
+								<div id="div_search_top" class="ioexp-top">
+									<table>
+										<tr>
+											<td>
+												<table id="tb_search_top_time">
+													<tr>
+														<td>
+															<span style="margin-left: 18px;">时间:</span>
+														</td>
+														<td id="td_curr_day" class="time-selected tap-time" @tap="selectDate($event, 0)"><span>当月</span></td>
+														<td class="tap-time" @tap="selectDate($event, 1)"><span>近3月</span></td>
+														<td class="tap-time" @tap="selectDate($event, 2)"><span>近6月</span></td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<span style="margin-left: 10px; font-size: 14px;"></span>&nbsp;&nbsp;<input style="width: 100px;" type="text" readonly placeholder="起始时间" :value="filterConditions.beginDate" @tap="pickBeginDate" />&nbsp;--&nbsp;<input style="width: 100px;" type="text" readonly placeholder="结束时间" :value="filterConditions.endDate" @tap="pickEndDate" />
+											</td>
+										</tr>
+									</table>
+								</div>
+								<ul class="mui-table-view" style="margin-top: 5px;margin-bottom: 20px;margin-left: 18px;">
+									
+									<li>
+										<span style="">车牌号:</span>
+										<input id="carPlateNoId" 
+										style="width:60%;border: 1px #C0C0C0 solid;text-align: left;height: 28px; color:black;font-weight: 70;font-size: 13px;margin-left: 9px;"
+											v-model="filterConditions.carPlateNo">
+									</li>
+									
+									<li style="margin-top: 15px;">
+										<span style="">提单号:</span>
+										<input id="ladingCodeId" 
+										style="width:60%;border: 1px #C0C0C0 solid;text-align: left;height: 28px; color:black;font-weight: 70;font-size: 13px;margin-left: 9px;"
+											v-model="filterConditions.ladingCode">
+									</li>
+									
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="btnList">
+						<button class="reset" @tap="resetFilter">重置</button>
+						<button class="sure" @tap="complete">完成</button>
+					</div>
+				</aside>
+			</div>
+		</div>
+		
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/loadingAnalysis.js");
+	</script>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <title>吊磅清零</title>
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../../../css/mui.min.css">
+    <link rel="stylesheet" href="../../../css/zmd.css">
+    <link href="../css/crane-hangweight.css" rel="stylesheet" />
+    <style>
+        #contentDiv div {
+            margin-top: 20px;
+        }
+
+        .contentSpan {
+            height: 50px;
+            line-height: 20px;
+            padding: 15px 10px;
+            border: 1px solid #f7f7f7;
+            border-radius: 5px;
+            background: #f7f7f7;
+            margin: 10px 5px;
+			font-size: 14px;
+        }
+		.contentCrane {
+            height: 50px;
+            line-height: 20px;
+            padding: 15px 5px;
+            border: 1px solid #f7f7f7;
+            border-radius: 5px;
+            background: #f7f7f7;
+            margin: 10px 5px;
+			font-size: 14px;
+        }
+        
+
+        .activeBg {
+            background: #1566d2;
+            color: #ffffff;
+            border: 1px solid #1566d2;
+        }
+
+		.titleSpan {
+            line-height: 20px;
+			padding: 10px 10px;
+			margin: 10px 5px;
+			color: #1566D1;
+			font-weight: 700;
+			font-size: 16px;
+        }
+		
+        .mui-icon-back:before,
+        .mui-icon-left-nav:before {
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        #btnList .reset {
+            width: 50%;
+            font-size: 16px !important;
+            border-radius: 0px;
+            line-height: 50px;
+        }
+
+        #btnList .sure {
+            width: 50%;
+            margin-left: -5px;
+            font-size: 16px !important;
+            border-radius: 0px;
+            line-height: 50px;
+            background: #5677fc;
+            color: white;
+        }
+    </style>
+</head>
+
+<body id="crane-hangweight">
+	
+	<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+	    <div class="mui-action-back">
+	        <a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+	        <span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color:#FFFFFF;">吊磅清零</span>
+	    </div>
+	</header>
+	
+    <div class="mui-content" style="height: 616px;">
+		
+		<div v-for="(index, item) in hangCarList" style="background: #fff;padding: 15px 20px;margin-top: 10px;">
+			<span style="width: 30%;display: inline-block;margin-left: 20px;">
+				<span style="color: #000000;">吊磅名称：</span>
+				<span style="margin-left: 15px;font-size: 15px;">{{item.name}}</span>
+			</span>
+			
+			<span style="width: 30%;display: inline-block;">
+				<span style="color: #000000;">重量：</span>
+				<span id="steadyWeight{{index}}" style="margin-left: 15px;font-size: 15px;"></span>
+			</span>
+
+			<button @tap="clearHangWeight(item.ipPort)" style="width: 10%;display: inline-block;
+				background-color: #1566d2;color: #fff;border: 0px solid #1566d2;">清零</button>
+		</div>
+
+    </div>
+
+</body>
+<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+<script>
+    //加载主模块
+    seajs.use("../js/crane-hangweight.js", function () {
+
+    });
+</script>
+
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>计重</title>
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../../../css/mui.css" />
+    <link rel="stylesheet" href="../../../css/icons-extra.css" />
+    <link rel="stylesheet" href="../../../css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../css/outside-weigh.css" />
+    <style>
+        .dialogSpan {
+            border-radius: 5px;
+            padding: 2px 10px;
+            border: 1px solid #cccccc;
+            background: #f3f3f3;
+            width: 320px;
+            margin-top: 5px;
+            line-height: 30px;
+            font-size: 14px;
+            text-align: center;
+			/* 单行不换行,超过显示... */
+			white-space:nowrap;
+			overflow:hidden;
+			text-overflow:ellipsis;
+        }
+
+		.layui-layer-btn{
+			padding: 0px !important;
+			bottom: 0 !important;
+			position: absolute !important;
+			width: 100% !important;
+		}
+        .layui-layer-btn a {
+            width: 48%;
+            text-align: center;
+            padding: 0px 45px !important;
+            border-radius: 5px;
+			margin: 0px !important;
+			width: 50%;
+			border-radius: 0px !important;
+
+        }
+		.layui-layer-content{
+			overflow: hidden !important;
+		}
+        .layui-layer-btn .layui-layer-btn0 {
+            border-color: #CCCCCC !important;
+            background-color: #CCCCCC !important;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .layui-layer-btn .layui-layer-btn1 {
+            border-color: #4285f4 !important;
+            background-color: #4285f4 !important;
+            height: 40px;
+            line-height: 40px;
+            color: #ffffff;
+        }
+		.fixedTable tr>td:nth-child(1),#subInfo th:nth-child(1){
+			width: 300px;
+		}
+		.fixedTable tr>td:nth-child(2),#subInfo th:nth-child(2){
+			width: 100px;
+		}
+		.fixedTable tr>td:nth-child(3),#subInfo th:nth-child(3){
+			width: 100px;
+		}
+		.fixedDiv{
+			height: 210px;
+			overflow: auto;
+		}
+		.fixedDiv table{
+			border:1px solid #ccc;
+			width: 100%;
+			font-size: 14px;
+			line-height: 30px;
+			text-align: center;
+		}
+		.fixedTable tr{
+			line-height: 50px;
+			border:1px solid #ccc;
+		}
+		
+		.layui-layer-setwin {
+		    padding-top: 15px;
+		    width: 50px;
+		    height: 40px;
+		    right: 0 !important;
+		    top: 0 !important
+		}
+		
+		.layui-layer-setwin .layui-layer-close1 {
+		    transform: scale(1.2) !important;
+		    height: 100%;
+		}
+		
+		.isWeigh{
+			position: relative;
+			left: -35px;
+			top: -5px;
+			padding: 2px 5px;
+			font-size: 10px;
+			border-radius: 10px;
+			color:#fff;
+			z-index: 5;
+		}
+		.isWeigh0{
+			background: orangered;
+		}
+		.isWeigh1{
+			background: #33be33;
+		}
+    </style>
+</head>
+
+<body>
+    <div id="off-canvas" style="">
+        <div id="weighDiv" style="display:none;">
+            <div style="padding:10px; ">
+                <table style="margin-top: -10px;">
+                    <tr>
+                        <td>
+                            <div class="dialogSpan" style="">
+								<span style="float: left;">物料：</span>
+								<span style="font-size: 12px;" v-text="detail.materialDesc"></span>
+							</div>
+                        </td>    
+                        <td>
+                            <div class="dialogSpan" style="margin-left: 20px;">
+                            	<span style="float: left;">计量方式：</span>
+                            	<span v-text="detail.countWeightModeDesc"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+							<div class="dialogSpan" style="    ">
+								<span style="float: left;">应发数量/重量：</span>
+								<span v-text="detail.sendNum" style="color:#4285f4;font-weight: 700;font-size: 20px;line-height: 20px;"></span>
+								<span v-text="detail.sendNumUnitDesc+'/'" ></span>
+								<span v-text="detail.sendWeight" ></span>
+								<span v-text="detail.sendWeightUnitDesc" ></span>
+							</div>
+                        </td>
+                    </tr>
+                </table>
+                <div
+                    style="width:660px; display: flex;background: #ffffff; line-height: 25px;margin-top:10px;border:1px solid #cccccc;border-radius:5px;padding:5px 10px;">
+                    <div style="display:flex;background: #ffffff;text-align: left;">
+                        <div style="width:120px;margin-left:10px;margin-top:5px;line-height: 18px;">
+                            <div>计量</div>
+                            <div>数量</div>
+                        </div>
+                        <div>
+                            <span @tap="toAddNum"
+                                style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px; background: #1566d2; padding:5px 25px;"
+                                class="mui-icon mui-icon-plus"></span>
+                            <input id="hangNum" type="number"
+                                style="margin-left: 5px;width:20%;text-align: center;height: 40px;border:0; color:#4285f4;font-weight: 700;font-size: 25px;">
+                            <span @tap="toMinusNum"
+                                style="margin-left:5px;color: #ffffff;border: 1px  solid;border-radius: 5px; background: #1566d2; padding:5px 25px;"
+                                class="mui-icon mui-icon-minus"></span>
+                        </div>
+                    </div>
+                    <span style="display:flex;width:100%;">
+                        <span style="margin-left:20px;line-height: 18px;margin-top:5px">
+                            <div>计量</div>
+                            <div>重量</div>
+                        </span>
+                        <span style="margin-left:20px;margin-top:0px;">
+                            <input type="number" id="hangWeightNum" style="color:#000000;padding-left:10px;font-size:24px;width:100px;height: 40px;margin-top: 4px;">
+                        </span>
+						<span style="margin-top:20px;margin-left:5px;">kg</span>
+                        <span
+                            style="margin-left:20px;padding: 0 20px;background:#1566d2;color: #ffffff; border-radius:5px;line-height: 45px;"
+                            @tap="confirmOnce">确认</span>
+                    </span>
+                </div>
+				<div>
+					<table style="margin-top: 10px;width: 100%;line-height: 30px;border: 1px solid #ccc;">
+						<tr style="background:#f3f3f3;">
+							<th style="width: 300px;color:red;border-bottom: 1px solid #ccc;">小计：</th>
+							<th style="width: 100px;font-weight: 700;border-bottom: 1px solid #ccc;" id='sumNum'></th>
+							<th style="width: 100px;font-weight: 700;border-bottom: 1px solid #ccc;" id='sumWeight'></th>
+							<th style="border-bottom: 1px solid #ccc;"></th>
+						</tr>
+						<tr style="background:#f3f3f3;">
+						    <th>物料描述</th>
+						    <th>数量(件)</th>
+						    <th>重量(吨)</th>
+						    <th>操作</th>
+						</tr>
+					</table>
+				</div>
+                <div class="fixedDiv">
+                    <table id='subInfo' style="  ">
+						<tbody id="tby">
+						
+						</tbody>
+					</table>
+                </div>
+            </div>
+        </div>
+        <!-- 主页面容器 -->
+        <div class="mui-inner-wrap" style="">
+            <header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+                <div class="mui-action-back">
+                    <a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+                    <span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color:#FFFFFF;">计重</span>
+                </div>
+                <span @tap="toRefresh" style="color:#ffffff;font-weight: 700;margin-right: 0px;"
+                    class="mui-icon mui-icon-loop mui-pull-right"></span>
+            </header>
+            <div style="padding-top:50px;">
+                <div id="divTag">
+                    <span v-for="(index,pf) in pfList" :id="'pf_'+pf.id" class="divTagSpan"
+                        @tap="autoSaveOutsidePlatData(pf.id)" v-text="pf.name"></span>
+                    
+                </div>
+            </div>
+            <div style="">
+                <div>
+                    <div style="padding-bottom: 5px;background: #ffffff;width:100%;font-size: 14px;">
+                        <!-- <span class="titleSpan" style="margin-left:10px;"><span>出库时间：</span><span
+                                v-text="proSend.sendDate"></span></span> -->
+                        <span class="titleSpan" style=""><span>任务单号：</span><span
+                                v-text="proSend.taskCode"></span></span>
+                        <!-- <span class="titleSpan" style=""><span>提货单位：</span><span
+                                v-text="proSend.deliveryCompany"></span></span> -->
+						<span class="titleSpan" style="margin-left:10px;"><span>提单号：</span><span v-text="proSend.ladingCode"></span></span>
+                        <span class="titleSpan" style="margin-left:10px;"><span>车牌号：</span><span style="color:#4285f4;font-weight: 700;"
+                                v-text="proSend.carPlateNo"></span></span>
+                        <span class="titleSpan" style="width:98.6%;"><span>货主单位：</span><span
+                                v-text="proSend.ownerName"></span></span><br>
+                    </div>
+                </div>
+                <div>
+                   <span></span>
+                </div>
+                <div style="height: 395px;overflow-y: auto;">
+                    <ul class="public-list-wrapper" style="">
+                        <li v-for="(index,detail) in proSend.detailList" :key="detail.detailIds"
+                            style="margin: 10px;text-align: center;">
+                            <div style="display: flex;background: #fff;padding: 10px;border-radius:5px">
+                                <div style="flex:0.1;">
+									<span class="isWeigh isWeigh0" v-if="detail.isWeight=='0'" >未计重</span>
+									<span class="isWeigh isWeigh1" v-if="detail.isWeight=='1'" >已计重</span>
+									<button style="font-size: 18px;line-height: 20px;margin-top: -16px;"  v-text="detail.warehousePlaceName"
+									    class="addrBtn" style=""></button>
+                                </div>
+                                <div style="flex: 0.8;" class="">
+                                    <table style="width:100%;">
+                                        <tr style="line-height: 30px;">
+                                            <td style="text-align: right;width:120px;">物料描述：</td>
+                                            <td style="text-align: left;width:220px;" v-text="detail.materialDesc"></td>
+											<td style="text-align: right;width:120px;">应发数量/重量：</td>
+                                            <td style="text-align: left;width:120px;">
+												<span v-text="detail.sendNum"  style="color:#4285f4;font-weight: 700;font-size: 18px;"></span>
+												<span v-text="detail.sendNumUnitDesc+'/'"></span>
+												<span v-text="detail.sendWeight"></span>
+												<span v-text="detail.sendWeightUnitDesc"></span>
+											</td>
+                                           
+                                        </tr>
+                                        <tr style="line-height: 30px;">
+                                            <td style="text-align: right;width:120px;">计重方式：</td>
+                                            <td style="text-align: left;width:120px;" v-text="detail.countWeightModeDesc"></td>
+											
+                                            <td style="text-align: right;width:120px;">实提数量/重量：</td>
+                                            <td style="text-align: left;width:120px;">
+                                                <span v-text="detail.outputNum"  style="color:#4285f4;font-weight: 700;font-size: 18px;"></span>
+                                                <span v-text="detail.sendNumUnitDesc+'/'"></span>
+                                                <span v-text="detail.outputWeight"></span>
+												<span v-text="detail.sendWeightUnitDesc"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div style="flex:0.1">
+                                    <button  class="weighBtn weighBtnActive" @tap="gotoWeigh(detail,index)">计 重</button>
+                                </div>
+                            </div>
+                        </li>
+						
+                    </ul>
+                    <div @tap="sendConfirmComplete" v-if="proSend.detailList.length>0"
+                        style="position: absolute; color:#ffffff;width:50%;background:#5677fc;font-size: 18px;bottom:2px;padding:15px;text-align: center;left: 50%;">
+                        确认全部完成</div>
+						<div @tap="saveOutsidePlatData()" v-if="proSend.detailList.length>0"
+						    style="position: absolute; color:#ffffff;width:50%;background:#CCCCCC;font-size: 18px;bottom:2px;padding:15px;text-align: center;">
+						    暂 存</div>
+                </div>
+            </div>
+            <div class="mui-off-canvas-backdrop"></div>
+        </div>
+      
+    </div>
+</body>
+<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+<script>
+    seajs.use("../js/outside-weigh.js");
+</script>
+
+</html>

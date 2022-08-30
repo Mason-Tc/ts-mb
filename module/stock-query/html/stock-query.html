@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>库存展示</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link href="../css/stock-query.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../exponent-report/css/dAHFZjuHwkWsorioAuKK.css" />
+	</head>
+
+	<body>
+		<div id="div_stock_query" v-cloak>
+			<header class="mui-bar mui-bar-nav">
+				<div class="back-area mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title">库存展示</h1>
+				</div>
+			</header>
+
+			<div id="slider" class="mui-content mui-slider">
+				<!--<div class="fixed-top">-->
+				<div id="menuSliderControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-hidden" style="background: #ffffff;height: 40px; line-height:40px;">
+					<a class="mui-control-item" href="#item1" @tap="onItemSliderClick($event,0)">按仓库</a>
+					<a class="mui-control-item" href="#item2" @tap="onItemSliderClick($event,1)">按物料</a>
+					<a class="mui-control-item" href="#item3" @tap="onItemSliderClick($event,2)">按省份</a>
+				</div>
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4 mui-hidden"></div>
+				<!--</div>-->
+				<div id="sliderContent" class="mui-slider-group" style="position: relative; top: -2px;">
+					<div id="item1" class="mui-slider-item mui-control-content mui-hidden">
+						<div id="div_item1" class="mui-scroll-wrapper" style="margin-top:2px;">
+							<div class="mui-scroll">
+								<div class="top-counter">
+									<div class="page-title">
+										<div class="tip-first">现货库存</div>
+										<div class="top-div-left" v-text="totalNumForWarehouseStr"></div>
+										<div class="top-div-right" v-text="totalWeightForWarehouseStr"></div>
+									</div>
+								</div>
+								<div id="div_warehouse" class="top-center">
+									<div style="position: relative;">
+										<div class="tip-second-ws">仓库分布</div>
+										<div style="position: absolute; top: 5px; right:10px;" v-text="'Top12展示'"></div>
+									</div>
+									<div id="div_warehouse_chart" style="height: 100%; width: 100%;">
+										<canvas id="cv_warehouse"></canvas>
+									</div>
+
+								</div>
+								<div>
+									<table class="m-main-table" style="  position: relative; z-index: 100;">
+										<tbody>
+											<tr>
+												<td class="td-left" style="width: 100px;">
+													<table class="td-left-wrap">
+														<tr>
+															<th class="td2">
+																仓库名称
+															</th>
+														</tr>
+													</table>
+												</td>
+												<td class="td-right">
+													<div class="t-header">
+														<table class="header-table">
+															<tr>
+																<th @tap="sortByNumForWarehouse($event)" style="width: 50%;">
+																	<div v-bind:class="[warehouseSortColumns[0] == warehouseSortColumn?'f-sort-active': '']">{{warehouseSortColumns[0]}}<span class="mui-icon" v-bind:class="[numSortForWarehouse === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+																</th>
+																<th @tap="sortByRatioForWarehouse($event)" style="width: 50%;">
+																	<div v-bind:class="[warehouseSortColumns[1] == warehouseSortColumn?'f-sort-active': '']">{{warehouseSortColumns[1]}}<span class="mui-icon" v-bind:class="[ratioSortForWarehouse === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+																</th>
+															</tr>
+														</table>
+													</div>
+												</td>
+											</tr>
+											<tr class="mainBody">
+												<td class="td-top">
+													<div class="t-left">
+														<table class="left-table">
+															<tr v-for="(index,exp) in warehouseDataList">
+																<td>
+																	<div v-bind:class="[parseInt(exp.warehouseNameShow.length/12)>0?'duohang'+parseInt(exp.warehouseNameShow.length/12) + ' td2' : 'td2']" style="text-align: left; color:#129BFF;width: 100px;" @tap="openExponentPage(exp.warehouseId, exp.warehouseShortName)">
+																		<!--<div class="help-tip">
+																			<p>{{exp.warehouseNameShow}}</p>
+																		</div>
+																		{{exp.warehouseNameShowAbb}}-->
+																		{{(index +1) + '.' + exp.warehouseNameShow}}
+																	</div>
+																</td>
+															</tr>
+														</table>
+													</div>
+												</td>
+												<td class="td-content">
+													<div class="t-content">
+														<table class="content-table">
+															<tr v-for="exp in warehouseDataList">
+																<td style="width: 50%;">
+																	<div v-bind:class="[parseInt(exp.warehouseNameShow.length/12)>0?'duohang'+parseInt(exp.warehouseNameShow.length/12): '']" style="text-align: right;">
+																		<div class="limitNum13" style="margin-right: 3px;">{{exp.weight}}</div>
+																	</div>
+																</td>
+																<td style="width: 50%;">
+																	<div v-bind:class="[parseInt(exp.warehouseNameShow.length/12)>0?'duohang'+parseInt(exp.warehouseNameShow.length/12): '']" style="text-align: right;">
+																		<div class="limitNum13" style="margin-right: 3px;">{{exp.ratioShow}}</div>
+																	</div>
+																</td>
+															</tr>
+														</table>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="item2" class="mui-slider-item mui-control-content mui-active">
+						<div id="div_item2" class="mui-scroll-wrapper" style="margin-top:2px;">
+							<div class="mui-scroll">
+								<div class="top-counter">
+									<div class="page-title">
+										<div class="tip-first">现货库存</div>
+										<div class="top-div-left" v-text="totalNumForMaterielStr"></div>
+										<div class="top-div-right" v-text="totalWeightForMaterielStr"></div>
+									</div>
+								</div>
+								<div id="div_materiel" class="top-center">
+									<div class="tip-second">物料分布</div>
+									<div id="div_materiel_chart" style="height: 100%; width: 100%; padding-bottom: 10px;">
+										<canvas id="cv_materiel"></canvas>
+									</div>
+								</div>
+								<div style="margin-top: 3px;">
+									<table class="m-main-table m-main-table1">
+										<tbody>
+											<tr>
+												<td class="td-left td-left1" style="width: 110px;">
+													<table class="td-left-wrap" style="width: 100%;">
+														<tr>
+															<th class="td2" style="width: 100%;">
+																物料品名
+															</th>
+														</tr>
+													</table>
+												</td>
+												<td class="td-right">
+													<div class="t-header t-header1">
+														<table class="header-table">
+															<tr>
+																<th @tap="sortByNumForMateriel($event)" style="width: 50%;">
+																	<div v-bind:class="[materielSortColumns[0] == materielSortColumn?'f-sort-active': '']">{{materielSortColumns[0]}}<span class="mui-icon" v-bind:class="[numSortForMateriel === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+																</th>
+																<th @tap="sortByRatioForMateriel($event)" style="width: 50%;">
+																	<div v-bind:class="[materielSortColumns[1] == materielSortColumn?'f-sort-active': '']">{{materielSortColumns[1]}}<span class="mui-icon" v-bind:class="[ratioSortForMateriel === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+																</th>
+															</tr>
+														</table>
+													</div>
+												</td>
+											</tr>
+											<tr class="mainBody">
+												<td class="td-top">
+													<div class="t-left t-left1">
+														<table class="left-table">
+															<tr v-for="(index,exp) in materielDataList">
+																<td>
+																	<div v-bind:class="[parseInt(exp.materielNameShow.length/12)>0?'duohang'+parseInt(exp.materielNameShow.length/12) + ' td2' : 'td2']" style="text-align: left;width: 110px;">
+																		<div class="help-tip">
+																			<p>{{(index +1) + '.' + exp.materielNameShow}}</p>
+																		</div>
+																		{{(index +1) + '.' + exp.materielNameShowAbb}}
+																		<!--{{exp.materielNameShow}}-->
+																	</div>
+																</td>
+															</tr>
+															<tr class="space-tr"></tr>
+														</table>
+													</div>
+												</td>
+												<td class="td-content">
+													<div class="t-content t-content1">
+														<table class="content-table">
+															<tr v-for="exp in materielDataList">
+																<td style="width: 50%;">
+																	<div v-bind:class="[parseInt(exp.materielNameShow.length/12)>0?'duohang'+parseInt(exp.materielNameShow.length/12): '']" style="text-align: right;">
+																		<div class="limitNum13" style="margin-right: 3px;">{{exp.weight}}</div>
+																	</div>
+																</td>
+																<td style="width: 50%;">
+																	<div v-bind:class="[parseInt(exp.materielNameShow.length/12)>0?'duohang'+parseInt(exp.materielNameShow.length/12): '']" style="text-align: right;">
+																		<div class="limitNum13" style="margin-right: 3px;">{{exp.ratioShow}}</div>
+																	</div>
+																</td>
+															</tr>
+															<tr class="space-tr"></tr>
+														</table>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="item3" class="mui-slider-item mui-control-content mui-hidden">
+						<div id="div_item3" class="mui-scroll-wrapper" style="margin-top:2px;">
+							<div class="mui-scroll">
+								<div class="top-counter">
+									<div class="page-title">
+										<div class="tip-first">现货库存</div>
+										<div class="top-div-left" v-text="totalNumForProvinceStr"></div>
+										<div class="top-div-right" v-text="totalWeightForProvinceStr"></div>
+									</div>
+								</div>
+								<div id="div_province" class="top-center">
+
+									<div class="tip-second">省份分布</div>
+									<div id="div_province_chart" style="height: 100%; width: 100%; padding-bottom: 10px;">
+										<canvas id="cv_province"></canvas>
+									</div>
+								</div>
+								<div style="position: relative; z-index: 100;">
+									<table class="m-main-table m-main-table2">
+										<tbody>
+											<tr>
+												<td class="td-left td-left2" style="width: 90px;">
+													<table class="td-left-wrap" style="width: 100%;">
+														<tr>
+															<th class="td2" style="width: 100%;">
+																省份
+															</th>
+														</tr>
+													</table>
+												</td>
+												<td class="td-right">
+													<div class="t-header t-header2">
+														<table class="header-table">
+															<tr>
+																<th @tap="sortByNumForProvince($event)" style="width:50%;">
+																	<div v-bind:class="[provinceSortColumns[0] == provinceSortColumn?'f-sort-active': '']">{{provinceSortColumns[0]}}<span class="mui-icon" v-bind:class="[numSortForProvince === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+																</th>
+																<th @tap="sortByRatioForProvince($event)" style="width:50%;">
+																	<div v-bind:class="[provinceSortColumns[1] == provinceSortColumn?'f-sort-active': '']">{{provinceSortColumns[1]}}<span class="mui-icon" v-bind:class="[ratioSortForProvince === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+																</th>
+															</tr>
+														</table>
+													</div>
+												</td>
+											</tr>
+											<tr class="mainBody">
+												<td class="td-top">
+													<div class="t-left t-left2">
+														<table class="left-table">
+															<tr v-for="(index,exp) in provinceDataList">
+																<td>
+																	<div v-bind:class="[parseInt(exp.provinceNameShow.length/12)>0?'duohang'+parseInt(exp.provinceNameShow.length/12) + ' td2' : 'td2']" style="text-align: left;width: 90px;">
+																		<!--<div class="help-tip">
+																			<p>{{exp.provinceNameShow}}</p>
+																		</div>
+																		{{exp.provinceNameShowAbb}}-->
+																		{{(index +1) + '.' + exp.provinceNameShow}}
+																	</div>
+																</td>
+															</tr>
+														</table>
+													</div>
+												</td>
+												<td class="td-content">
+													<div class="t-content t-content2">
+														<table class="content-table">
+															<tr v-for="exp in provinceDataList">
+																<td style="width:50%;">
+																	<div v-bind:class="[parseInt(exp.provinceNameShow.length/12)>0?'duohang'+parseInt(exp.provinceNameShow.length/12): '']" style="text-align: right;">
+																		<div class="limitNum13" style="margin-right: 3px;">{{exp.weight}}</div>
+																	</div>
+																</td>
+																<td style="width:50%;">
+																	<div v-bind:class="[parseInt(exp.provinceNameShow.length/12)>0?'duohang'+parseInt(exp.provinceNameShow.length/12): '']" style="text-align: right;">
+																		<div class="limitNum13" style="margin-right: 3px;">{{exp.ratioShow}}</div>
+																	</div>
+																</td>
+															</tr>
+														</table>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/stock-query.js");
+	</script>
+	<!--<style>
+		table tr td,
+		table tr th {
+			border: 1px solid #ebebeb;
+		}
+		
+		table tr th {
+			background: #fafafa;
+		}
+		
+		.ap_word {
+			margin: 5px;
+		}
+	</style>-->
+
+</html>

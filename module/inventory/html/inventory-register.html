@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>盘点登记</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/inventory-register.css" />
+
+	</head>
+
+	<body id="body_inventory_register" style="height: 100%">
+		<div class="main" style="height: 100%;">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title">盘点登记</h1>
+				</div>
+				<input type='text' id='txt_scanner' style="width:0px; background:none; border:none;"></input>
+			</header>
+			<div id="slider" class="mui-content mui-slider" style="height: calc(100% - 45px);">
+				<div class="fixed-top">
+					<div class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="height: 40px; line-height:40px; border-bottom: 1px solid #ebebeb;">
+						<a class="mui-control-item" href="#div_basic_info" @tap="onItemSliderClick($event,0)">基本信息</a>
+						<a class="mui-control-item" href="#div_attach" @tap="onItemSliderClick($event,1)">附件</a>
+					</div>
+					<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+				</div>
+				<div id="sliderContent" class="mui-slider-group" style="height: 100%;">
+					<!--基本信息-->
+					<div id="div_basic_info" class="mui-slider-item mui-control-content mui-active" style="overflow-x: hidden;overflow-y: hidden;">
+						<div id="queryContent" style="">
+							<ul class="query-list">
+								<li class="item"></li>
+								<li class="item">
+									<span class="title">
+										<span style="color: red;">*&nbsp;</span>盘点单号
+									</span>
+									<input type="text" readonly :value="checkCode" />
+								</li>
+								
+								<li class="item">
+									<span class="title">
+										<span style="color: red;">*&nbsp;</span>盘点主题
+									</span>
+									<input type="text" readonly :value="checkSubject" />
+								</li>
+								
+								<li class="item">
+									<span class="title">
+										<span style="color: red;">*&nbsp;</span>盘点时间
+									</span>
+									<input type="text" readonly :value="checkDate" />
+								</li>
+								
+								<li class="item">
+									<span class="title">
+										<span style="color: red;">*&nbsp;</span>原总件数
+									</span>
+									<input v-if="checkType === '1'" type="text" readonly :value="numTotal" />
+								</li>
+								
+								<li class="item">
+									<span class="title">
+										<span style="color: red;">*&nbsp;</span>仓库
+									</span>
+									<input type="text" readonly :value="warehouseName" />
+								</li>
+								
+
+		<!-- 						<li class="item">
+									<span class="title"><span style="color: red;">*&nbsp;</span>制单员</span>
+									<input type="text" readonly :value="createBy" />
+								</li> -->
+							</ul>
+							
+							<div style="font-size:14px; color: #333; font-weight: bold; padding-left: 10px;margin-top: 8px;">
+								物料信息&nbsp;&nbsp;<span v-text="totalStr"></span>
+							</div>
+							
+						</div>
+
+<!-- 						<div style=" height:42px; line-height: 42px; display: block; margin-right: 0px;background-color: #0000FF;">
+							<div style="margin:0px auto; font-size:14px;  color: #333; font-weight: bold;display: block;width: 60%; padding-left: 10px;float: left;">物料信息&nbsp;&nbsp;<span v-text="totalStr"></span></div>
+
+						</div> -->
+
+						<div id="div_material_list" class="public-list mui-scroll-wrapper" style="top: 270px;">
+							<div class="mui-scroll">
+								<ul class="public-list-wrapper">
+									<li :id="'li_'+item.cbxId" class="item" v-for="(index,item) in detailPage.materialList">
+									<!--<li :id="'li_'+item.cbxId" class="item" v-for="(index,item) in 11">-->
+										<ul class="uibg" :class="{'uibga': item.checkStatus === '1'}" style="padding-left: 15px;">
+											<!--改变背景颜色 uibga 或  uibg-->
+											<li>
+												<em style="">货主单位:</em>
+												<span v-text="item.ownerName"></span>
+												<span v-if="checkType === '1'" style="position: absolute;right: 15px;">
+													<em>原件数:</em>
+													<span v-text="item.num"></span>
+												</span>
+											</li>
+											
+											<li style="margin-top: 5px;margin-bottom: 5px;">
+												<em style="">物料描述:</em>
+												<!-- <span>{{index}}>{{item.updateDate}}</span> -->
+												<span v-text="item.materialDesc"></span>
+												
+												<div class="mui-switch mui-switch-blue" @tap="saveDetail(item)"
+													:class="{'mui-active': item.checkStatus === '1'}">
+												  <div class="mui-switch-handle"></div>
+												</div>
+						
+											</li>
+
+											<li>
+												<span style="padding-left: 0;">
+													<em>盘点库位:</em>
+													<span v-text="item.warehousePlaceName" style="width: 20%;display: inline-block;"></span>
+												</span>
+												
+<!-- 												<button @tap="saveDetail(item)" type="button" 
+												v-bind:class="{ todoCheck: (item.checkStatus === '0'), doneCheck: (item.checkStatus === '1')}" 
+												style="line-height: 13px;position: absolute;right: 15px;" v-text="item.checkStatus === '1' ? '已盘' : '未盘'"></button> -->
+												
+											</li>
+											
+											<li v-if="item.checkStatus === '1'" style="">
+												<em style="">盘点件数:</em>
+												    <span style="margin-left: -2px;">
+												        <span @tap=""
+												            style="color: #ffffff;border: 1px solid gainsboro;border-radius: 5px;background: gainsboro;padding: 1px 15px;"
+												            class="mui-icon mui-icon-plus"></span>
+												        <input id="hangNum{{item.id}}" type="number" value="{{item.checkNum}}" disabled="disabled"
+												            style="width:60px;border: 1px #C0C0C0 solid;text-align: center;height: 26px; color:gainsboro;font-weight: 700;font-size: 20px;"
+															>
+														<span @tap=""
+												            style="color: #ffffff;border: 1px solid gainsboro;border-radius: 5px;background: gainsboro;padding: 1px 15px;"
+												            class="mui-icon mui-icon-minus"></span>
+												    </span>
+											</li>
+											
+											<li v-if="item.checkStatus === '0'" style="">
+												<em style="">盘点件数:</em>
+												    <span style="margin-left: -2px;">
+												        <span @tap="toAddNum(index)"
+												            style="color: #ffffff;border: 1px  solid;border-radius: 5px;background: #1566d2;padding: 1px 15px;"
+												            class="mui-icon mui-icon-plus"></span>
+												        <input id="hangNum{{item.id}}" type="number" value="{{item.checkNum}}"
+												            style="width:60px;border: 1px #C0C0C0 solid;text-align: center;height: 26px; color:#4285f4;font-weight: 700;font-size: 20px;">
+														<span @tap="toMinusNum(index)"
+												            style="color: #ffffff;border: 1px  solid;border-radius: 5px;background: #1566d2;padding: 1px 15px;"
+												            class="mui-icon mui-icon-minus"></span>
+												    </span>
+											</li>
+											
+											<li v-if="item.checkStatus === '1'" style="margin-top: 12px;">
+												<em style="">盘点说明:</em>
+												<input id="checkDescInput{{item.id}}" disabled="disabled" style="width:60%;border: 1px #C0C0C0 solid;text-align: left;height: 26px; color:black;font-weight: 70;font-size: 13px;margin-left: 9px;"
+												value="{{item.checkDesc}}">
+											
+											</li>
+											
+											<li v-if="item.checkStatus === '0'" style="margin-top: 12px;">
+												<em style="">盘点说明:</em>
+												<input id="checkDescInput{{item.id}}" style="width:60%;border: 1px #C0C0C0 solid;text-align: left;height: 26px; color:black;font-weight: 70;font-size: 13px;margin-left: 9px;"
+												value="{{item.checkDesc}}">
+											
+											</li>
+
+										</ul>
+									</li>
+									<!-- <li style="height: 20px;"></li> -->
+
+								</ul>
+							</div>
+						</div>
+						
+						<!-- <div style="height: 45px; position: relative;"></div> -->
+
+					</div>
+					<!--附件-->
+					<div id="div_attach" class="mui-slider-item mui-control-content content m-list-time-line">
+						<div style="width: 100%; margin: 45px auto;">
+							<!--文件区域-->
+							<div v-cloak>
+								<ul class="mui-table-view">
+									<li class="mui-table-view-cell mui-media" v-for="(index, file) in files">
+										<a class="">
+											<img class="mui-media-object mui-pull-left" style="width:2.5em;" :src="getcoverUrl(index)" @tap="openFile(file.id, file.baidudocId)">
+											<div class="mui-media-body">
+												{{file.fileName.length
+												<18?file.fileName:file.fileName.substring(0,5)+ '...'+file.fileName.substr(-9)}} <p class="mui-ellipsis" @tap="openFile(file.id, file.baidudocId)">
+													</p>
+													<div class="delete" @click="delete(file, 1)">删除</div>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<!--图片区域-->
+							<div v-clock>
+								<ul class="mui-table-view mui-grid-view">
+									<li class="mui-table-view-cell mui-media mui-col-xs-3" v-for="image in imageFiles" style="height: 80px;margin:10px 0;position: relative;">
+										<div class="close" style="background: red; color:#fff; width: 18px; height:18px; position: absolute;top:2px;right: 4px;z-index: 1;border-radius:4px;" @click="delete(image, 2)" id="{{image.id}}">X</div>
+										<img class="" data-preview-src="{{image.previewFileUrl}}" data-preview-group="1" style="position: absolute;top:0;right: 2%; border-radius:4px;margin: 0 auto;width: 96%;" src="{{image.fileUrl}}">
+
+									</li>
+									<li class="mui-table-view-cell mui-media mui-col-xs-3" id="addFile">
+										<a >+<!--<span style="font-size:16px; margin:4px 0px 0px 6px; display: inline-block; position: absolute;"添加</span>--></a>
+									</li>
+
+								</ul>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<nav id="nav_footer" class="mui-bar mui-bar-tab">
+			<div class="nav-left" @tap="onTemporaryClick">暂存</div>
+			<div class="nav-right" @tap="onSubmitClick">完成</div>
+		</nav>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/inventory-register.js");
+	</script>
+	<style>
+		.mui-table-view.mui-grid-view {
+			width: 100%;
+			margin: 40px auto;
+			margin-bottom: 0px;
+		}
+	</style>
+
+</html>

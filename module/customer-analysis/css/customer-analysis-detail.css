@@ -1,0 +1,160 @@
+[v-cloak] {
+	display: none
+}
+
+.relative {
+	position: relative !important;
+}
+
+.mui-bar .mui-icon {
+	font-size: 24px;
+	position: relative;
+	z-index: 20;
+	padding-top: 9px;
+	padding-bottom: 10px;
+	color: #666;
+}
+
+.mui-title {
+	right: 68px !important;
+	font-size: 17px;
+	font-weight: 500;
+	line-height: 43px;
+	position: absolute;
+	display: block;
+	width: 100%;
+	margin: 0 -10px;
+	padding: 0;
+	text-align: left;
+	white-space: nowrap;
+	color: #666666;
+}
+
+h5 {
+	background: #efeff4;
+	padding: 10px 10px 10px 32px;
+	border-bottom: 1px solid #ebebeb;
+	margin: 0px;
+}
+
+.mui-input-group:before,
+.mui-input-group:after {
+	height: 0px;
+}
+
+.mui-bar .mui-btn {
+	top: 6px;
+}
+
+.mui-content ul {
+	padding: 0px;
+	margin: 0px;
+}
+
+@-webkit-keyframes fadeIn {
+	0% {
+		opacity: 0;
+		transform: scale(0.6);
+	}
+	100% {
+		opacity: 100%;
+		transform: scale(1);
+	}
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 100%;
+	}
+}
+
+.mui-bar .mui-title {
+	top: 1px;
+}
+.top-counter {
+	display: block;
+	font-size: 14px;
+	width: 100%;
+	/*height: 60px;
+	line-height: 60px;*/
+	text-align: center;
+	vertical-align: middle;
+	background: #fff;
+	margin-top: 0px;
+	border-bottom: 0px solid #ebebeb;
+}
+
+.top-counter .top-div-left {
+	width: 50%;
+	float: left;
+	/** background-color: #539AF0; **/
+	color: white;
+	height: 68px;
+	line-height: 98px;
+	font-size: 18px;padding-left: 10px;
+	text-align: center;
+}
+
+.top-counter .top-div-right {
+	width: 50%;
+	float: right;
+	/**background-color: #F0AD4E;**/
+	color: white;
+	height: 68px;
+	line-height: 98px;
+	font-size: 18px;padding-left: 10px;
+	text-align: center;
+}
+
+.top-center {
+	width: 100%;
+	/*height: 430px;*/
+	display: block;
+	font-size: 14px;
+	margin-top: 3px;
+	background: #fff;
+}
+
+.page-title{
+	background-image:linear-gradient(to right,#4f8dfc,#34bdff);
+	height:78px;
+	
+}
+.tip-first {
+	position: absolute;
+	top: 12px;
+	left: 10px;
+	width: 80px;
+	height: 20px;
+	line-height: 20px;
+	padding: 1px 5px;
+	line-height: 18px;
+	background-image: linear-gradient(to right,#ffa40c, #ffba23);
+	background: #f5c236;
+	border-radius: 4px;
+	color: white;
+	text-align: center;
+	font-size: 13px;
+}
+.tip-second {
+	position: absolute;
+	top: 88px;
+	left: 10px;
+	width: 80px;
+	height: 20px;
+	line-height: 23px;
+	background-image: linear-gradient(to right,#ffa40c, #ffba23);
+	background: #f5c236;
+	border-radius: 4px;
+	color: white;
+	text-align: center;
+	font-size: 13px;
+}
+.mui-icon{
+	font-size: 18px;
+	color: #555;
+}
+body{ background: #fff;}

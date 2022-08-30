@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>库容调整</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/capacity-list.css" />
+		<style>
+			.mui-icon-back:before, .mui-icon-left-nav:before {
+			    font-size: 24px;
+			    color: #ffffff;
+			}
+			.underLine{
+				border-bottom:1px solid #CCCCCC;
+				text-align: left;
+				padding-left: 5px;
+			}
+			#tabId td{
+				width:25%;
+			}
+			#subInfo td{
+				border-bottom:1px solid #ccc;
+				text-align: center;
+			}
+			#subTitle td{
+				text-align: center;
+				width:25%;
+			}
+			.detailDiv{
+				margin:5px;background:#e9ecf3;border:1px solid #ccc;border-radius:5px;line-height: 30px;padding:5px
+			}
+			#detailTb{
+				border:1px solid #cccccc;
+			}
+			#detailTb th{
+				border-bottom:1px solid #cccccc;
+				background:#f3f3f3 ;
+			}
+			#detailTb th,td{
+				border-bottom:1px solid #cccccc;
+			}
+			.titleSpan{
+				border-radius:5px;
+				padding:0px 30px;
+				border: 1px solid #cccccc;
+				background:#f3f3f3 ;
+				width:45%;
+			}
+			
+			.cloumnDiv{
+				padding: 1px;
+				border-left:1px dashed #ccc;
+				border-right:1px dashed #ccc;
+				font-size: 12px;
+			}
+			.cloumnSubDiv{
+				display: flex;
+				width:160px;
+				height:120px;
+			}
+			.cloumnSubDivB{
+				display: flex;
+				width:160px;
+				height:240px;
+			}
+			.textDiv{
+				padding-top:15px;
+				text-align: center;
+				word-break:break-all;
+				border: 0.5px solid #cccccc;
+				color:darkblue;
+			}
+			.textDivS{
+				padding-top:2px;
+				text-align: center;
+				word-break:break-all;
+				border: 0.5px solid #cccccc;
+				color:#ffffff;
+			}
+			.imgHide{
+				display:none;
+			}
+			.imgShow{
+				display:block;
+			}
+			.trbg{
+				background: #fcecc8;
+			}  
+			
+			.level1{
+				background: #66cc66;
+			}
+			.level2{
+				background: #4285f4;
+			}
+			.level3{
+				background: #ffdd5f;
+			}
+			.level4{
+				background: #e42a61;
+			}
+			
+			
+			.layui-layer-setwin {
+			    padding-top: 15px;
+			    width: 50px;
+			    height: 40px;
+			    right: 0 !important;
+			    top: 0 !important
+			}
+			
+			.layui-layer-setwin .layui-layer-close1 {
+			    transform: scale(1.2) !important;
+			    height: 100%;
+			}
+			
+			.layui-layer-btn{
+				padding: 0px !important;
+				bottom: 0 !important;
+				position: absolute !important;
+				width: 100% !important;
+			}
+			.layui-layer-btn .layui-layer-btn0 {
+			    border-color: #4285f4 !important;
+			    background-color: #4285f4 !important;
+			    height: 40px;
+			    line-height: 40px;
+			    width: 100%;
+			        text-align: center;
+			        margin: 0;
+			        font-size: 16px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="off-canvas">
+			<div id="handleDiv" style="display:none;padding:20px;">
+				<div style="width: 100%;margin-top: 0px;line-height: 30px;">
+					<span class="titleSpan" style="float:left;"><span>库位：</span><span v-text="warehousePlace.warehousePlaceName"></span></span>
+					<span class="titleSpan" style="float:right;"><span>总容量：</span><span v-text="warehousePlace.maxNum"></span></span>
+				</div>
+				<table id='subInfo' style="border:1px solid #ccc;width: 100%;margin-top: 50px;font-size: 14px;line-height: 40px;">
+					<tr style="background:#f3f3f3 ;">
+						<td>子库位</td>
+						<td>物料描述</td>
+						<td>总容量</td>
+						<td>已用容量</td>
+					</tr>
+					<tr v-for="su in warehousePlaceSubList">
+						<td v-text="su.subPlaceName"></td>
+						<td v-text="su.materialDesc"></td>
+						<td><input type="number" v-model="su.capacity" style="width:40px;height: 30px;padding-left: 5px;"></td>
+						<td v-text="su.usedWeight"></td>
+					</tr>
+				</table>
+			</div>
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color:#FFFFFF;">库容调整</span>
+						</div>
+					</header>
+					<div id="slider" style="padding:52px,20px;" class="mui-content mui-slider">
+						<div style="margin-top:5px;display: flex;height: 100%;">
+							<div style="height: 540px;flex:0.8;background: #FFFFFF;">
+								<div style="height: 100%;display: flex;">
+									<div class="cloumnDiv">
+										<div class="cloumnSubDiv">
+											<div style="width:49.5%;">
+												<div id="1" @tap="tipDetail(1)" class="textDivS" style="width:100%;height: 33%;">
+													<div id="1_pname">01-A01-A</div>
+													<div id="1_usable"> </div>
+													<img id="1_img" class="imgHide" src="../images/target.png" style="position: relative;top:-30px; margin:0 auto;width:40px;">
+												</div>
+												<div id="4" @tap="tipDetail(4)" class="textDivS" style="width:100%;height: 33%;margin-top: 1px;">
+													<div id="4_pname">01-A01-B</div>
+													<div id="4_usable"> </div>
+													<img id="4_img" class="imgHide" src="../images/target.png" style="position: relative;top:-30px; margin:0 auto;width:40px;">
+												</div>
+												<div id="7" @tap="tipDetail(7)" class="textDivS" style="width:100%;height: 33%;margin-top: 1px;">
+													<div id="7_pname">01-A01-C</div>
+													<div id="7_usable"> </div>
+													<img id="7_img" class="imgHide" src="../images/target.png" style="position: relative;top:-30px; margin:0 auto;width:40px;">
+												</div>
+											</div>
+											<div style="width:49.5%;margin-left:1px;">
+												<div id="2" @tap="tipDetail(2)" class="textDivS" style="width:100%;height: 33%;">
+													<div id="2_pname">01-A02-A</div>
+													<div id="2_usable"> </div>
+													<img id="2_img" class="imgHide" src="../images/target.png" style="position: relative;top:-30px;margin:0 auto;width:40px;">
+												</div>
+												<div id="5" @tap="tipDetail(5)" class="textDivS" style="width:100%;height: 33%;margin-top: 1px;">
+													<div id="5_pname">01-A02-B</div>
+													<div id="5_usable"> </div>
+													<img id="5_img" class="imgHide" src="../images/target.png" style="position: relative;top:-30px;margin:0 auto;width:40px;">
+												</div>
+												<div id="8" @tap="tipDetail(8)" class="textDivS" style="width:100%;height: 33%;margin-top: 1px;">
+													<div id="8_pname">01-A02-C</div>
+													<div id="8_usable"> </div>
+													<img id="8_img" class="imgHide" src="../images/target.png" style="position: relative;top:-30px;margin:0 auto;width:40px;">
+												</div>
+											</div>
+
+										</div>
+
+										<div style="width:160px;height: 20px;text-align: center;margin-top:4px;">月台1</div>
+
+										<div class="cloumnSubDivB" style="display: block;">
+											<div style="width:100%;">
+												<div style="display: flex;height:118px;">
+													<div style="width:100%;">
+														<div id="18" @tap="tipDetail(18)" class="textDivS" style="width:100%;height: 42%;">
+															<div id="18_pname">06-A01-A</div>
+															<div id="18_usable"> </div>
+															<img id="18_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px; margin:0 auto;width:40px;">
+														</div>
+														<div id="21" @tap="tipDetail(21)" class="textDivS" style="width:100%;height: 33%;margin-top:1px;">
+															<div id="21_pname">06-A01-B</div>
+															<div id="21_usable"> </div>
+															<img id="21_img" class="imgHide" src="../images/target.png" style="position: relative;top:-40px; margin:0 auto;width:40px;">
+														</div>
+														<div id="24" @tap="tipDetail(24)" class="textDivS" style="font-size: 10px; padding-top:5px;width:100%;height: 25%;margin-top:1px;">
+															<div id="24_pname">06-A01-C</div>
+															<div id="24_usable"> </div>
+															<img id="24_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px; margin:0 auto;width:40px;">
+														</div>
+													</div>
+													<div style="height: 100%;width:100%;margin-left: 1px;">
+														<div id="19" @tap="tipDetail(19)" class="textDivS" style="width:100%;height: 42%;">
+															<div id="19_pname">06-A02-A</div>
+															<div id="19_usable"> </div>
+															<img id="19_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px; margin:0 auto;width:40px;">
+														</div>
+														<div id="22" @tap="tipDetail(22)" class="textDivS" style="width:100%;height: 33%;margin-top:1px;">
+															<div id="22_pname">06-A02-B</div>
+															<div id="22_usable"> </div>
+															<img id="22_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px; margin:0 auto;width:40px;">
+														</div>
+														<div id="25" @tap="tipDetail(25)" class="textDivS" style="font-size: 10px;padding-top:5px;width:100%;height: 25%;margin-top:1px;">
+															<div id="25_pname">06-A02-C</div>
+															<div id="25_usable"> </div>
+															<img id="25_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px; margin:0 auto;width:40px;">
+														</div>
+													</div>
+													<div style="height: 100%;width:100%;margin-left: 1px;">
+														<div id="20" @tap="tipDetail(20)" class="textDivS" style="width:100%;height: 42%;">
+															<div id="20_pname">06-A03-A</div>
+															<div id="20_usable"> </div>
+															<img id="20_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px; margin:0 auto;width:40px;">
+														</div>
+														<div id="23" @tap="tipDetail(23)" class="textDivS" style="width:100%;height: 33%;margin-top:1px;">
+															<div id="23_pname">06-A03-B</div>
+															<div id="23_usable"> </div>
+															<img id="23_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px; margin:0 auto;width:40px;">
+														</div>
+														<div id="26" @tap="tipDetail(26)" class="textDivS" style="font-size: 10px;padding-top:5px;width:100%;height: 25%;margin-top:1px;">
+															<div id="26_pname">06-A03-C</div>
+															<div id="26_usable"> </div>
+															<img id="26_img" class="imgHide" src="../images/target.png" style="position: relative;top:-40px; margin:0 auto;width:40px;">
+														</div>
+													</div>
+
+												</div>
+											</div>
+											<div style="width:100%;margin-top:3px;">
+												<div style="display: flex;height:118px;">
+													<div style="width:100%;height: 100%;">
+														<div id="27" @tap="tipDetail(27)" class="textDiv" style="padding-top:0px;width:100%;height: 20%;">
+															<div id="27_pname">06-B01-A</div>
+															<div id="27_usable"> </div>
+															<img id="27_img" class="imgHide" src="../images/target.png" style="position: relative;top:-35px;left:30px; margin:0 auto;width:40px;">
+														</div>
+														<div id="29" @tap="tipDetail(29)" class="textDiv" style="padding-top:1px;width:100%;height: 23%;margin-top:1px;">
+															<div id="29_pname">06-B01-B</div>
+															<div id="29_usable"> </div>
+															<img id="29_img" class="imgHide" src="../images/target.png" style="position: relative;top:-35px;left:30px; margin:0 auto;width:40px;">
+														</div>
+														<div id="31" @tap="tipDetail(31)" class="textDiv" style="padding-top:3px;width:100%;height: 26%;margin-top:1px;">
+															<div id="31_pname">06-B01-C</div>
+															<div id="31_usable"> </div>
+															<img id="31_img" class="imgHide" src="../images/target.png" style="position: relative;top:-35px;left:30px;margin:0 auto;width:40px;">
+														</div>
+														<div id="33" @tap="tipDetail(33)" class="textDiv" style="padding-top:5px;width:100%;height: 29%;margin-top:1px;">
+															<div id="33_pname">06-B01-D</div>
+															<div id="33_usable"> </div>
+															<img id="33_img" class="imgHide" src="../images/target.png" style="position: relative;top:-35px;left:30px; margin:0 auto;width:40px;">
+														</div>
+													</div>
+													<div style="width:100%;height: 100%;margin-left:1px;">
+														<div id="28" @tap="tipDetail(28)" class="textDiv" style="padding-top:0px;width:100%;height: 20%;">
+															<div id="28_pname">06-B02-A</div>
+															<div id="28_usable"> </div>
+															<img id="28_img" class="imgHide" src="../images/target.png" style="position: relative;top:-35px;left:30px; margin:0 auto;width:40px;">
+														</div>
+														<div id="30" @tap="tipDetail(30)" class="textDiv" style="padding-top:1px;width:100%;height: 23%;margin-top:1px;">
+															<div id="30_pname">06-B02-B</div>
+															<div id="30_usable"> </div>
+															<img id="30_img" class="imgHide" src="../images/target.png" style="position: relative;top:-35px;left:30px; margin:0 auto;width:40px;">
+														</div>
+														<div id="32" @tap="tipDetail(32)" class="textDiv" style="padding-top:3px;width:100%;height: 26%;margin-top:1px;">
+															<div id="32_pname">06-B02-C</div>
+															<div id="32_usable"> </div>
+															<img id="32_img" class="imgHide" src="../images/target.png" style="position: relative;top:-35px;left:30px; margin:0 auto;width:40px;">
+														</div>
+														<div id="34" @tap="tipDetail(34)" class="textDiv" style="padding-top:5px;width:100%;height: 29%;margin-top:1px;">
+															<div id="34_pname">06-B02-D</div>
+															<div id="34_usable"> </div>
+															<img id="34_img" class="imgHide" src="../images/target.png" style="position: relative;top:-35px;left:30px; margin:0 auto;width:40px;">
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台6</div>
+
+										<div class="cloumnSubDiv">
+											<div style="width:33.3%;">
+												<div id="50" @tap="tipDetail(50)" class="textDiv" style="padding-top:0px;width:100%;height: 33%;">
+													<div id="50_pname">11-A01-A</div>
+													<div id="50_usable"> </div>
+													<img id="50_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px; margin:0 auto;width:40px;">
+												</div>
+												<div id="52" @tap="tipDetail(52)" class="textDiv" style="padding-top:0px;width:100%;height: 33%;margin-top: 1px;">
+													<div id="52_pname">11-A01-B</div>
+													<div id="52_usable"> </div>
+													<img id="52_img" class="imgHide" src="../images/target.png" style="position: relative;top:-35px; margin:0 auto;width:40px;">
+												</div>
+												<div id="54" @tap="tipDetail(54)" class="textDiv" style="padding-top:0px;width:100%;height: 33%;margin-top: 1px;">
+													<div id="54_pname">11-A01-C</div>
+													<div id="54_usable"> </div>
+													<img id="54_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px; margin:0 auto;width:40px;">
+												</div>
+											</div>
+											<div style="width:33.3%;margin-left:1px;">
+												<div id="51" @tap="tipDetail(51)" class="textDiv" style="padding-top:0px;width:100%;height: 33%;">
+													<div id="51_pname">11-A02-A</div>
+													<div id="51_usable"> </div>
+													<img id="51_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px;margin:0 auto;width:40px;">
+												</div>
+												<div id="53" @tap="tipDetail(53)" class="textDiv" style="padding-top:0px;width:100%;height: 33%;margin-top: 1px;">
+													<div id="53_pname">11-A02-B</div>
+													<div id="53_usable"> </div>
+													<img id="53_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px;margin:0 auto;width:40px;">
+												</div>
+												<div id="55" @tap="tipDetail(55)" class="textDiv" style="padding-top:0px;width:100%;height: 33%;margin-top: 1px;">
+													<div id="55_pname">11-A02-C</div>
+													<div id="55_usable"> </div>
+													<img id="55_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px;margin:0 auto;width:40px;">
+												</div>
+											</div>
+											<div style="width:33.3%;margin-left:1px;">
+												<div id="141" @tap="tipDetail(141)" class="textDiv" style="padding-top:0px;width:100%;height: 33%;">
+													<div id="141_pname">11-A03-A</div>
+													<div id="141_usable"> </div>
+													<img id="141_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px;margin:0 auto;width:40px;">
+												</div>
+												<div id="142" @tap="tipDetail(142)" class="textDiv" style="padding-top:0px;width:100%;height: 33%;margin-top: 1px;">
+													<div id="142_pname">11-A03-B</div>
+													<div id="142_usable"> </div>
+													<img id="142_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px;margin:0 auto;width:40px;">
+												</div>
+												<div id="143" @tap="tipDetail(143)" class="textDiv" style="padding-top:0px;width:100%;height: 33%;margin-top: 1px;">
+													<div id="143_pname">11-A03-C</div>
+													<div id="143_usable"> </div>
+													<img id="143_img" class="imgHide" src="../images/target.png" style="position: relative;    top: -25px;margin:0 auto;width:40px;">
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div style="width:1px;height: 100%;"></div>
+
+									<div class="cloumnDiv">
+										<div class="cloumnSubDiv">
+											<div id="10" @tap="tipDetail(10)" class="textDiv" style="width:25%;">
+												<div id="10_pname">02-A01-A</div>
+												<div id="10_usable"> </div>
+												<img id="10_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+											<div id="11" @tap="tipDetail(11)" class="textDiv" style="width:75%;margin-left:1px;">
+												<div id="11_pname">02-A02-A</div>
+												<div id="11_usable"> </div>
+												<img id="11_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+										</div>
+
+										<div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台2</div>
+
+										<div class="cloumnSubDivB">
+											<div id="36" @tap="tipDetail(36)" class="textDiv" style="width:25%;">
+												<div id="36_pname">07-A01-A</div>
+												<div id="36_usable"> </div>
+												<img id="36_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+											<div id="37" @tap="tipDetail(37)" class="textDiv" style="width:75%;margin-left:1px;">
+												<div id="37_pname">07-A02-A</div>
+												<div id="37_usable"> </div>
+												<img id="37_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+										</div>
+
+										<div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台7</div>
+
+										<div class="cloumnSubDiv">
+											<div id="56" @tap="tipDetail(56)" class="textDiv" style="width:35%;">
+												<div id="56_pname">12A01A</div>
+												<div id="56_usable"> </div>
+												<img id="56_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+											<div id="57" @tap="tipDetail(57)" class="textDiv" style="width:65%;margin-left:1px;">
+												<div id="57_pname">12A02A</div>
+												<div id="57_usable"> </div>
+												<img id="57_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+											
+										</div>
+									</div>
+
+									<div style="width:1px;height: 100%;"></div>
+
+									<div class="cloumnDiv">
+										<div class="cloumnSubDiv">
+											<div id="12" @tap="tipDetail(12)" class="textDiv" style="width:50%;">
+												<div id="12_pname">03-A01-A</div>
+												<div id="12_usable"> </div>
+												<img id="12_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+											<div id="13" @tap="tipDetail(13)" class="textDiv" style="width:50%;margin-left:1px;">
+												<div id="13_pname">03-A02-A</div>
+												<div id="13_usable"> </div>
+												<img id="13_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+										</div>
+
+										<div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台3</div>
+
+										<div class="cloumnSubDivB">
+											<div id="38" @tap="tipDetail(38)" class="textDiv" style="width:50%;">
+												<div id="38_pname">08A01A</div>
+												<div id="38_usable"> </div>
+												<img id="38_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+											<div id="95" @tap="tipDetail(95)" class="textDiv" style="width:50%;margin-left:1px;">
+												<div id="95_pname">08A02A</div>
+												<div id="95_usable"> </div>
+												<img id="95_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+										</div>
+
+										<div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台8</div>
+
+										<div class="cloumnSubDiv">
+											<div id="59" @tap="tipDetail(59)" class="textDiv" style="width:31%;">
+												<div id="59_pname">13-A01-A</div>
+												<div id="59_usable"> </div>
+												<img id="59_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+											<div id="60" @tap="tipDetail(60)" class="textDiv" style="width:69%;margin-left:1px;">
+												<div id="60_pname">13-A02-A</div>
+												<div id="60_usable"> </div>
+												<img id="60_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+										</div>
+									</div>
+
+									<div style="width:1px;height: 100%;"></div>
+
+									<div class="cloumnDiv">
+										<div class="cloumnSubDiv">
+											<div id="14" @tap="tipDetail(14)" class="textDiv" style="width:100%;">
+												<div id="14_pname">04A01A</div>
+												<div id="14_usable"> </div>
+												<img id="14_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+										</div>
+
+										<div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台4</div>
+
+										<div class="cloumnSubDivB" style="display: block;">
+											<div class="cloumnSubDiv">
+												<div id="39" @tap="tipDetail(39)" class="textDiv" style="width:35%;">
+													<div id="39_pname">09A01A</div>
+													<div id="39_usable"> </div>
+													<img id="39_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+												</div>
+												<div style="width:33%;margin-left:1px;">
+													<div id="40" @tap="tipDetail(40)" class="textDiv" style="width:100%;height: 100%;">
+														<div id="40_pname">09A02A</div>
+														<div id="40_usable"> </div>
+														<img id="40_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+													</div>
+												</div>
+												<div style="width:33%;margin-left:1px;">
+													<div id="42" class="textDiv" @tap="tipDetail('42')" style="width:100%;height:49.6%;">
+														<div id="42_pname">09A03A</div>
+														<div id="42_usable"> </div>
+														<img id="42_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;top:-40px;position:relative;">
+													</div>
+													<div id="43" class="textDiv" @tap="tipDetail('43')" style="width:100%;height:49.6%;margin-top:1px;">
+														<div id="43_pname">09A03B</div>
+														<div id="43_usable"> </div>
+														<img id="43_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;top:-40px;position:relative;">
+													</div>
+												</div>
+											</div>
+											<div class="cloumnSubDiv">
+												<div id="80" class="textDiv" @tap="tipDetail('80')" style="width:100%;height:100%;margin-top:1px;">
+													<div id="80_pname">09A01B</div>
+													<div id="80_usable"> </div>
+													<img id="80_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;top:-40px;position:relative;">
+												</div>
+											</div>
+											
+											
+
+											
+
+										</div>
+
+										<div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台9</div>
+
+										<div class="cloumnSubDiv">
+											<div id="61" @tap="tipDetail(61)" class="textDiv" style="width:50%;height:100%;">
+												<div id="61_pname">14A01A</div>
+												<div id="61_usable"> </div>
+												<img id="61_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+											</div>
+											<div id="62" @tap="tipDetail('62')" class="textDiv" style="width:50%;height:100%;margin-left:1px;">
+												<div id="62_pname">14A02A</div>
+												<div id="62_usable"> </div>
+												<img id="62_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;">
+
+											</div>
+											
+										</div>
+									</div>
+
+									<div style="width:1px;height: 100%;"></div>
+
+									<div class="cloumnDiv">
+										<div class="cloumnSubDiv" style="font-size: 8px;">
+											<div style="height:120px;width:24.5%;">
+												<div id="16" @tap="tipDetail('16')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;padding-top:5px;">
+													<div id="16_pname">05-A01-A</div>
+													<div id="16_usable"> </div>
+													<img id="16_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="83" @tap="tipDetail('83')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="83_pname">05A01B</div>
+													<div id="83_usable"> </div>
+													<img id="83_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="87" @tap="tipDetail('87')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="87_pname">05A01C</div>
+													<div id="87_usable"> </div>
+													<img id="87_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="91" @tap="tipDetail('91')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="91_pname">05A01D</div>
+													<div id="91_usable"> </div>
+													<img id="91_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+											<div style="height:120px;width:24.5%;margin-left:1px;">
+												<div id="17" @tap="tipDetail('17')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;padding-top:5px;">
+													<div id="17_pname">05-A02-A</div>
+													<div id="17_usable"> </div>
+													<img id="17_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="84" @tap="tipDetail('84')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="84_pname">05A02B</div>
+													<div id="84_usable"> </div>
+													<img id="84_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="88" @tap="tipDetail('88')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="88_pname">05A02C</div>
+													<div id="88_usable"> </div>
+													<img id="88_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="92" @tap="tipDetail('92')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="92_pname">05A02D</div>
+													<div id="92_usable"> </div>
+													<img id="92_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+											<div style="height:120px;width:24.5%;margin-left:1px;">
+												<div id="81" @tap="tipDetail('81')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;padding-top:5px;">
+													<div id="81_pname">05-A03-A</div>
+													<div id="81_usable"> </div>
+													<img id="81_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="85" @tap="tipDetail('85')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="85_pname">05A03B</div>
+													<div id="85_usable"> </div>
+													<img id="85_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="89" @tap="tipDetail('89')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="89_pname">05A03C</div>
+													<div id="89_usable"> </div>
+													<img id="89_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="93" @tap="tipDetail('93')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="93_pname">05A03D</div>
+													<div id="93_usable"> </div>
+													<img id="93_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+											<div style="height:120px;width:24.5%;margin-left:1px;">
+												<div id="82" @tap="tipDetail('82')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;padding-top:5px;">
+													<div id="82_pname">05-A04-A</div>
+													<div id="82_usable"> </div>
+													<img id="82_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="86" @tap="tipDetail('86')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="86_pname">05A04B</div>
+													<div id="86_usable"> </div>
+													<img id="86_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="90" @tap="tipDetail('90')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="90_pname">05A04C</div>
+													<div id="90_usable"> </div>
+													<img id="90_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="94" @tap="tipDetail('94')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="94_pname">05A04D</div>
+													<div id="94_usable"> </div>
+													<img id="94_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+										</div>
+
+										<div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台5</div>
+
+										<div class="cloumnSubDivB" style="font-size: 8px;">
+											<div style="height:240px;width:24.5%;">
+												<div id="46" @tap="tipDetail('46')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:5px;padding-top:2px;">
+													<div id="46_pname">10-A01-A</div>
+													<div id="46_usable"> </div>
+													<img id="46_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="47" @tap="tipDetail('47')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="47_pname">10-A01-B</div>
+													<div id="47_usable"> </div>
+													<img id="47_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="48" @tap="tipDetail(48)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="48_pname">10-A01-C</div>
+													<div id="48_usable"> </div>
+													<img id="48_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="49" @tap="tipDetail('49')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="49_pname">10-A01-D</div>
+													<div id="49_usable"> </div>
+													<img id="49_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="112" @tap="tipDetail(112)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="112_pname">10-B01-A</div>
+													<div id="112_usable"> </div>
+													<img id="112_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="116" @tap="tipDetail('116')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="116_pname">10-B01-B</div>
+													<div id="116_usable"> </div>
+													<img id="116_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="120" @tap="tipDetail(120)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="120_pname">10-B01-C</div>
+													<div id="120_usable"> </div>
+													<img id="120_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="124" @tap="tipDetail('124')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="124_pname">10-B01-D</div>
+													<div id="124_usable"> </div>
+													<img id="124_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="128" @tap="tipDetail('128')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="128_pname">10-C01-A</div>
+													<div id="128_usable"> </div>
+													<img id="128_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="132" @tap="tipDetail(132)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="132_pname">10-C01-B</div>
+													<div id="132_usable"> </div>
+													<img id="132_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="136" @tap="tipDetail('136')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="136_pname">10-C01-C</div>
+													<div id="136_usable"> </div>
+													<img id="136_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+											<div style="height:240px;width:24.5%;margin-left:1px;">
+												<div id="100" @tap="tipDetail(100)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;">
+													<div id="100_pname">10-A02-A</div>
+													<div id="100_usable"> </div>
+													<img id="100_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="103" @tap="tipDetail('103')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="103_pname">10-A02-B</div>
+													<div id="103_usable"> </div>
+													<img id="103_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="106" @tap="tipDetail(106)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="106_pname">10-A02-C</div>
+													<div id="106_usable"> </div>
+													<img id="106_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="109" @tap="tipDetail('109')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="109_pname">10-A02-D</div>
+													<div id="109_usable"> </div>
+													<img id="109_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="113" @tap="tipDetail(113)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="113_pname">10-B02-A</div>
+													<div id="113_usable"> </div>
+													<img id="113_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="117" @tap="tipDetail('117')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="117_pname">10-B02-B</div>
+													<div id="117_usable"> </div>
+													<img id="117_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="121" @tap="tipDetail(121)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="121_pname">10-B02-C</div>
+													<div id="121_usable"> </div>
+													<img id="121_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="125" @tap="tipDetail('125')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="125_pname">10-B02-D</div>
+													<div id="125_usable"> </div>
+													<img id="125_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="129" @tap="tipDetail('129')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="129_pname">10-C02-A</div>
+													<div id="129_usable"> </div>
+													<img id="129_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="133" @tap="tipDetail(133)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="133_pname">10-C02-B</div>
+													<div id="133_usable"> </div>
+													<img id="133_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -25px;">
+												</div>
+												<div id="137" @tap="tipDetail('137')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="137_pname">10-C02-C</div>
+													<div id="137_usable"> </div>
+													<img id="137_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+											<div style="height:240px;width:24.5%;margin-left:1px;">
+												<div id="101" @tap="tipDetail(101)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;">
+													<div id="101_pname">10-A03-A</div>
+													<div id="101_usable"> </div>
+													<img id="101_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="104" @tap="tipDetail('104')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="104_pname">10-A03-B</div>
+													<div id="104_usable"> </div>
+													<img id="104_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="107" @tap="tipDetail(107)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="107_pname">10-A03-C</div>
+													<div id="107_usable"> </div>
+													<img id="107_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="110" @tap="tipDetail('110')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="110_pname">10-A03-D</div>
+													<div id="110_usable"> </div>
+													<img id="110_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="114" @tap="tipDetail(114)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="114_pname">10-B03-A</div>
+													<div id="114_usable"> </div>
+													<img id="114_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="118" @tap="tipDetail('118')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="118_pname">10-B03-B</div>
+													<div id="118_usable"> </div>
+													<img id="118_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="122" @tap="tipDetail(122)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="122_pname">10-B03-C</div>
+													<div id="122_usable"> </div>
+													<img id="122_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="126" @tap="tipDetail('126')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="126_pname">10-B03-D</div>
+													<div id="126_usable"> </div>
+													<img id="126_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="130" @tap="tipDetail('130')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="130_pname">10-C03-A</div>
+													<div id="130_usable"> </div>
+													<img id="130_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="134" @tap="tipDetail(134)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="134_pname">10-C03-B</div>
+													<div id="134_usable"> </div>
+													<img id="134_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="138" @tap="tipDetail('138')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="138_pname">10-C03-C</div>
+													<div id="138_usable"> </div>
+													<img id="138_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+											<div style="height:240px;width:24.5%;margin-left:1px;">
+												<div id="102" @tap="tipDetail(102)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;">
+													<div id="102_pname">10-A04-A</div>
+													<div id="102_usable"> </div>
+													<img id="102_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="105" @tap="tipDetail('105')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="105_pname">10-A04-B</div>
+													<div id="105_usable"> </div>
+													<img id="105_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="108" @tap="tipDetail(108)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="108_pname">10-A04-C</div>
+													<div id="108_usable"> </div>
+													<img id="108_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="111" @tap="tipDetail('111')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="111_pname">10-A04-D</div>
+													<div id="111_usable"> </div>
+													<img id="111_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="115" @tap="tipDetail(115)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="115_pname">10-B04-A</div>
+													<div id="115_usable"> </div>
+													<img id="115_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="119" @tap="tipDetail('119')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="119_pname">10-B04-B</div>
+													<div id="119_usable"> </div>
+													<img id="119_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="123" @tap="tipDetail(123)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="123_pname">10-B04-C</div>
+													<div id="123_usable"> </div>
+													<img id="123_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="127" @tap="tipDetail('127')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="127_pname">10-B04-D</div>
+													<div id="127_usable"> </div>
+													<img id="127_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="131" @tap="tipDetail('131')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="131_pname">10-C04-A</div>
+													<div id="131_usable"> </div>
+													<img id="131_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="135" @tap="tipDetail(135)" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="135_pname">10-C04-B</div>
+													<div id="135_usable"> </div>
+													<img id="135_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="139" @tap="tipDetail('139')" class="textDiv" style="width:99.5%;height:8.7%;padding-top:2px;margin-top:1px;">
+													<div id="139_pname">10-C04-C</div>
+													<div id="139_usable"> </div>
+													<img id="139_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+										</div>
+
+										<div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台10</div>
+
+										<div class="cloumnSubDiv" style="font-size: 8px;">
+											<div style="height:120px;width:24.5%;">
+												<div id="64" @tap="tipDetail('64')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;padding-top:5px;">
+													<div id="64_pname">15-A01-A</div>
+													<div id="64_usable"> </div>
+													<img id="64_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="68" @tap="tipDetail('68')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="68_pname">15A01B</div>
+													<div id="68_usable"> </div>
+													<img id="68_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="72" @tap="tipDetail('72')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="72_pname">15A01C</div>
+													<div id="72_usable"> </div>
+													<img id="72_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="76" @tap="tipDetail('76')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="76_pname">15A01D</div>
+													<div id="76_usable"> </div>
+													<img id="76_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+											<div style="height:120px;width:24.5%;margin-left:1px;">
+												<div id="65" @tap="tipDetail('65')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;padding-top:5px;">
+													<div id="65_pname">15-A02-A</div>
+													<div id="65_usable"> </div>
+													<img id="65_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="69" @tap="tipDetail('69')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="69_pname">15A02B</div>
+													<div id="69_usable"> </div>
+													<img id="69_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="73" @tap="tipDetail('73')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="73_pname">15A02C</div>
+													<div id="73_usable"> </div>
+													<img id="73_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="77" @tap="tipDetail('77')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="77_pname">15A02D</div>
+													<div id="77_usable"> </div>
+													<img id="77_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+											<div style="height:120px;width:24.5%;margin-left:1px;">
+												<div id="66" @tap="tipDetail('66')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;padding-top:5px;">
+													<div id="66_pname">15-A03-A</div>
+													<div id="66_usable"> </div>
+													<img id="66_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="70" @tap="tipDetail('70')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="70_pname">15A03B</div>
+													<div id="70_usable"> </div>
+													<img id="70_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="74" @tap="tipDetail('74')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="74_pname">15A03C</div>
+													<div id="74_usable"> </div>
+													<img id="74_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="78" @tap="tipDetail('78')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="78_pname">15A03D</div>
+													<div id="78_usable"> </div>
+													<img id="78_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+											<div style="height:120px;width:24.5%;margin-left:1px;">
+												<div id="67" @tap="tipDetail('67')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;padding-top:5px;">
+													<div id="67_pname">15-A04-A</div>
+													<div id="67_usable"> </div>
+													<img id="67_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="71" @tap="tipDetail('71')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="71_pname">15A04B</div>
+													<div id="71_usable"> </div>
+													<img id="71_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="75" @tap="tipDetail('75')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="75_pname">15A04C</div>
+													<div id="75_usable"> </div>
+													<img id="75_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+												<div id="79" @tap="tipDetail('79')" class="textDiv" style="width:99.5%;height:24.4%;padding-top:5px;margin-top:1px;">
+													<div id="79_pname">15A04D</div>
+													<div id="79_usable"> </div>
+													<img id="79_img" class="imgHide" src="../images/target.png" style="margin:0 auto;width:40px;position:relative;    top: -30px;">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div style="flex:0.2;background: #FFFFFF;font-size: 12px;overflow-y: auto;">
+								<div style="background: #ffffff;width:100%;">
+									<div class="detailDiv">
+										<span>物料描述：</span>
+										<span v-text="proDispatchDetail.materialDesc"></span>
+									</div>
+									<div class="detailDiv">
+										<span>计划重量：</span>
+										<span v-text="proDispatchDetail.weight+' '+proDispatchDetail.weightUnitDesc"></span>
+									</div>
+									<div class="detailDiv">
+										<span>可用库容：</span>
+										<span v-text="capacity+' '+proDispatchDetail.weightUnitDesc"></span>
+									</div>
+									<div class="detailDiv" style="background: #ffffff;">
+										<span>接受重量：</span>
+										<span>
+											<input v-model="proDispatchDetail.receiveWeight" type="number" style="width:70px;border:0;height: 30px;" />
+											<span v-text="proDispatchDetail.weightUnitDesc"></span>
+										</span>
+									</div>
+								</div>
+								<div style="text-align: center;">
+									<!-- 									<button style="background:#ebf3fe;padding:5px 20px;" @tap="toHandle()" >取消</button>
+ -->
+									<button style="width:95%;background:#4285f4;padding:5px 20px;color: #ffffff;" @tap="editDetail()">确 定</button>
+								</div>
+								<table style="line-height: 30px;text-align: center;width:95%;margin:30px 5px;">
+									<tr>
+										<th>库位</th>
+										<th>占用/吨</th>
+										<th>可用/吨</th>
+									</tr>
+									<tbody id="detailTb">
+										<tr v-for="sub in subList" :id="sub.warehousePlaceId+'_tr'">
+											<td style="width:65px;" v-text="sub.warehousePlaceName"></td>
+											<td style="width:65px;"  v-text="sub.usedWeight"></td>
+											<td style="width:85px;text-align: right;" ><span v-text="formatDecimal(sub.capacity-sub.usedWeight)"></span><span @tap="editCapacity(sub.warehousePlaceId)"
+												 style="margin-left: 5px;color:red;" class="mui-icon mui-icon-compose"></span></td>
+										</tr>
+									</tbody>
+
+									<!-- <tr>
+										<td>库位A</td>
+										<td>53</td>
+										<td><span>32</span><span @tap="editCapacity(1)" style="margin-left: 5px;color:red;"  class="mui-icon mui-icon-compose"></span></td>
+									</tr> -->
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/capacity-set.js");
+	</script>
+
+</html>

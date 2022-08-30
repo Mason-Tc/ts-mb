@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>月台验证应急</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+		<link rel="stylesheet" type="text/css" href="../css/emergency-platform.css" />
+		<style>
+			.textr{
+				text-align: right;
+			}
+			.textl{
+				text-align: left;
+			}
+			.layui-layer-btn a {
+			    text-align: center;
+			    padding: 0px 45px !important;
+				margin: 0px !important;
+				width: 50%;
+				border-radius: 0px !important;
+			
+			}
+			.layui-layer-btn{
+				padding: 0px !important;
+				bottom: 0 !important;
+				position: absolute !important;
+				width: 100% !important;
+			}
+			.layui-layer-btn .layui-layer-btn0 {
+			    border-color: #CCCCCC !important;
+			    background-color: #CCCCCC !important;
+			    height: 40px;
+			    line-height: 40px;
+			}
+			
+			.layui-layer-btn .layui-layer-btn1 {
+			    border-color: #4285f4 !important;
+			    background-color: #4285f4 !important;
+			    height: 40px;
+			    line-height: 40px;
+			    color: #ffffff;
+			}
+			
+			.layui-layer-setwin {
+			    padding-top: 15px;
+			    width: 50px;
+			    height: 40px;
+			    right: 0 !important;
+			    top: 0 !important
+			}
+			
+			.layui-layer-setwin .layui-layer-close1 {
+			    transform: scale(1.2) !important;
+			    height: 100%;
+			}
+		</style>
+	</head> 
+	
+	<body>
+		<div id="off-canvas" class="">
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="left: 100px;margin: 1px 0px 0px -3px;color:#FFFFFF;">月台验证应急</span>
+						</div>
+					</header>
+					<div id="slider" class="mui-content mui-slider">
+						<div id="sliderContent" class="mui-slider-group" style="top: 1px;">
+							<div id="div_list" class="mui-slider-item mui-control-content">
+								<div class="search-wrap" style="height: 100%;">
+										<div class="search-item" style="margin-left: 10px;">
+											<span >车牌号:</span>
+											<input type="text" style="border:0;width: 150px;    height: 28px;" v-model="dataPage.filterConditions.billCode" />
+										</div>
+										<div class="search-item" style="margin-left: 10px;">
+											<span >月台:</span>
+											<select style="width: 150px;    height: 28px;" v-model="platformId" >
+												<option value="">请选择</option>
+												<option :value="pf.id" v-for="pf in platformList" >{{pf.platformName}}</option>                                    
+											</select>
+										</div>	
+										<div class="search-item" style="">
+											<span >仓库:</span>
+											<!-- <input type="text" style="width: 150px;    height: 28px;" v-model="dataPage.filterConditions.warehouseId" /> -->
+											<select style="width: 150px;    height: 28px;" v-model="dataPage.filterConditions.warehouseId" >   
+												<option value="">请选择</option>
+												<option :value="wa.id" v-for="wa in warehouseList" >{{wa.text}}</option>                                    
+											</select>
+										</div>
+										<div class="search-item" style="height: 30px;padding: 6px 20px;background: royalblue;color:white; 1px solid #ccc;border-radius: 3px;" @tap="complete">查 询</span>
+										</div>
+								<div class="public-list mui-scroll-wrapper" style="top: 60px !important;">
+									<ul class="public-list-wrapper  mui-row">
+										 <li v-for="listItem in dataPage.dataList"  style="margin-top: 10px;" class="mui-col-sm-6 mui-col-xs-12">
+											<div style="display: flex;background: #fff;padding:5px 10px">
+												<div style="flex: 0.9;" class="span-r">
+													<table style="width:100%;line-height: 54px;">
+														<tr style="">
+															<td class="textr" style="width: 50px;">月台：</td>
+															<td class="textl" style="width: 80px;color: royalblue;" v-text="listItem.platformName">月台1</td>
+															<td class="textr" style="width: 60px;">车牌号：</td>
+															<td class="textl" style="width: 120px;color: royalblue;" v-text="listItem.carPlateNo">湘B988334</td>
+															<td class="textr" style="width: 80px;">作业单号：</td>
+															<td class="textl" style="width: 140px;" v-text="listItem.taskCode">RK09883344</td>
+															<td class="textr" style="width: 80px;">业务类型：</td>
+															<td class="textl" v-text="listItem.taskTypeDesc">出库</td>
+															<td class="textr" style="width: 50px;">时间：</td>
+															<td class="textl" style="width: 150px;" >{{listItem.weightTime | formatTimer}}</td>
+														</tr>
+													</table>
+												</div>
+												<div style="flex:0.1"> 
+													<button @tap="toHandle(listItem)" style="padding:20px 30px;" >车牌验证</button>
+												</div>
+											</div>
+										</li> 
+										
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop"></div>
+				</div>
+			</div>
+		</div>
+		
+	</body>
+	
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/emergency-platform.js");
+	</script>
+
+</html>

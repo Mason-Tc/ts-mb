@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>报告详情</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/inventory-report-detail.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+	</head>
+
+	<body id="body_inventory_report_detail" v-cloak>
+		<div class="mui-content">
+			<header class="mui-bar mui-bar-nav">
+				<div class="">
+					<a @tap="toBack()" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title">
+						<span @tap="toBack()">报告详情</span>
+						<span @tap="toInventoryDetail(checkId)" style="color: #5677fc;">({{checkCode}})</span>
+					</h1>
+				</div>
+			</header>
+			
+			<div id="div_info" class="mui-scroll-wrapper" style="margin-top:50px;">
+				<div id="div_info_list" class="mui-scroll">
+					<div class="top-list">
+						<ul class="top-list-wrapper">
+							<li class="item">
+								<ul>
+									<li><span style="color: #888;">盘点主题:</span><span v-text="checkSubject"></span></li>
+									<li><span style="color: #888;">误差率:<span style="color: #5677fc;" v-text="accuracy"></span></span><span class="time" style="color: #888;">盘点时间:<span v-text="checkDate"></span></span>
+									</li>
+									<li><span style="color: #888;">盘点人:<span v-text="creatorName"></span></span><span class="time"><font style="color: #888; width: 58px; display: inline-block;">仓库:</font><span v-text="warehouseShortName"></span></span>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+					<div class="info-second">
+						<table style="width: 100%; background: #fff;">
+							<tr>
+								<th>盘点总数</th>
+								<th>已盘数量</th>
+								<th>差异数</th>
+								<th>未盘数量</th>
+							</tr>
+							<tr>
+								<td>{{numTotal}}</td>
+								<td>{{checkedNum}}</td>
+								<td>{{diffNum}}</td>
+								<td>{{uncheckedNum}}</td>
+							</tr>
+						</table>
+					</div>
+					<div class="info-third">
+						<div class="top-div">
+							<span style="margin-left: 15px; font-weight: bold;">异常明细数据</span>
+						</div>
+						<div class="public-list">
+							<ul class="public-list-wrapper">
+								<li class="item" v-for="(index,listItem) in detailList" ><!-- v-for="(index,listItem) in detailList" -->
+									<!--<li class="item" v-for="n in 21">-->
+									<ul>
+										<li></li>
+										<li><em style="width:78px;display: inline-block; text-align: right; vertical-align:top;">货主单位:</em><span v-text="listItem.ownerName" style=" display: inline-block; width:calc(100% - 78px) "></span></li>
+										<li><em style="width:78px;display: inline-block; text-align: right; vertical-align:top;">物料描述:</em><span v-text="listItem.materialDesc" style=" display: inline-block; width:calc(100% - 78px) "></span></li>
+										
+										<li><em style="width:78px;display: inline-block; text-align: right;">库位:</em><span v-text="listItem.warehousePlaceName"></span></li>
+										<li><em style="width:78px;display: inline-block; text-align: right; vertical-align:top;">差异数:</em><span v-text="listItem.numDiff" style=" display: inline-block; width:calc(100% - 78px) "></span></li>
+										<li><em style="width:78px;display: inline-block; text-align: right; vertical-align:top;">盘点说明:</em><span v-text="listItem.checkDesc" style=" display: inline-block; width:calc(100% - 78px) "></span></li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/inventory-report-detail.js");
+	</script>
+
+</html>

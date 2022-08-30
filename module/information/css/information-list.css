@@ -1,0 +1,177 @@
+html,
+body {
+	height: 100%;
+	width: 100%;
+}
+
+.mui-scroll-wrapper,
+.mui-scroll {
+	background-color: #efeff4;
+}
+
+.mui-content,
+.mui-slider {
+	height: 100%;
+}
+
+.mui-control-content {
+	background-color: white;
+}
+
+.mui-control-content .mui-loading {
+	margin-top: 70px;
+}
+
+.mui-row-mtop {
+	margin-top: 2px;
+}
+
+.mui-row-rtop {
+	margin-top: 10px;
+}
+
+.mui-row-more-top {
+	margin-top: 17px;
+}
+
+.mui-media-body-cutom {
+	position: relative;
+	text-align: center;
+	background-color: white;
+	margin-top: 5px;
+	padding: 6px 0px 4px 0px;
+}
+
+.item {
+	list-style: none;
+	width: 100%;
+}
+
+.message-title,
+.message-context {
+	float: left;
+	text-align: left;
+	font-size: 14px;
+}
+
+.message-datetime {
+	width: 35%;
+	float: right;
+	text-align: right;
+	font-size: 13px;
+	color: #B6B6B6;
+}
+
+.message-title {
+	font-weight: bold;
+	width: 65%;
+}
+
+.message-context {
+	color: #888888;
+	width: 95%;
+}
+
+.split {
+	width: 100%;
+	border: solid #e2e2e2;
+	border-top-width: 1px;
+	border-bottom-width: 0;
+}
+
+.query-btn {
+	padding: 3px !important;
+	/**
+	color: #007aff;
+	**/
+}
+
+.mui-segmented-control.mui-segmented-control-inverted~ .mui-slider-progress-bar {
+	background-color: #999;
+	color: #999;
+}
+
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+	color: #555;
+}
+/**
+.mui-icon-back:before,
+.mui-icon-left-nav:before {
+	font-size: 24px;
+	color: #666;
+}
+
+.mui-table-view-cell {
+	position: relative;
+	overflow: hidden;
+	padding: 3px 3px;
+	-webkit-touch-callout: none;
+}
+**/
+.wms-title {
+	font-size: 17px;
+	/*font-weight: bold;*/
+	color: #666666;
+	display: inline-block;
+	position: absolute;
+	left: 20%;
+	top: 20px;
+	-webkit-transform: translateX(-50%);
+	-moz-transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+	-o-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+
+.mui-table-view-cell:after {
+	background-color: #ebebeb;
+}
+
+.mui-slider .mui-segmented-control.mui-segmented-control-inverted~ .mui-slider-group .mui-slider-item {
+	border: 1px solid #ebebeb;
+}
+
+.empty {
+	margin-top: 100px;
+	text-align: center;
+}
+
+.mui-input-group,
+.m-hot-keyword {
+	border-radius: 4px;
+	padding: 5px;
+}
+
+.mui-input-group:before,
+.mui-input-group:after {
+	height: 0px;
+}
+
+.mui-input-group .mui-input-row:after {
+	border: 0px solid #ebebeb;
+	height: 1px;
+	background: #ebebeb;
+}
+
+.mui-input-row label {
+	color: #bbb;
+	font-size: 14px;
+}
+
+.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+	top: 17px
+}
+
+.tip-Success {
+	border: 1px solid #738ffe;
+	color: #738ffe;
+	padding: 2px;
+	border-radius: 4px;
+}
+
+.tip-cache {
+	border: 1px solid #61b345;
+	color: #61b345;
+	padding: 2px;
+	border-radius: 4px;
+}

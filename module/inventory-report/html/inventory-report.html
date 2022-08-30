@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>盘点报告</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" type="text/css" href="../css/inventory-report.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<style type="text/css">
+			.selectedTD {
+				color: #738ffe;
+				font-weight: bold;
+			}
+			
+			.sxing {
+				font-size: 1rem;
+				list-style: none;
+				float: left;
+				height: 30px;
+				line-height: 30px;
+				margin-top: 10px;
+				padding: 0px 10px;
+				border: 1px solid #bbb;
+				border-radius: 4px;
+				margin: 5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in">
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title">盘点报告</h1>
+						</div>
+					</header>
+					
+					<div class="mui-content">
+						<div id="sliderContent" class="" style="top: -2px;">
+							<div id="div_info_list" class="mui-active">
+								
+								<!-- <div>测试</div> -->
+								
+<!-- 								<div class="search-wrap">
+									<div class="search" @tap="showOffExponentQuery">
+										<span class="mui-icon mui-icon-search"></span>
+									</div>
+								</div> -->
+								<div class="public-list mui-scroll-wrapper" style="margin-top: 4px;">
+									<ul class="public-list-wrapper mui-scroll">
+										<li class="item" v-for="(index,listItem) in dataPage.dataList" @tap="openDetailPage(listItem.id)">
+											<!--<li class="item" v-for="n in 21">-->
+											<ul>
+												<li><span class="bold" v-text="listItem.titleInfo"></span></li>
+												<li>
+													<em>盘点日期:</em>
+													<span v-text="listItem.checkDate"></span>
+													<span style="position: absolute;right: 2px;top: 0;padding: 0;width: 150px;">
+														<em>仓库:</em>
+														<span v-text="listItem.warehouseName">
+															
+														</span>
+													</span>
+												</li>
+												<li>
+													<em>盘点总数量:</em>
+													<span v-text="listItem.numTotal" style=""></span>
+													<!-- <span style="color: #5677fc;" v-text="listItem.rigtCount"></span> -->
+													<span style="color: #FF0000; position: absolute;right: 2px;top: 0;padding: 0;width: 150px;">
+														<em>差异总数量:</em>
+														<span v-text="listItem.diffSum">
+															
+														</span>
+													</span>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- <div class="mui-off-canvas-backdrop"></div> -->
+				</div>
+				<!-- 菜单容器 -->
+<!-- 				<aside class="mui-off-canvas-right" id="searchVue" style="width: 90%; background: #F0F0F0;">
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area" @tap="hideOffCanvaQuery">
+							<a id="back-cust-list-btn" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title" style="left:40px; width: 4em; top:5px;">查询条件</h1>
+						</div>
+					</header>
+					<div id="div_search_summary" class="mui-scroll-wrapper" style="margin-bottom: 43px;">
+						<div class="mui-scroll">
+							<div style="margin-top: 48px;height: 5px; background:#fff;">
+							</div>
+							<div class="mui-clearfix"></div>
+							<div class="mui-card" style="margin: 0;">
+								<div id="div_search_top" class="ioexp-top">
+									<span style="margin-left: 10px; font-size: 14px;">时间</span>&nbsp;&nbsp;<input style="width: 100px;" type="text" readonly placeholder="起始时间" :value="dataPage.filterConditions.beginDate" @tap="pickBeginDate" />&nbsp;--&nbsp;<input style="width: 100px;" type="text" readonly placeholder="结束时间" :value="dataPage.filterConditions.endDate" @tap="pickEndDate" />
+								</div>
+								<ul class="mui-table-view" style="margin-top: 10px;">
+									<li class="mui-table-view-cell mui-collapse mui-active">
+										<a class="mui-navigate-right" href="#">仓库</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="warehouseScrollDiv">
+												<div class="mui-scroll">
+													<ul style="background: #fff;">
+														<li v-for="warehouse in conditions.warehouseList" class="warehouseA" v-text="warehouse.text" :id="'warehouse_'+warehouse.id" :mtxId="warehouse.id" @tap="searchIvntDetail($event,warehouse.id);" style="font-size:1rem; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="btnList">
+						<button class="reset" @tap="resetFilter">重置</button>
+						<button class="sure" @tap="complete">完成</button>
+					</div>
+				</aside> -->
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/inventory-report.js");
+	</script>
+
+</html>

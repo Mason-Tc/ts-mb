@@ -1,0 +1,50 @@
+	[v-cloak] { display: none }
+	.center-row{ background: #F2F2F2;}
+			.mui-input-row{padding:1px 0;width:100%; background: #fff;  margin-top:1px ;}
+			.label-l {
+				color:#BBBBBB;
+			    font-size: 14px;
+			    width: 25%;
+			   	background: #fff;
+			    text-align: right;
+			    padding-right: 15px;	
+			    float:left;	 
+
+			}
+			.label-r {
+			    width: 75%;
+			    color:#666666;
+			    font-size: 15px;
+			   	background: #fff;
+			    text-align: left;
+			    float:left;
+			    padding-left:15px;
+			}
+			p{font-size: 15px;color:#666666;}{font-weight: 600;}
+			.mui-btn{width:80%;margin: 20px auto;padding:8px 0;margin-bottom: 60px;}
+			 img {
+				width: 28%;
+				height: 28%;
+				margin: 15px 0;
+				border-radius: 8px;
+				background: #FFF;
+				display: block;
+				text-align: center;
+				box-shadow: 0px 0px 1px 1px #ebebeb;
+			}{border: 1px solid #ccc;}
+			.mui-input-row label{ width: 25%;}
+			.mui-title {
+						height: 
+						}
+.banner_my{margin: 0px; padding: 0px;}
+.banner_my img{ width: 100%; display: block; margin: 0px padding:0px; border-radius: 0px; top:0px; margin:0px;}
+.mui-input-row .label-r{ width:75%;}
+
+.center-roww   {
+                 background:-moz-linear-gradient(top, #1464d2, #2375d8);  
+                 background:-webkit-gradient(linear, 0 0, 0 bottom, from(#1464d2), to(#2375d8));  
+                 background:-o-linear-gradient(top, #1464d2, #2375d8);
+                 border-radius: 0px;background-clip: padding-box;box-shadow: 0 1px 1px rgba(0,0,0,.1);margin: 0px;
+                 padding: 48px 0px;}
+.s_admin{width: 68px;  height:68px; border-radius: 50%; overflow: hidden; background:#ffffff; margin:0px auto; position: relative;z-index: 100;} 
+.s_admin img{width: 100%; height: 95%; padding: 10px; margin-top: 2px;}

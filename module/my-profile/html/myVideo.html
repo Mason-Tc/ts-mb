@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html class="ui-page-login">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>我的视频</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" href="../css/myVideo.css">
+		<link rel="stylesheet" href="../../../css/zmd.css">
+	</head>
+
+	<body>
+		<!--导航栏-->
+		<header class="mui-bar mui-bar-nav">
+			<div class="mui-action-back back-area">
+				<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title" style="width: 8em;">我的视频</h1>
+			</div>
+		</header>
+		<div class="mui-content" style="margin-top: 10px;">
+			<div id="myVideoDiv" v-cloak>
+				<ul class="mui-table-view list">
+					<li class="mui-table-view-cell mui-media list-item" v-for="(vdo,idx) in videoList" :videoPath="vdo.path" @tap="playVideo(vdo.path)">
+						<a href="javascript:;">
+							<img :id="'img_'+idx" class="mui-media-object mui-pull-right" :src="vdo.posterImg">
+
+							<video :muted="true" :src="vdo.path" class="mui-media-object mui-pull-right" poster="a" autoplay>
+								<!--<source   muted type="video/mp4"> -->
+							</video>
+
+							<div class="mui-media-body">
+								{{vdo.name}}
+								<p class="mui-ellipsis" v-text="vdo.updateTime"></p>
+							</div>
+						</a>
+					</li>
+
+					<canvas id="myCanvas" width="100" height="100"></canvas>
+
+				</ul>
+			</div>
+		</div>
+		<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+		<script>
+			//加载主模板块
+			seajs.use("../js/myVideo.js", function() {
+
+			});
+		</script>
+
+	</body>
+
+</html>

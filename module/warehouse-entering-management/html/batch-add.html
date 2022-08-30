@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>新增物料</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/material-details.css" />
+
+	</head>
+
+	<body id="body_material_details">
+		<div class="main">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title">物料明细</span>
+				</div>
+			</header>
+			<div id="div_material_details" class="mui-content">
+				<!--
+				<div class="div-top">
+					<div class="div-title">物料明细</div>
+				</div>
+				-->
+				<ul class="info-list"> 
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>品名
+						</span>
+						<input type="text" readonly placeholder="请选择品名" v-model="" @tap="" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>材质
+						</span>
+						<input type="text" readonly placeholder="请选择材质" v-model="" @tap="" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>规格 
+						</span>
+						<input type="text" readonly placeholder="请选择规格" v-model="" @tap="" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>产地
+						</span>
+						<input type="text" readonly placeholder="请选择产地" v-model="" @tap="" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>捆包号
+						</span>
+						<input type="text" placeholder="请填写捆包号" v-model="" @tap="" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>实收数量
+						</span>
+						<input type="text" placeholder="请填写实收数量" v-model="" @tap="" />
+						<span class="unit">件</span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>实收重量
+						</span>
+						<input type="text" placeholder="请填写实收重量" v-model="" @tap="" />
+						<span class="unit">吨</span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>库位
+						</span>
+						<input type="text" readonly placeholder="请选择库位" v-model="" @tap="" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;&nbsp;</span>层号
+						</span>
+						<input type="text" placeholder="请填写层号" v-model="" @tap="" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>车船号
+						</span>
+						<input type="text" placeholder="请选择车船号" v-model="" @tap="" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>计量方式
+						</span>
+						<input type="text" readonly placeholder="请选择计量方式" v-model="" @tap="" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+				</ul> 
+			</div>
+		</div>
+		<nav id="nav_footer" class="mui-bar mui-bar-tab">
+			<div class="nav-div" @tap="submit">确定</div>  
+		</nav> 
+	</body> 
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/batch-add.js");
+	</script>
+
+</html>

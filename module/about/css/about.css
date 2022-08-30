@@ -1,0 +1,22 @@
+[v-cloak] { display: none !important; }
+
+/**zhouyao**/
+.mui-title {height:48px; line-height: 48px; text-align:left;} 
+.mui-bar-nav{height:48px; background: #ffffff;}
+.mui-icon-back:before, .mui-icon-left-nav:before{ margin-top: 30px;}
+.mui-bar .mui-title{right:10px; left:10px; line-height: 56px;}
+.mui-content{margin-top:0px;}{background: #ffffff;} 
+.mui-content p{padding: 10px;}
+.mui-bar .mui-btn {top: 11px;}
+
+.mui-segmented-control.mui-segmented-control-inverted ~ .mui-slider-progress-bar {background-color: #999; color: #999;}
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item{ font-weight: normal; color: #bbbbbb;}
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{ color: #555;}
+.mui-icon-back:before, .mui-icon-left-nav:before {font-size:24px; color: #666;}
+.mui-table-view-cell:after{background-color: #ebebeb;}
+.mui-slider .mui-segmented-control.mui-segmented-control-inverted ~ .mui-slider-group .mui-slider-item{ border: 1px solid #ebebeb;}
+.mui-input-group,.m-hot-keyword {border-radius:4px; padding: 5px;}
+.mui-input-group:before,.mui-input-group:after{height:0px;}
+.mui-input-group .mui-input-row:after {border: 0px solid #ebebeb; height: 1px; background: #ebebeb;}
+.mui-input-row label {color:#bbb; font-size: 14px;}
+

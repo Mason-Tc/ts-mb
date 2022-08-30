@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+
+	<head>
+		<meta charset="UTF-8" />
+		<title>监控列表</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css">
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/zmd.css">
+		<link rel="stylesheet" href="../css/credit-summary.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/reset.css" />
+		<script src="../../exponent-report/css/font_size/iconfont.js"></script>
+	</head>
+
+	<body style="height: 100%;">
+		<div id="app" v-cloak style="height: 100%;">
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title" >在线视频</h1>
+	
+			</header>
+			
+			<div class="mui-content" style="height: calc(100% - 45px);">
+				
+				<div style="position: fixed;left:0;z-index:9;top:48px;">
+					<table class="m-main-table">
+						<tbody>
+							<tr>
+								<td @tap="openControlling" class="td-left" style="border-top:0px;">
+									仓库：
+								</td>
+								<td class="td-content" style="overflow: hidden; position: relative;">
+									<div class="t-content">
+										<table class="content-table">
+											<tr>
+												<td v-for="w in whsList" class="noBorder" id="whsName">
+													<div class="limitNum" v-text="w.warehouseName"></div>
+												</td>
+											</tr>
+										</table>
+									</div>
+									
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<table class="m-main-table">
+						<tbody>
+							<tr>
+								<td class="td-left" style="border-top:0px;">
+									区域：
+								</td>
+								<td class="td-content">
+									<div class="t-content" style="overflow-x: auto;">
+										<table class="content-table" style="width: auto;">
+											<tr>
+												<td v-for="(idx,partition) in curPartitionList" :key="partition.id" :class="[partition.selected?'selectedTD':'']" @tap="getCameraList3(partition.id);"
+												 :id="'ptt_'+partition.id">{{partition.partitionName}}</td>
+												<!--<td v-for="n in 13">测试</td>-->
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+											
+				</div>
+				
+				<div id="div_av_short_list" style="margin-top: 70px;">
+					<div>
+						
+						<div style="margin-left: 10px;margin-top: 5px;margin-bottom: 5px;">
+							<span style="font-size: 14px; color: #666;">视频信号列表</span>
+						
+						</div>
+						
+						<ul style="margin: 0px; padding-bottom: 40px; height: 100%;">
+							<li v-for="(index,cam) in cameraList" :key="cam.id" @tap="openCamera(cam.cameraName, cam.cameraUuid)"
+							 style="padding: 5px; border-bottom: solid 1px #EBEBEB; line-height:38px;  height:38px; ">
+								<!--    -->
+								<span v-text="(index+1) + '.'"></span>
+								<span class="mui-icon mui-icon mui-icon-videocam" style="margin-top: 6px;line-height: 12px; display: inline-block;"></span>
+								<span>{{cam.cameraNameShow}}</span>
+								<!-- <span v-bind:class="[cam.onLineStatus == '1' ? 'online_tip' : 'offline_tip']">{{cam.onLineStatusShow}}</span> -->
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				<div id="div_av_middle_list" class="mui-scroll-wrapper" style="top:123px;">
+					<div class="mui-scroll">
+						
+						<div style="margin-left: 10px;margin-top: 5px;margin-bottom: 5px;">
+							<span style="font-size: 14px; color: #666;">视频信号列表</span>
+						
+						</div>
+						
+						<ul style="margin: 0px; padding-bottom: 40px; height: 100%;">
+							<li v-for="(index,cam) in cameraList" :key="cam.id" @tap="openCamera(cam.cameraName, cam.cameraUuid)"
+							 style="padding: 5px; border-bottom: solid 1px #EBEBEB; line-height:38px;  height:38px; ">
+								<!--    -->
+								<span v-text="(index+1) + '.'"></span>
+								<span class="mui-icon mui-icon mui-icon-videocam" style="margin-top: 6px;line-height: 12px; display: inline-block;"></span>
+								<span>{{cam.cameraNameShow}}</span>
+								<!-- <span v-bind:class="[cam.onLineStatus == '1' ? 'online_tip' : 'offline_tip']">{{cam.onLineStatusShow}}</span> -->
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				<div id="div_av_list" class="mui-scroll-wrapper" style="top:123px;">
+					<div class="mui-scroll">
+						
+						<div style="margin-left: 10px;margin-top: 5px;margin-bottom: 5px;">
+							<span style="font-size: 14px; color: #666;">视频信号列表</span>
+						
+						</div>
+						
+						<ul style="margin: 0px; padding-bottom: 40px; height: 100%;">
+							<li v-for="(index,cam) in cameraList" :key="cam.id" @tap="openCamera(cam.cameraName, cam.cameraUuid)"
+							 style="padding: 5px; border-bottom: solid 1px #EBEBEB; line-height:38px;  height:38px; ">
+								<!--    -->
+								<span v-text="(index+1) + '.'"></span>
+								<span class="mui-icon mui-icon mui-icon-videocam" style="margin-top: 6px;line-height: 12px; display: inline-block;"></span>
+								<span>{{cam.cameraNameShow}}</span>
+								<!-- <span v-bind:class="[cam.onLineStatus == '1' ? 'online_tip' : 'offline_tip']">{{cam.onLineStatusShow}}</span> -->
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+	</body>
+	<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/cameraList.js", function(cameraListVue) {
+			window.cameraListVue = cameraListVue;
+		});
+	</script>
+
+</html>

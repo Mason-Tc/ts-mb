@@ -1,0 +1,51 @@
+/**搜索框**/
+[v-cloak] {
+    display: none;
+}
+.query-btn{padding: 3px !important; margin: 10px 0px 0px 0px; color: #738ffe; border: 1px solid #ebebeb;}
+.query-btn-label{font-size: 14px;}
+.mui-bar .mui-icon{font-size:18px;}
+.mui-btn-primary, .mui-btn-blue {color: #fff;border: 1px solid #738ffe;background-color: #738ffe;}
+
+/**页头统一**/
+.mui-title {text-align:left;} 
+.mui-bar-nav{background: #ffffff;}
+.mui-bar .mui-title{right:40px; left:40px;line-height:48px; height:48px;}
+.mui-input-row input {line-height:38px;}
+.mui-bar-nav ~ .mui-content {padding-top: 58px;}
+.mui-bar .mui-icon{color: #bbbbbb; padding-top: 8px; font-size: 28px;}
+.mui-bar .mui-btn-link{ line-height: 56px;}/****/
+
+/**列表样式线背景**/
+.mui-table-view .mui-media-object {line-height: 42px;height: 42px;max-width: 30px;height: 30px;}/**图标大小**/
+.mui-table-view:before{position: absolute;background-color: #ebebeb;}
+.mui-table-view-cell:after,.mui-table-view:after,.mui-table-view-divider:before,.mui-table-view-divider:after{position: absolute;right: 0;bottom: 0;left:0px;height: 1px;content: '';-webkit-transform: scaleY(.5);transform: scaleY(.5);background-color: #ebebeb}
+.mui-table-view-divider {background-color: #efeff4;}
+.mui-media-body{font-size: 13px; margin-left: 10px;}
+.mui-badge-danger, .mui-badge-red {background-color: #f2706b;}
+/**
+.mui-bar-nav {-webkit-box-shadow: 0 1px 6px #ebebeb;box-shadow: 0 1px 6px #ebebeb;}
+**/
+.mui-content > .mui-table-view:first-child {margin-top:12px;}
+.mui-table-view:before,.mui-table-view:after,.mui-table-view-cell:after,.mui-table-view-cell:before{background-color: #ebebeb; }
+.mui-input-group .select-icon::before{content: ">";color:#BBBBBB; position: absolute; right: 25px; top:15px; background: #ffffff;font-size:18px;}
+.mui-bar .mui-icon-search{ font-size:20px; color:#738ffe;}
+
+h1, h2, h3, h4, h5, h6{line-height: 1;margin-top: 5px;margin-bottom: 5px;}
+h1, .mui-h1{font-size: 30px;}
+h2, .mui-h2{font-size: 28px;}
+h3, .mui-h3{font-size: 24px;}
+h4, .mui-h4{font-size: 16px;}
+h5, .mui-h5{font-size: 13px;font-weight: normal;color: #8f8f94;}
+h6, .mui-h6{font-size: 12px;font-weight: normal;color: #8f8f94;}
+p{font-size:14px;margin-top: 0;margin-bottom: 0px;color: #8f8f94;}
+
+.tipp{background:#f8f8c9; color: #666666; line-height: 28px; max-width: 60%; margin: 10px auto; border-radius:4px; padding: 5px; font-size: 13px; text-align: center;}
+
+.pt9{padding-top: 9px !important;}
+.back-area{display: inline-block;}
+
+
+
+
+

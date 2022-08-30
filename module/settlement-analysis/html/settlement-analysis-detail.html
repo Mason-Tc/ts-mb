@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>趋势分析</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link href="../css/settlement-analysis-detail.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../exponent-report/css/dAHFZjuHwkWsorioAuKK.css" />
+	</head>
+
+	<body>
+		<div id="off-canvas" v-cloak>
+			<!-- 主页面标题 -->
+			<header class="mui-bar mui-bar-nav">
+				<div class="back-area mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title">趋势分析</h1>
+				</div>
+			</header>
+			<div class="mui-content">
+				<div class="mui-scroll-wrapper" style="top:48px;">
+					<div class="mui-scroll">
+						<div class="top-counter">
+							<span v-text="topText" style="margin-left: 12px;"></span>
+						</div>
+						<div id="div_canvas" class="top-center">
+							<div id="div_canvas_chart" style="height: 100%; width: 100%;">
+								<canvas id="cv_canvas"></canvas>
+							</div>
+						</div>
+						<div style="margin-top: -90px;">
+							<table class="m-main-table">
+								<tbody>
+									<tr>
+										<td class="td-left" style="width: 100px;">
+											<table class="td-left-wrap">
+												<tr>
+													<th class="td2" style="width: 100%;">
+														月份
+													</th>
+												</tr>
+											</table>
+										</td>
+										<td class="td-right">
+											<div class="t-header">
+												<table class="header-table">
+													<tr>
+														<th style="width: 50%;">
+															<div>{{sortColumns[0]}}</div>
+														</th>
+														<th style="width: 50%;">
+															<div>{{sortColumns[1]}}</div>
+														</th>
+													</tr>
+												</table>
+											</div>
+										</td>
+									</tr>
+									<tr class="mainBody">
+										<td class="td-top">
+											<div class="t-left">
+												<table class="left-table">
+													<tr v-for="exp in trendList">
+														<td>
+															<div v-bind:class="[parseInt(exp.monthShow.length/12)>0?'duohang'+parseInt(exp.monthShow.length/12) + ' td2' : 'td2']" style="text-align: left; width: 100px;">
+																<!--<div class="help-tip">
+																			<p>{{exp.monthShow}}</p>
+																		</div>
+																		{{exp.monthShowAbb}}-->
+																{{exp.monthShow}}
+															</div>
+														</td>
+													</tr>
+												</table>
+											</div>
+										</td>
+										<td class="td-content">
+											<div class="t-content">
+												<table class="content-table">
+													<tr v-for="exp in trendList">
+														<td style="width: 50%;">
+															<div v-bind:class="[parseInt(exp.monthShow.length/12)>0?'duohang'+parseInt(exp.monthShow.length/12): '']" style="text-align: right;">
+																<div class="limitNum13" style="margin-right: 3px;">{{exp.settlementWeight}}</div>
+															</div>
+														</td>
+														<td style="width: 50%;">
+															<div v-bind:class="[parseInt(exp.monthShow.length/12)>0?'duohang'+parseInt(exp.monthShow.length/12): '']" style="text-align: right;">
+																<div class="limitNum13" style="margin-right: 3px;">{{exp.settlementMoney}}</div>
+															</div>
+														</td>
+													</tr>
+												</table>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/settlement-analysis-detail.js");
+	</script>
+
+</html>

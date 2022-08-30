@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>收货单</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+		<link rel="stylesheet" type="text/css" href="../css/recive-detail.css" />
+		<link rel="stylesheet" href="../../../js/select2/select2.min.css" />
+		<style>
+			
+			
+			.layui-layer-setwin {
+			    padding-top: 15px;
+			    width: 50px;
+			    height: 40px;
+			    right: 0 !important;
+			    top: 0 !important
+			}
+			
+			.layui-layer-setwin .layui-layer-close1 {
+			    transform: scale(1.2) !important;
+			    height: 100%;
+			}
+			
+			.select2-container--default .select2-selection--single {
+			    background-color: transparent !important; 
+/* 			    border: 0px solid #ccc;
+			    border-radius: 4px; */
+			}
+			
+			.select2-container .select2-selection--single {
+/* 			    box-sizing: border-box;
+			    cursor: pointer;
+			    display: block;
+			    height: 32px;
+			    user-select: none;
+			    -webkit-user-select: none; */
+				margin-top: 4px;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="">
+			<div id="relSubPlace" style="display: none;">
+				<ul class="mui-table-view">
+				  <li class="mui-table-view-cell" v-for="item in dataPage.relPlaceSubList" :key="item.id" @tap="relSubPlaceSelect(item.id, item.text)">
+				    {{ item.text }}
+				  </li>
+				</ul>
+			</div>
+			
+				<!-- 主页面容器 -->
+			<div class="mui-inner-wrap">
+				<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+					<div class="mui-action-back">
+						<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+						<span class="wms-title" style="left: 60px;color:#FFFFFF;">收货单<span></span></span>
+					</div>
+					<!-- <span @tap="toRefresh" style="color:#ffffff;font-weight: 700;margin-right: 0px;" class="mui-icon mui-icon-loop mui-pull-right"></span> -->
+				</header>
+				
+				<div style="margin-top: 60px;">
+					<div style="padding:10px 10px 10px 10px;background:#e0e0e0;font-size:18px;margin-top: 0px;">基本信息</div>
+					<div style="padding-top: 18px;padding-bottom: 8px;text-align: left;">
+						<table style="margin-top: -10px;font-size:14px;width:100%;margin:0 auto;">
+							<tr>
+								<td style="text-align: right;">时间：</td>
+								<td v-text="dataPage.detailData.receivingDate"></td>
+								<td style="text-align: right;">短驳单：</td>
+								<td v-text="dataPage.detailData.bargeCode"></td>
+								<td style="text-align: left;">
+									车牌号：
+									<span v-text="dataPage.detailData.carNosStr"></span>
+								</td>
+								<!-- <td v-text="dataPage.detailData.carNosStr" style="text-align: left;font-size: 14px;"></td> -->
+							</tr>
+							<tr style="line-height: 40px">
+								<td style="text-align: right;">运输人：</td>
+								<td v-text="dataPage.detailData.driverName"></td>
+								<td style="text-align: right;">货主单位：</td>
+								<td v-text="dataPage.detailData.ownerName"></td>
+							
+								<td font-size: 14px;">
+									<span>证件号：</span>
+									<span v-text="dataPage.detailData.cardNo"></span>
+									<span style="margin-left: 50px">备注：</span>
+									<span v-text="dataPage.detailData.remarks"></span>
+								</td>
+						
+							</tr>
+						</table>
+					</div>
+					
+					<div style="padding:10px 10px 10px 10px;background:#e0e0e0;font-size:18px;">物料信息</div>
+					<div style="text-align: center;background-color: #F5F5F5;background: #fff;padding-top: 18px;padding-bottom: 8px;">
+						<div style="margin-top:0px;">
+							<table style="width:100%;font-size:14px;margin:0 auto;background: #fff;" v-for="(index,det) in dataPage.detailData.detailList">
+								
+								<tr> 
+									<td style="text-align: left;width: 35%"> 
+										<span class="" > 
+											<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;物料描述：</span>    
+											<span v-text="det.materialDesc"></span>
+										</span> 
+									</td>     
+									<td style="text-align: left;">
+										<span class="" >  
+											<span>捆包号：</span>
+											<span v-text="det.packageNo"></span>
+										</span>   
+									</td>
+
+								</tr>
+								
+								<tr style="line-height: 40px">
+									<td style="text-align: left;">
+										<span class=""  style="margin-left:0px;">
+											<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;应收数量：</span>
+											<span v-text="det.receivableNum" ></span>
+											<span v-text="det.receivableNumUnitDesc"></span>
+										</span>
+									</td>
+									
+									<td style="text-align: left;width: 35%"> 
+<!-- 										<span class="contSpan" style="margin-left:0px;background: #ffffff;">
+											<span>实收数量：</span>
+											<span>
+												<input type="number" style="width:20px;border:0;" v-model="det.realNum">
+												<span v-text="det.realNumUnitDesc"></span>
+											</span>
+										</span> -->
+										
+										<div class=""
+										    style="margin-left: 0px;background: #ffffff;text-align: left;">
+										    <span style="float: left;">实收数量：</span>
+										    <span>
+										        <span @tap="toAddNum(index)"
+										            style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px;background: #1566d2; padding:3px 15px;"
+										            class="mui-icon mui-icon-plus"></span>
+										        <input id="hangNum" type="number" v-model="det.realNum"
+										            style="margin-left: 2px;margin-bottom:4px;width:20%;border: 1px #C0C0C0 solid;text-align: center;height: 30px; color:#4285f4;font-weight: 700;font-size: 25px;">
+										        <!-- <span v-text="det.realNumUnitDesc"></span> -->
+												<span @tap="toMinusNum(index)"
+										            style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px;background: #1566d2; padding:3px 15px;"
+										            class="mui-icon mui-icon-minus"></span>
+										    </span>
+										</div>
+										
+									</td>
+									
+									<td style="text-align: left;">
+<!-- 										<span class="contSpan" style="margin-left:-20px;background: #ffffff;">
+											<span>库位：</span>
+											<input  id="subPlaceInputId{{det.id}}" type="hidden">
+											<input id="subPlaceInput{{det.id}}" @tap="selectSub(det)" style="width:100px;" readonly="true">
+
+										</span> -->
+										
+										<span class="contSpan" style="margin-left:-20px;background: #ffffff;">
+											<label>库位</label>
+											<!-- <input id="subPlaceInputId{{det.id}}" type="hidden"> -->
+											<select id="subPlaceInput{{det.id}}" class="q-subPlaceInput-name" 
+												style="width: 45%;" itemIndex={{index}}>
+											</select>
+										</span>
+
+										
+										<span style="margin-left: 5px;color: #007AFF" @tap="getRelSubPlace(index)">关联库位</span>
+									</td>
+									
+									
+								</tr>
+		
+							</table>
+						</div>
+					</div>
+					
+					<!--附件-->
+					<div id="div_attach" class="mui-slider-item content m-list-time-line">
+						<!-- <div>测试</div> -->
+						<div style="padding:10px 10px 10px 10px;background:#e0e0e0;font-size:18px;margin-top: 0px;">附件</div>
+						<div style="width: 100%; margin: 5px auto;">
+							<!--文件区域-->
+<!-- 							<div v-cloak>
+								<ul class="mui-table-view">
+									<li class="mui-table-view-cell mui-media" v-for="(index, file) in files">
+										<a class="">
+											<img class="mui-media-object mui-pull-left" style="width:2.5em;" :src="getcoverUrl(index)" @tap="openFile(file.id, file.baidudocId)">
+											<div class="mui-media-body">
+												{{file.fileName.length
+												<18?file.fileName:file.fileName.substring(0,5)+ '...'+file.fileName.substr(-9)}} <p class="mui-ellipsis" @tap="openFile(file.id, file.baidudocId)">
+													</p>
+													<div class="delete" @click="delete(file, 1)">删除</div>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div> -->
+							<!--图片区域-->
+							<div v-clock>
+								<ul class="mui-table-view mui-grid-view">
+									<li class="mui-table-view-cell mui-media mui-col-xs-3" v-for="image in imageFiles" style="width: 200px; height: 100px;margin:0;position: relative;">
+										<div class="close" style="background: red; color:#fff; width: 18px; height:18px; position: absolute;top:2px;right: 4px;z-index: 1;border-radius:4px;" @click="delete(image, 2)" id="{{image.id}}">X</div>
+										<img class="" data-preview-src="{{image.previewFileUrl}}" data-preview-group="1" style="position: absolute;top:0;right: 2%; border-radius:4px;margin: 0 auto;width: 96%;" src="{{image.fileUrl}}">
+					
+									</li>
+									<li class="mui-table-view-cell mui-media mui-col-xs-3" id="addFile" style="width: 200px; height: 100px;margin:10px 0;position: relative;">
+										<a >+<!--<span style="font-size:16px; margin:4px 0px 0px 6px; display: inline-block; position: absolute;"添加</span>--></a>
+									</li>
+					
+								</ul>
+							</div>
+						</div>
+					
+					</div>
+					
+					<div style="width:100%;display: block;position:fixed;bottom: 2px;z-index: 99;">
+						<span @tap="cancelRecive" style="color:#ffffff;width:50%;background:#CCCCCC;font-size: 18px;bottom:2px;padding:15px;text-align: center;float: left">
+							取 消
+						</span>
+						<span @tap="saveRecive" style="color:#ffffff;width:50%;background:#5677fc;font-size: 18px;bottom:2px;padding:15px;text-align: center;float: right">
+							确 定
+						</span>
+					</div>
+
+				</div>
+				
+			</div>
+			
+<!-- 			<div id="dialogDiv" style="display:none;background-color: #F5F5F5;padding: 0;" class="mui-content mui-slider">
+
+			</div> -->
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv"></div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/recive-detailR.js");
+	</script>
+
+</html>

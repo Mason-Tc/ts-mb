@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>室外出库作业</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/outsideout-work.css" />
+		<style>
+		
+
+/* 		.layui-layer-btn{
+			padding: 0px !important;
+			bottom: 0 !important;
+			position: absolute !important;
+			width: 100% !important;
+		}
+        .layui-layer-btn a {
+            width: 48%;
+            text-align: center;
+            padding: 0px 45px !important;
+            border-radius: 5px;
+			margin: 0px !important;
+			width: 50%;
+			border-radius: 0px !important;
+
+        }
+		.layui-layer-content{
+			overflow: hidden !important;
+		}
+        .layui-layer-btn .layui-layer-btn0 {
+            border-color: #CCCCCC !important;
+            background-color: #CCCCCC !important;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .layui-layer-btn .layui-layer-btn1 {
+            border-color: #4285f4 !important;
+            background-color: #4285f4 !important;
+            height: 40px;
+            line-height: 40px;
+            color: #ffffff;
+        }
+		
+		
+		.layui-layer-setwin {
+		    padding-top: 15px;
+		    width: 50px;
+		    height: 40px;
+		    right: 0 !important;
+		    top: 0 !important
+		}
+		
+		.layui-layer-setwin .layui-layer-close1 {
+		    transform: scale(1.2) !important;
+		    height: 100%;
+		}
+		
+		 .demoClass .layui-layer-btn0 {
+			width: 20px !important;
+		    border-color: #E6E3E6;
+		    background-color: #FFF;
+		    color: black;
+		 } */
+		 
+		 .popOne .layui-layer-btn .layui-layer-btn0 {
+		     border-color: #CCCCCC !important;
+		     background-color: #CCCCCC !important;
+		 }
+		 
+		 .popTwo .layui-layer-btn .layui-layer-btn0 {
+		     border-color: #CCCCCC !important;
+		     background-color: #CCCCCC !important;
+		 }
+		 
+		 .popTwo .layui-layer-btn .layui-layer-btn1 {
+		     border-color: #4285f4 !important;
+		     background-color: #4285f4 !important;
+		     color: #ffffff;
+		 }
+		
+		
+		td{
+			width:150px;
+		}
+		#detailPage td{
+			width:120px;
+			text-align: left;
+		}
+		
+		#listDiv td{
+			width:80px;
+			text-align: center;
+		}
+		
+    </style>
+	</head>
+
+	<body>
+		<div id="off-canvas" style="">
+
+			<!-- 主页面容器 -->
+			<div class="mui-inner-wrap" style="">
+				<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+					<div class="mui-action-back">
+						<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+						<span class="wms-title" style="left: 100px;margin: 1px 0px 0px -3px;color:#FFFFFF;">室外出库作业<span></span></span>
+					</div>
+					<span @tap="toRefresh" style="color:#ffffff;font-weight: 700;margin-right: 0px;" class="mui-icon mui-icon-loop mui-pull-right"></span>
+				</header>
+
+				<div style="margin-top:60px;" id="detailPage">
+					<div style="padding:10px 10px 10px 10px;background:#e0e0e0;font-size:18px;">基本信息</div>
+					<div style="margin:0 auto; line-height: 40px;text-align: center;">
+						<table style="margin-top: -10px;width:100%;margin:0 auto;margin-left: -60px;">
+							<tr>
+								<td style="text-align: right;">任务单号：</td>
+								<td v-text="proReceiving.taskCode" style="color:#4285f4;font-weight: 700;font-size: 20px;"></td>
+								<td style="text-align: right;">提单号：</td>
+								<td v-text="proReceiving.ladingCode"></td>
+							</tr>
+							<tr>
+								<td style="text-align: right;">货主单位：</td>
+								<td v-text="proReceiving.ownerName" style="width:250px;   font-size: 14px;"></td>
+								<td style="text-align: right;">车牌号：</td>
+								<td v-text="proReceiving.carPlateNo"></td>
+<!-- 								<td style="text-align: right;">作业月台：</td>
+								<td v-text="proReceiving.platformName"></td>
+								<td style="text-align: right;">备注：</td>
+								<td v-text="proReceiving.remarks" style="width:250px;   font-size: 14px;"></td> -->
+								
+								
+							</tr>
+						</table>
+						
+						
+<!-- 						<div class="mui-switch mui-switch-blue" style="margin-top: 50px;">
+							<div class="mui-switch-handle"></div>
+						</div> -->
+						
+					</div>
+					<div style="padding:10px 10px 10px 10px;background:#e0e0e0;font-size:18px;">
+						物料信息
+						<span style="font-size: 16px;color: #4285f4;">(请选择计量物料)</span>
+					</div>
+					<div style="margin:0 auto; line-height: 30px;text-align: center;height: 340px;" id="listDiv">
+						<div style="margin-top:10px;padding-left:10px;padding-right:10px;">
+							<table style="width:100%;background: #fff;padding-top: 20px;margin-top: 8px;" :class="{'uibga': detail.isLoading === '1' && detail.isWeight === '0'}" v-for="(index,detail) in detailList">
+									<tr>
+										<td style="">物料描述：</td>
+										<td v-text="detail.materialDesc" style="width:150px;font-size: 14px;"></td>
+										<td style="">计量方式：</td>
+										<td v-text="detail.countWeightModeDesc"></td>
+										<td style="">子库位：</td>
+										<td v-text="detail.subPlaceName"></td>
+									</tr>
+									<tr>
+										<td style="">应发数量/重量：</td>  
+										<td>{{detail.sendNum}}{{detail.sendNumUnitDesc}}/{{detail.sendWeight}}{{detail.sendWeightUnitDesc}}</td>
+										<td style="">实提数量：</td>
+										<td style="width:150px;font-size: 14px;">   
+											<span v-if="detail.isWeight === '0' && detail.isLoading === '0'">
+												<span @tap="toAddNum(detail)"
+													style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px; background: #1566d2; padding:5px 20px;"
+													class="mui-icon mui-icon-plus"></span>
+												<input id="realNumInput{{detail.detailIds}}" type="number"
+													style="margin-left: 2px;width:35%;border: 1px solid;text-align: center;height: 25px; color:#4285f4;font-weight: 700;font-size: 22px;padding: 14px 20px;">
+												<span @tap="toMinusNum(detail)"
+													style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px; background: #1566d2; padding:5px 20px;"
+													class="mui-icon mui-icon-minus"></span>
+											</span>
+											
+											<span v-if="detail.isWeight === '1' || detail.isLoading === '1'">
+												<span
+													style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px; background: gainsboro; padding:5px 20px;"
+													class="mui-icon mui-icon-plus"></span>
+												<input id="realNumInput{{detail.detailIds}}" type="number" disabled="disabled"
+													style="margin-left: 2px;width:35%;border: 1px solid;text-align: center;height: 25px; color:gainsboro;font-weight: 700;font-size: 22px;padding: 14px 20px;">
+												<span
+													style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px; background: gainsboro; padding:5px 20px;"
+													class="mui-icon mui-icon-minus"></span>
+											</span>
+											
+										</td>
+										<td style="position: relative;left: 25px;">
+											<div v-if="detail.isWeight === '0'" id="loadSwitchBtn{{detail.id}}" class="mui-switch mui-switch-blue" @tap="loadSwitch(detail)"
+												:class="{'mui-active': detail.isLoading === '1'}">
+												<div class="mui-switch-handle"></div>
+											</div>
+									
+										</td>
+									
+									
+									</tr>
+							</table>
+						</div>
+					
+						
+					</div>
+
+					<div @tap="sendConfirmComplete(2)" style="position: absolute; color:#ffffff;width:50%;background:#5677fc;font-size: 18px;bottom:2px;padding:15px;text-align: center;left: 50%;">
+						确认全部完成
+					</div>
+					<div @tap="sendConfirmComplete(1)" style="position: absolute; color:#ffffff;width:50%;background:#CCCCCC;font-size: 18px;bottom:2px;padding:15px;text-align: center;">
+						提交过磅
+					</div>
+				</div>
+			</div>
+			<div class="mui-off-canvas-backdrop"></div>
+		</div>
+
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/outsideout-work.js");
+	</script>
+
+</html>

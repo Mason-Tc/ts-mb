@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>已出库列表查询页面</title>
+		<link rel="stylesheet" type="text/css" href="../css/warehouse-outing-management.css"/>
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+	</head>
+
+	<body>   
+		<div id="queryContent">   
+			<header class="mui-bar mui-bar-nav"> 
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+				</div>
+			</header>
+			<div id="queryContent" class="mui-content">
+				<ul class="query-list"> 
+					<li class="item">   
+						<span class="title">车牌号</span>
+						<input type="text" placeholder="车牌号" v-model="carPlateNo" />
+					</li>
+					<li class="item">   
+						<span class="title">提单号</span> 
+						<input type="text" placeholder="提单号" v-model="ladingCode"/>
+					</li>
+					<li class="item" style="position: relative;" @tap="showSelectBox('ownerNameList')">  
+						<span class="title">货主单位</span> 
+						<input type="text" readonly placeholder="请选择货主单位" :value="ownerName"/>
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>    
+					<li class="item" style="position: relative;" @tap="pickBeginDate">
+						<span class="title">开始时间</span>
+						<input type="text" readonly placeholder="年-月-日  时:分" :value="beginDate"/>
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;" @tap="pickEndDate">
+						<span class="title">截止时间</span>
+						<input type="text" readonly placeholder="年-月-日  时:分" :value="endDate"/> 
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item">
+						<button type="button" class="mui-btn" :class="{'mui-btn-primary': currentSelectedBtnIndex==0}" @tap="todayQuery" style="margin-left:90px;">当天</button>
+						<button type="button" class="mui-btn" :class="{'mui-btn-primary': currentSelectedBtnIndex==1}" @tap="threeDayQuery">近三天</button>
+						<button type="button" class="mui-btn" :class="{'mui-btn-primary': currentSelectedBtnIndex==2}" @tap="weekDayQuery">近一周</button>
+					</li>  
+				</ul>    
+			</div>
+			
+			<footer id="btnList">  
+				<button class="reset" @tap="resetVal">重置</button>
+				<button class="sure mui-action-back" @tap="sure">确定</button> 
+			</footer>
+			
+			<div id="ownerNameList" class="select-box">
+				<div class="title">   
+					货主单位选择
+				</div>   
+				<div class="content mui-scroll-wrapper">
+					<ul class="mui-scroll"> 
+						<li v-for="(index, item) in ownerNameList" @tap="pickOwnerName($event, item.text, item.id)" v-text="item.text"></li> 
+					</ul>
+				</div> 
+				<div class="foot">  
+					<button class="close" @tap="hideSelectBox('ownerNameList', false)">取消</button>
+					<button class="sure" @tap="hideSelectBox('ownerNameList', true)">确定</button>
+				</div>
+			</div>
+			<div class="cyq_mask" @tap="hideSelectBox()"></div>
+		</div>    
+	</body> 
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/output-list-query.js");
+	</script>
+</html>

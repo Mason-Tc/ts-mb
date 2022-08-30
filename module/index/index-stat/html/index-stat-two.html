@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<title>首页</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../../css/mui.css">
+		<link rel="stylesheet" href="../../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../../css/zmd.css">
+		<link href="../css/index-stat.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<!--
+		<div id="slider" class="mui-slider" data-slider="1"  style="height: 30px;">
+			<div class="mui-slider-group mui-slider-loop" style="transform: translate3d(-320px, 0px, 0px) translateZ(0px); transition-duration: 0ms;">
+				<div class="mui-slider-item mui-slider-item-duplicate">
+					<a href="#"><img src="../images/a.jpg"></a>
+				</div>
+				<div class="mui-slider-item">
+					<a href="#"><img src="../images/a.jpg"></a>
+				</div>
+				<<div class="mui-slider-item">
+					<a href="#"><img src="../images/a.jpg"></a>
+				</div>
+				<div class="mui-slider-item mui-slider-item-duplicate">
+					<a href="#"><img src="../images/shuijiao.jpg"></a>
+				</div>
+			</div>
+		</div>
+		-->
+
+		
+		<div id="index-stat" v-cloak>
+				<div  style=" width: 100%; overflow: hidden;">
+					<div v-if="cameraAuth"  @tap="openCameraList" class=" mui-col-sm-6 mui-col-xs-12 mokuai">
+					              <div class="mokuai bg_one">
+					              	   <p>在线监控  </p>
+					              	   <span><img src="../images/jiankong.png"></span>
+					              </div>
+					</div>
+
+					<div v-if="whsOnlineAuth"  @tap="openWarehouseOnline" class=" mui-col-sm-6 mui-col-xs-12 mokuai">
+						          <div class="mokuai bg_two"> 
+						          	   <p>在线仓库</p>
+						          	   <span><img src="../images/cangchu.png"></span>
+					              </div>
+						         </div>
+					</div>
+
+					<div v-if="exponentAuth" @tap="openCustomerExponent" class=" mui-col-sm-6 mui-col-xs-12 mokuai">
+						          <div class="mokuai bg_th"> 
+						          	        <p>指数分析</p>
+						          	   <span><img src="../images/shuju.png"></span>
+					              </div>
+						          </div>
+					
+					</div>
+				</div>
+		</div>
+		<script type="text/javascript" id="seajsnode" src="../../../../js/seajs/sea-all.min.js"></script>
+		<script>
+			//加载主模块
+			seajs.use("../js/index-stat.js", function() {});
+		</script>
+	</body>
+
+</html>

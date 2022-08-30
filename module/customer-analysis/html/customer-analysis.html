@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>客户分析</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link href="../css/customer-analysis.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../exponent-report/css/dAHFZjuHwkWsorioAuKK.css" />
+		<style type="text/css">
+			.icon {
+				width: 1.8em;
+				height: 1.8em;
+				vertical-align: -0.15em;
+				fill: currentColor;
+				overflow: hidden;
+				margin-right: 33px;
+				color: #738ffe;
+			}
+			
+			.selectedTD {
+				color: #738ffe;
+				font-weight: bold;
+			}
+			
+			.sxing {
+				font-size: 1rem;
+				list-style: none;
+				float: left;
+				height: 30px;
+				line-height: 30px;
+				margin-top: 10px;
+				padding: 0px 10px;
+				border: 1px solid #bbb;
+				border-radius: 4px;
+				margin: 5px;
+			}
+		</style>
+		<script src="../../exponent-report/css/font_size/iconfont.js"></script>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in" v-cloak>
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<!-- 主页面标题 -->
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title">客户分析</h1>
+						</div>
+
+						<span id="query-btn" v-on:tap="showOffExponentQuery" class="mui-btn mui-btn-outlined query-btn mui-pull-right" style="width: 68px; border:0px;">
+							<svg class="icon" aria-hidden="true">
+								<use xlink:href="#icon-shaixuan"></use>
+							</svg>
+	
+							<span class="query-btn-label" style="margin-top:-5px; display: inline-block; position: absolute; top:12px; right: 10px; ">筛选</span>
+						</span>
+					</header>
+					<div class="mui-content">
+						<div class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<div class="top-counter">
+									<div class="page-title">
+										<div class="tip-first">客户总数</div>
+										<div class="tip-first" style="margin-left: 50%;">吞吐量总数</div>
+										<div class="top-div-left" v-text="realNumTotalForSummaryStr"></div>
+										<div class="top-div-right" v-text="realWeightTotalForSummaryStr"></div>
+									</div>
+								</div>
+								<div style="text-align: right; margin-right: 5px; height: 18px; line-height: 20px; font-size: 12px;">取数说明：前30名客户</div>
+								<table class="m-main-table" style="margin-top: 3px;">
+									<tbody>
+										<tr>
+											<td class="td-left" style="width: 100px;">
+												<table class="td-left-wrap" style="width: 100%;">
+													<tr>
+														<th class="td2" style="width: 100%;">
+															客户名称
+														</th>
+													</tr>
+												</table>
+											</td>
+											<td class="td-right">
+												<div class="t-header">
+													<table class="header-table">
+														<tr>
+															<th @tap="doTurnoverRateSort($event)">
+																<div v-bind:class="[sortColumns[0] == sortColumn?'f-sort-active': '']">{{sortColumns[0]}}<span class="mui-icon" v-bind:class="[turnoverRateSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+															</th>
+															<th @tap="doEnterWeightSort($event)">
+																<div v-bind:class="[sortColumns[1] == sortColumn?'f-sort-active': '']">{{sortColumns[1]}}<span class="mui-icon" v-bind:class="[enterWeightSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+															</th>
+															<th @tap="doOutputWeightSort($event)">
+																<div v-bind:class="[sortColumns[2] == sortColumn?'f-sort-active': '']">{{sortColumns[2]}}<span class="mui-icon" v-bind:class="[outWeightSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+															</th>
+																														<th @tap="doFinalWeightSort($event)">
+																<div v-bind:class="[sortColumns[5] == sortColumn?'f-sort-active': '']">{{sortColumns[5]}}<span class="mui-icon" v-bind:class="[finalWeightSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+															</th>
+															<th @tap="doSpotGoodsTpWeightSort($event)">
+																<div v-bind:class="[sortColumns[3] == sortColumn?'f-sort-active': '']">{{sortColumns[3]}}<span class="mui-icon" v-bind:class="[tpWeightSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+															</th>
+															<th @tap="doBalanceSort($event)">
+																<div v-bind:class="[sortColumns[4] == sortColumn?'f-sort-active': '']">{{sortColumns[4]}}<span class="mui-icon" v-bind:class="[balanceSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+															</th>
+														</tr>
+													</table>
+												</div>
+											</td>
+										</tr>
+										<tr class="mainBody">
+											<td class="td-top">
+												<div class="t-left">
+													<table class="left-table">
+														<tr v-for="(index,exp) in summaryList">
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerNameShow.length/12)>0?'duohang'+parseInt(exp.ownerNameShow.length/12) + ' td2' : 'td2']" style="text-align: left;">
+																	<div class="help-tip">
+																		<p>{{(index + 1) + '.' + exp.ownerNameShow}}</p>
+																	</div>
+																	{{(index + 1) + '.' + exp.ownerNameShowAbb}}
+																</div>
+															</td>
+														</tr>
+														<tr class="space-tr"></tr>
+													</table>
+												</div>
+											</td>
+											<td class="td-content">
+												<div class="t-content">
+													<table class="content-table">
+														<tr v-for="exp in summaryList">
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerNameShow.length/12)>0?'duohang'+parseInt(exp.ownerNameShow.length/12): '']" style="text-align: right;" @tap="openDetailPage($event,exp)">
+																	<div class="limitNum13" style="margin-right: 3px;">{{exp.turnoverRate}}</div>
+																</div>
+															</td>
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerNameShow.length/12)>0?'duohang'+parseInt(exp.ownerNameShow.length/12): '']" style="text-align: right;">
+																	<div class="limitNum13" style="margin-right: 3px;">{{exp.periodEnterWeight}}</div>
+																</div>
+															</td>
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerNameShow.length/12)>0?'duohang'+parseInt(exp.ownerNameShow.length/12): '']" style="text-align: right;">
+																	<div class="limitNum13" style="margin-right:3px;">{{exp.periodOutputWeight}}</div>
+																</div>
+															</td>
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerNameShow.length/12)>0?'duohang'+parseInt(exp.ownerNameShow.length/12): '']" style="text-align: right;">
+																	<div class="limitNum13" style="margin-right:3px;">{{exp.finalWeight}}</div>
+																</div>
+															</td>
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerNameShow.length/12)>0?'duohang'+parseInt(exp.ownerNameShow.length/12): '']" style="text-align: right;">
+																	<div class="limitNum13" style="margin-right: 3px;">{{exp.spotGoodsTpWeight}}</div>
+																</div>
+															</td>
+															<td>
+																<div v-bind:class="[parseInt(exp.ownerNameShow.length/12)>0?'duohang'+parseInt(exp.ownerNameShow.length/12): '']" style="text-align: right;color:#129BFF;" @tap="openBalancePage($event,exp)">
+																	<div class="limitNum13" style="margin-right: 3px;">{{exp.settlementMoney}}</div>
+																</div>
+															</td>
+														</tr>
+														<tr class="space-tr"></tr>
+													</table>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop" @tap="hideOffCanvaQuery"></div>
+				</div>
+				<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-right" id="searchVue">
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area" @tap="hideOffCanvaQuery">
+							<a id="back-cust-list-btn" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title" style="left:40px; width: 4em; top:2px;">查询条件</h1>
+						</div>
+					</header>
+					<div id="div_search_summary" class="mui-scroll-wrapper" style="margin-bottom: 43px;">
+						<div class="mui-scroll">
+							<div style="margin-top: 48px; background:#fff;">
+							</div>
+							<div class="mui-clearfix"></div>
+							<div class="mui-card" style="margin: 0;">
+								<div style="height: 45px; line-height: 45px ; border-bottom: 1px solid #e3e3e3;">
+									<div style="position: relative; left: 15px;">
+										<span style="font-size: 14px;">客户名称:</span>
+										<input type="text" style="margin-left:10px;width: 190px; border: none;" v-model="filterConditions.ownerName" />
+									</div>
+								</div>
+								<div id="div_search_top" class="ioexp-top">
+									<table>
+										<tr>
+											<td>
+												<table id="tb_search_top_time">
+													<tr>
+														<td>
+															<span style="margin-left: 18px;">时间:</span>
+														</td>
+														<td id="td_curr_day" class="time-selected tap-time" @tap="selectDate($event, 0)"><span>当月</span></td>
+														<td class="tap-time" @tap="selectDate($event, 1)"><span>近3月</span></td>
+														<td class="tap-time" @tap="selectDate($event, 2)"><span>近6月</span></td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<span style="margin-left: 10px; font-size: 14px;"></span>&nbsp;&nbsp;<input style="width: 100px;" type="text" readonly placeholder="起始时间" :value="filterConditions.beginDate" @tap="pickBeginDate" />&nbsp;--&nbsp;<input style="width: 100px;" type="text" readonly placeholder="结束时间" :value="filterConditions.endDate" @tap="pickEndDate" />
+											</td>
+										</tr>
+									</table>
+								</div>
+								<ul class="mui-table-view" style="margin-top: 1px;">
+									<li id="li_warehouse" class="mui-table-view-cell mui-collapse mui-active">
+										<a class="mui-navigate-right" href="#">仓库</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="warehouseScrollDiv">
+												<div class="mui-scroll">
+													<ul style="background: #fff;">
+														<li v-for="warehouse in warehouseList" class="warehouseA" v-text="warehouse.text" :id="'warehouse_'+warehouse.id" :mtxId="warehouse.id" @tap="searchIvntDetail($event,warehouse.id);" style="font-size:1rem; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="btnList">
+						<button class="reset" @tap="resetFilter">重置</button>
+						<button class="sure" @tap="complete">完成</button>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/customer-analysis.js");
+	</script>
+	<!--<style>
+		table tr td,
+		table tr th {
+			border: 1px solid #ebebeb;
+		}
+		
+		table tr th {
+			background: #fafafa;
+		}
+		
+		.ap_word {
+			margin: 5px;
+		}
+	</style>-->
+
+</html>

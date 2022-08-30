@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>个人中心</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/zmd.css">
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link href="../css/my-profile.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="center-roww">
+			<!--<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color:#fff; position: fixed;top:10px; left:10px; z-index: 9;"></a>-->
+			<div class="s_admin"><img src="../../my-profile/images/zt_crm_logob.png"></div>
+			<div id="wave" style="overflow: hidden; ">
+				<canvas id="waveCont" style="width:100%;  position: fixed; top:-20px;"></canvas>
+			</div>
+			<script>
+				function SiriWave(opt) {
+					this.opt = opt || {};
+
+					this.K = 2;
+					this.F = 6;
+					this.speed = this.opt.speed || 0.001;
+					this.noise = this.opt.noise || 0;
+					this.phase = this.opt.phase || 0;
+
+					this.canvas = document.getElementById('waveCont');
+					this.width = this.canvas.width;
+					this.height = this.canvas.height;
+					this.MAX = (this.height / 2) - 4;
+
+					if(this.canvas.getContext) {
+						this.ctx = this.canvas.getContext('2d');
+					}
+
+					this.run = false;
+				}
+				SiriWave.prototype = {
+
+					_globalAttenuationFn: function(x) {
+						return Math.pow(this.K * 4 / (this.K * 4 + Math.pow(x, 4)), this.K * 2);
+					},
+
+					_drawLine: function(attenuation, color, xw, width) {
+						if(!this.ctx) {
+							return;
+						}
+						this.ctx.moveTo(0, 0);
+						this.ctx.beginPath();
+						this.ctx.strokeStyle = color;
+						this.ctx.lineWidth = width || 1;
+						var x, y;
+						for(var i = -this.K; i <= this.K; i += 0.005) {
+							x = this.width * ((i + this.K) / (this.K * 2)) * (xw || 1);
+							y = this.height / 2 + this.noise * this._globalAttenuationFn(i) * (1 / attenuation) * Math.sin(this.F * i - this.phase);
+							this.ctx.lineTo(x, y);
+						}
+						this.ctx.stroke();
+					},
+
+					_clear: function() {
+						if(!this.ctx) {
+							return;
+						}
+						this.ctx.globalCompositeOperation = 'destination-out';
+						this.ctx.fillRect(0, 0, this.width, this.height);
+						this.ctx.globalCompositeOperation = 'source-over';
+					},
+
+					_draw: function() {
+						if(!this.run) return;
+						this.phase = (this.phase + this.speed) % (Math.PI * 64);
+						this._clear();
+						this._drawLine(4, 'rgba(225,238,255,0.6)', 2.2, 1);
+						this._drawLine(2, 'rgba(225,238,255,0.4)', 2, 0.8);
+						this._drawLine(1, 'rgba(225,238,255,0.2)', 1.8, 0.5);
+						if(window.requestAnimationFrame) {
+							requestAnimationFrame(this._draw.bind(this), 10000);
+						}
+					},
+
+					start: function() {
+						this.phase = 0;
+						this.run = true;
+						this._draw();
+					},
+
+					stop: function() {
+						this.run = false;
+						this._clear();
+					},
+
+					setNoise: function(v) {
+						this.noise = Math.min(v, 1) * this.MAX;
+					},
+
+					setSpeed: function(v) {
+						this.speed = v;
+					},
+
+					set: function(noise, speed) {
+						this.setNoise(noise);
+						this.setSpeed(speed);
+					}
+
+				};
+
+				var SW = new SiriWave({
+					width: 640,
+					height: 288
+				});
+				SW.setSpeed(0.01);
+				SW.setNoise(0.6);
+				SW.start();
+			</script>
+			<!--
+				<header class="mui-bar mui-bar-nav">
+					<h1 class="mui-title mui-action-back" style="text-align: left;">个人中心</h1>
+				</header>
+				-->
+		</div>
+		<div id="user-info-detail" class="mui-content" style="background: #fafafa; padding-bottom: 100px;">
+			<div class="center-row">
+				<div class="mui-input-row">
+					<!--
+					<div class="label-l"><br/>头&nbsp;&nbsp;&nbsp;&nbsp;像</div>
+					<div class="label-r"><img src="../images/use_icon.png">
+						<!--<img src="http://img4.imgtn.bdimg.com/it/u=1432431551,985748249&fm=21&gp=0.jpg"/>--></div>
+			</div>
+			<div class="mui-input-row">
+				<label class="label-l">账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</label>
+				<label class="label-r" v-text="userInfoData.userName"></label>
+			</div>
+			<div class="mui-input-row">
+				<label class="label-l">手&nbsp;机&nbsp;号&nbsp;码</label>
+				<label class="label-r" v-text="replaceMobileNum(userInfoData.mobile)"></label>
+			</div>
+			<div class="mui-input-row" @tap="openMyVideoWindow()">
+				<label class="label-l">我&nbsp;的&nbsp;视&nbsp;频</label>
+				<a class="mui-navigate-right">
+					<label class="label-r"></label>
+				</a>
+			</div>
+			<div class="mui-input-row" @tap="openMyPictureWindow()">
+				<a class="mui-navigate-right">
+					<label class="label-l">我&nbsp;的&nbsp;图&nbsp;片</label>
+					<label class="label-r"></label>
+				</a>
+			</div>
+			<div class="mui-input-row">
+				<label class="label-l">版&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本</label>
+				<label class="label-r" v-text="version"></label>
+			</div>
+			<div class="mui-input-row" style="padding: 10px 0px; text-align: center; line-height: 30px;">
+				<a style="display:inline;" id="toUserProtocol">用户协议</a>
+				<span style="color: #0099FF; margin-left: 4px;">|</span>
+				<a style="display:inline;margin-left:4px;" id="toPrivacyProtocol">隐私政策</a>
+
+			</div>
+			<!--<div class="mui-input-row">
+					<label class="label-l">手机号</label>
+					<label class="label-r" v-text="userInfoData.mobile"></label>
+				</div>
+				<div class="mui-input-row">
+					<label class="label-l">邮&nbsp;&nbsp;&nbsp;&nbsp;箱</label>
+					<label class="label-r" v-text="userInfoData.email"></label>
+				</div>
+				<div class="mui-input-row">
+					<label class="label-l">版 本 号</label>
+					<label class="label-r" v-text="version"></label>
+				</div>-->
+			<!--<div class="mui-input-row">
+					<label class="label-l">级&nbsp;&nbsp;&nbsp;&nbsp;别</label>
+					<label class="label-r" v-cloak v-if="userInfoData.grade==0">董事长</label>
+					<label class="label-r" v-cloak v-if="userInfoData.grade==1">事业部责任人</label>
+					<label class="label-r" v-cloak v-if="userInfoData.grade==2">公司责任人</label>
+					<label class="label-r" v-cloak v-if="userInfoData.grade==3">部门责任人</label>
+					<label class="label-r" v-cloak v-if="userInfoData.grade==4">部门员工</label>
+				</div>
+				<div class="mui-input-row ">
+					<label class="label-l"><p>&nbsp;</p>组&nbsp;&nbsp;&nbsp;&nbsp;织</label>
+					<label class="label-r">
+							<p v-text="userInfoData.office.officeName"></p>
+							<p v-text="userInfoData.company.companyName"></p>
+							<p v-text="userInfoData.sysDep.depName"></p>
+						</label>
+				</div>
+				<div style="clear:both;margin-bottom: 5px;"></div>
+
+			</div>-->
+			<!--
+			<ul class="mui-table-view mui-table-view-chevron">
+				<li @tap="openAbout" class="mui-table-view-cell">
+					<a  href="javascript:void(0)" class="mui-navigate-right">关于CRM&nbsp;&nbsp;</a>
+				</li>
+			</ul>
+			-->
+			<button id="logout-btn" style=" width:90%; border-radius:24px;" class="mui-btn mui-btn-block mui-btn-primary">退出</button>
+		</div>
+	</body>
+	<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		//加载主模板块
+		seajs.use("../js/my-profile.js", function() {
+
+		});
+	</script>
+
+</html>

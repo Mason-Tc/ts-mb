@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>费用明细</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/cost-details.css" />
+
+	</head>
+
+	<body id="body_cost_details">
+		<div class="main">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title">费用明细</span>
+				</div>
+			</header>
+			<div id="div_cost_details" class="mui-content">
+				<ul class="info-list">
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>费用项目
+						</span>
+						<input type="text" readonly placeholder="请选择费用项目" :value="spendItemName" @click="showSelectBox('spendItemList')" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span>&nbsp;&nbsp;品名</span>
+						</span>
+						<input type="text" readonly placeholder="请选择品名" :value="brandName" @click="showSelectBox('brandList')" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>结算单位
+						</span>
+						<input type="text" readonly placeholder="" :value="spenderName" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px; display: none;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>结算方式
+						</span>
+						<input type="text" readonly placeholder="请选择结算方式" :value="paymentModeDesc" @click="showSelectBox('paymentModeList')" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>计价方式
+						</span>
+						<input type="text" readonly placeholder="请选择计价方式" :value="priceModeDesc" @click="showSelectBox('priceModeList')" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>结算量
+						</span>
+						<input type="number" placeholder="请填写结算量" v-model="settlementWeight" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>单价
+						</span>
+						<input type="number" placeholder="请填写单价" v-model="unitPrice" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>金额
+						</span>
+						<input type="text" readonly placeholder="请填写金额" v-model="detailMoney" />
+					</li>
+				</ul>
+			</div>
+		</div>
+		<nav id="nav_footer" class="mui-bar mui-bar-tab">
+			<div class="nav-div" @tap="submit">确定</div>
+		</nav>
+		<div id="spendItemList" class="select-box">
+			<div class="title">
+				费用项目选择
+			</div>
+			<div class="content mui-scroll-wrapper">
+				<ul class="mui-scroll">
+					<li v-for="(index, item) in spendItemList" @click="pickSpendItem($event, item)" v-text="item.text"></li>
+				</ul>
+			</div>
+			<div class="foot">
+				<button class="close" @click="hideSelectBox('spendItemList', false)">取消</button>
+			</div>
+		</div>
+		<div id="brandList" class="select-box">
+			<div class="title">
+				品名选择
+			</div>
+			<div class="content mui-scroll-wrapper">
+				<ul class="mui-scroll">
+					<li v-for="(index, item) in brandList" @click="pickBrand($event, item)" v-text="item.text"></li>
+				</ul>
+			</div>
+			<div class="foot">
+				<button class="close" @click="hideSelectBox('brandList', false)">取消</button>
+			</div>
+		</div>
+		<div id="spenderList" class="select-box">
+			<div class="title">
+				结算单位选择
+			</div>
+			<div class="content mui-scroll-wrapper">
+				<ul class="mui-scroll">
+					<li v-for="(index, item) in spenderList" @click="pickSpender($event, item)" v-text="item.text"></li>
+				</ul>
+			</div>
+			<div class="foot">
+				<button class="close" @click="hideSelectBox('spenderList', false)">取消</button>
+			</div>
+		</div>
+		<div id="paymentModeList" class="select-box">
+			<div class="title">
+				结算方式选择
+			</div>
+			<div class="content mui-scroll-wrapper">
+				<ul class="mui-scroll">
+					<li v-for="(index, item) in paymentModeList" @click="pickPaymentMode($event, item)" v-text="item.text"></li>
+				</ul>
+			</div>
+			<div class="foot">
+				<button class="close" @click="hideSelectBox('paymentModeList', false)">取消</button>
+			</div>
+		</div>
+		<div id="priceModeList" class="select-box">
+			<div class="title">
+				计价方式选择
+			</div>
+			<div class="content mui-scroll-wrapper">
+				<ul v-if="spendTemplate != '09'" class="mui-scroll">
+					<li v-for="(index, item) in priceModeList" @click="pickPriceMode($event, item)" v-text="item.text"></li>
+				</ul>
+				<ul v-if="spendTemplate == '09'" class="mui-scroll">
+					<li v-for="(index, item) in priceTemplateList" @click="pickPriceMode($event, item)" v-text="item.text"></li>
+				</ul>
+			</div>
+			<div class="foot">
+				<button class="close" @click="hideSelectBox('priceModeList', false)">取消</button>
+			</div>
+		</div>
+		<div class="cyq_mask" @click="hideSelectBox()"></div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/cost-details.js");
+	</script>
+
+</html>

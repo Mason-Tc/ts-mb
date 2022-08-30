@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>标签打印</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+		<link rel="stylesheet" type="text/css" href="../css/print-label-list.css" />
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in">
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="margin: 1px 0px 0px -3px;" v-text="headTitle"></span>
+						</div>
+						<input type='text' id='txt_scanner' style="width:0px; background:none; border:none;"></input>
+						<span v-if="!isPDA" @tap="scannerQRCode" class="mui-btn-outlined mui-pull-right" style="margin-top: 13px;margin-right: 5px;">
+							<span class="mui-icon-extra mui-icon-extra-sweep"></span>
+						</span>
+					</header>
+					<div id="slider" class="mui-content mui-slider">
+						<div class="fixed-top" style="border-bottom: 1px solid #ebebeb;">
+							<div class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="height: 40px; line-height:40px;">
+								<a class="mui-control-item slider-bottom" v-bind:class="[printPage.orderBy == 1 ? 'mui-control-item slider-bottom' : 'mui-control-item']" @tap="onItemSortClick($event,1)">按时间</a>
+								<a class="mui-control-item" v-bind:class="[printPage.orderBy == 2 ? 'mui-control-item slider-bottom' : 'mui-control-item']" @tap="onItemSortClick($event,2)">按货主</a>
+								<a class="mui-control-item" v-bind:class="[printPage.orderBy == 3 ? 'mui-control-item slider-bottom' : 'mui-control-item']" @tap="onItemSortClick($event,3)">按品名</a>
+							</div>
+							<!--<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>-->
+						</div>
+						<div id="sliderContent" class="mui-slider-group" style="top: 1px;">
+							<div id="printList" class="mui-slider-item mui-control-content">
+								<div class="search-wrap">
+									<div class="search" @tap="showOffExponentQuery">
+										<span class="mui-icon mui-icon-search"></span>
+									</div>
+								</div>
+								<div class="public-list mui-scroll-wrapper">
+									<ul class="public-list-wrapper mui-scroll">
+										<li class="item" v-for="(index,listItem) in printList">
+										<!--<li class="item" v-for="n in 11">-->
+											<input :id="listItem.cbxId" type="checkbox" name="cbx" @change="onTitleClick($event,listItem)" />
+											<ul>
+												<li class="title" @tap="onTitleClick($event,listItem)"><em class="bold">货主单位:</em><span class="bold" v-text="listItem.owner"></span>
+												</li>
+												<li class="materialDes">
+													<em style="width:125px;display: inline-block; text-align: right;">物料描述:</em><span v-text="listItem.materialDesc"></span>
+												</li>
+												<li><em style="width:125px;display: inline-block; text-align: right;">入库时间:</em><span v-text="listItem.enterDate"></span></li>
+												<li><em style="width:125px;display: inline-block; text-align: right;">捆包号:</em><span v-text="listItem.packageNo"></span></li>
+												<li><em style="width:125px;display: inline-block; text-align: right;">库位/层号:</em><span v-text="listItem.warehouseInfo"></span></li>
+												<li><em style="width:125px;display: inline-block; text-align: right;">数量/重量:</em><span v-text="listItem.itemTotal"></span></li>
+												<li><em style="width:125px;display: inline-block; text-align: right;">仓库:</em><span v-text="listItem.warehouseShortName"></span></li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="footer">
+								<input v-if="printList.length > 0" id="cbx_all" type="checkbox" name="cbx_all" @change="onCBoxAllChange($event)" />
+								<label v-if="printList.length > 0" class="allSelect">全选</label>
+								<span class="total">合计选中:</span>
+								<em style="margin-left: 8px;" v-text="labelTotalShow"></em>
+								<input type="button" value="标签打印" @tap="printLabel($event)" />
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop"></div>
+				</div>
+				<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-right" id="searchVue" style="width: 90%; background: #F0F0F0;">
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area" @tap="hideOffCanvaQuery">
+							<a id="back-cust-list-btn" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title" style="left:40px; width: 4em; top:3px;">查询条件</h1>
+						</div>
+					</header>
+					<div id="div_search_summary" class="mui-scroll-wrapper" style="margin-bottom: 43px;">
+						<div class="mui-scroll">
+							<div style="margin-top: 38px;height: 5px; background:#fff;">
+							</div>
+							<div class="mui-clearfix"></div>
+							<div class="mui-card" style="margin: 0;">
+								<ul class="info-list">
+									<li class="item" style="position: relative;">
+										<span class="title">捆包号:</span>
+										<input type="text" style="width: 170px;" v-model="printPage.filterConditions.packageNo" />
+									</li>
+									<li class="item" style="position: relative;">
+										<span class="title">货物编号:</span>
+										<input type="text" style="width: 170px;" v-model="printPage.filterConditions.materialCode" />
+									</li>
+									<li class="item" style="position: relative;">
+										<span class="title">入库单:</span>
+										<input type="text" style="width: 170px;" v-model="printPage.filterConditions.enterCode" />
+									</li>
+								</ul>
+								<div id="div_search_top_time" class="ioexp-top-time">
+									<table>
+										<tr>
+											<td>
+												<table id="tb_search_top_time">
+													<tr>
+														<td>
+															<span style="margin-left: 18px;">时间:</span>
+														</td>
+														<td id="td_curr_day" class="tap-time" @tap="selectDate($event, 0)"><span>当天</span></td>
+														<td id="td_three_day" class="tap-time" @tap="selectDate($event, 1)"><span>近3天</span></td>
+														<td class="tap-time" @tap="selectDate($event, 2)"><span>近一周</span></td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr>
+											<td style="height: 10px;"></td>
+										</tr>
+										<tr>
+											<td>
+												<span style="margin-left: 10px; font-size: 14px;"></span>&nbsp;&nbsp;<input style="width: 115px;" type="text" readonly placeholder="起始时间" :value="printPage.filterConditions.beginDate" @tap="pickBeginDate" />&nbsp;--&nbsp;<input style="width: 115px;" type="text" readonly placeholder="结束时间" :value="printPage.filterConditions.endDate" @tap="pickEndDate" />
+											</td>
+										</tr>
+									</table>
+								</div>
+								<ul class="mui-table-view" style="margin-top: 10px;">
+									<li class="mui-table-view-cell mui-collapse">
+										<a class="mui-navigate-right" href="#">货主单位</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="ownerScrollDiv">
+												<div class="mui-scroll">
+													<ul style="background: #fff;">
+														<li v-for="owner in ownerList" class="ownerA" v-text="owner.text" :id="'owner'+owner.id" :mtxId="owner.id" @tap="searchIvntDetail($event,owner.id);" style="font-size:1em; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li id="li_warehouse" class="mui-table-view-cell mui-collapse mui-active">
+										<a class="mui-navigate-right" href="#">仓库</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="warehouseScrollDiv">
+												<div class="mui-scroll">
+													<ul style="background: #fff;">
+														<li v-for="warehouse in conditions.warehouseList" class="warehouseA" v-text="warehouse.text" :id="'warehouse_'+warehouse.id" :mtxId="warehouse.id" @tap="searchIvntDetail($event,warehouse.id);" style="font-size:1em; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li class="mui-table-view-cell mui-collapse">
+										<a class="mui-navigate-right" href="#">库位</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="warehousePlaceScrollDiv">
+												<div class="mui-scroll">
+													<ul>
+														<li v-for="warehousePlace in warehousePlaceList" class="warehousePlaceA" v-text="warehousePlace.text" :id="'warehousePlace_'+warehousePlace.id" :mtxId="warehousePlace.id" @tap="searchIvntDetail($event,warehousePlace.id);" style="font-size:1em; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="btnList">
+						<button class="reset" @tap="resetFilter">重置</button>
+						<button class="sure" @tap="complete">完成</button>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/print-label-list.js", function(globalVue) {
+			window.globalVue = globalVue;
+		});
+	</script>
+
+</html>

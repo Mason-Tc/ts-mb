@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script></script>
+		</script>
+		<title>关于</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" href="../../../css/zmd.css">
+		<link href="../css/about.css" rel="stylesheet" />
+	</head>
+
+	<body id="about-detail">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title" style="margin-left:24px;">关于</h1>
+		</header>
+		<div class="mui-content">
+
+			<p>中拓CRM是一款基于网络、通讯、计算机等信息技术的在线软件系统，用于取代电话、传真、QQ等传统的信息传递方式，实现公司内部不同职能部门的无缝连接，协助管理者更好有效的完成客户关系管理，拥有客户管理、接触管理、授信管理、逾期管理等八大功能。</p>
+
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a>版本<span class="mui-pull-right" v-text="version"></span></a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a>内核版本<span class="mui-pull-right" v-text="innerVersion"></span></a>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		//加载主模块
+		seajs.use("../js/about.js", function() {
+
+		});
+	</script>
+
+</html>

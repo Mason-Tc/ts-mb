@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<title>首页</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../../css/mui.css">
+		<link rel="stylesheet" href="../../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../../css/zmd.css">
+		<link href="../css/index-stat.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="fixe_top"></div>
+		<div id="index-stat">
+			<div class="mui-slider">
+				<div class="mui-slider-group mui-slider-loop">
+					<!--支持循环，需要重复图片节点-->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#"><img src="../images/33.jpg" /></a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="#"><img src="../images/11.png" /></a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="#"><img src="../images/22.jpg" /></a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="#"><img src="../images/33.jpg" /></a>
+					</div>
+					<!--<div class="mui-slider-item">
+				<a href="#"><img src="../images/44.jpg" /></a>
+			</div>-->
+					<!--支持循环，需要重复图片节点-->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#"><img src="../images/11.png" /></a>
+					</div>
+				</div>
+				<div class="mui-slider-indicator">
+					<div class="mui-indicator mui-active"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+				</div>
+			</div>
+
+			<div v-if="isShowInformation">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media">
+						<div class="mui-media-body" style=" margin-left: -5px; display: flex; flex-direction: row;">
+							<div style="width: 10%;">
+								<span class="mui-icon-extra mui-icon-extra-notice" style="margin-left:5px; font-size: 30px; line-height: 30px;"></span>
+							</div>
+							<div style="width: 60%;" @tap="openInformation">
+								<span style="font-size: 16px; font-weight: bold;line-height: 30px;margin-left: 7px; color: #0099FF;" v-text="informationInfo.titleStr"></span>
+							</div>
+							<div style="width: 30%; text-align: right;">
+								<span style="font-size: 14px;line-height: 30px;" v-text="informationInfo.showDateStr"></span>
+							</div>
+						</div> 
+					</li>
+				</ul>
+			</div>
+			<!--bannner_end-->
+			<ul class="mui-table-view mui-grid-view mui-grid-9 navv">
+				<li v-if="craneManageAuth" @tap="openCraneManage" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_one"><img src="../images/icon_four.png"></span>
+						<div class="mui-media-body">作业管理</div>
+					</a>
+				</li>
+				<li v-if="whsEnterAuth" @tap="openWarehouseEntering" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_one"><img src="../images/icon_four.png"></span>
+						<div class="mui-media-body">入库管理</div>
+					</a>
+				</li>
+				<li v-if="whsOutAuth" @tap="openWarehouseOuting" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_two"><img src="../images/icon_fif.png"></span>
+						<div class="mui-media-body">出库管理</div>
+					</a>
+				</li>
+				<li v-if="todoAuth" @tap="openTodo" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_two"><img src="../images/icon_fif.png"></span>
+						<div class="mui-media-body">个人待办</div>
+					</a>
+				</li>
+				<li v-if="materialQueryAuth" @tap="openMaterialQuery" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_th"><img src="../images/icon_wzcx.png"></span>
+						<div class="mui-media-body">物资查询</div>
+					</a>
+				</li>
+				<li v-if="moveRegisterAuth" @tap="openMoveRegister" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_four"><img src="../images/icon_one.png"></span>
+						<div class="mui-media-body">移库登记</div>
+					</a>
+				</li>
+				<li v-if="inventoryAuth" @tap="openInventory" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_fif"><img src="../images/icon_wzpd.png"></span>
+						<div class="mui-media-body">物资盘点</div>
+					</a>
+				</li>
+				<li v-if="inventoryReportAuth" @tap="openInventoryReport" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_six"><img src="../images/icon_pdbg.png"></span>
+						<div class="mui-media-body">盘点报告</div>
+					</a>
+				</li>
+				<li v-if="whsOnlineAuth" @tap="openWarehouseOnline" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_seven"><img src="../images/icon_two.png"></span>
+						<div class="mui-media-body">在线仓库</div>
+					</a>
+				</li>
+				<li v-if="exponentAuth" @tap="openCustomerExponent" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_eight"><img src="../images/icon_one.png"></span>
+						<div class="mui-media-body">仓库指数</div>
+					</a>
+				</li>
+				<li v-if="cameraAuth" @tap="openCameraList" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_nine"><img src="../images/icon_th.png"></span>
+						<div class="mui-media-body">在线视频</div>
+					</a>
+				</li>
+<!-- 				<li @tap="openTestPage" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_nine"><img src="../images/icon_th.png"></span>
+						<div class="mui-media-body">测试页面</div>
+					</a>
+				</li> -->
+				<li v-if="stockQueryAuth" @tap="openStockQuery" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_ten"><img src="../images/icon_kczs.png"></span>
+						<div class="mui-media-body">库存展示</div>
+					</a>
+				</li>
+				<li v-if="putInAnalysisAuth" @tap="openPutInAnalysis" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_eleven"><img src="../images/icon_rkfx.png"></span>
+						<div class="mui-media-body">入库分析</div>
+					</a>
+				</li>
+				<li v-if="outPutAnalysisAuth" @tap="openOutPutAnalysis" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_twelve"><img src="../images/icon_ckfx.png"></span>
+						<div class="mui-media-body">出库分析</div>
+					</a>
+				</li>
+				<li v-if="customerAnalysisAuth" @tap="openCustomerAnalysis" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_thirteen"><img src="../images/icon_khfx.png"></span>
+						<div class="mui-media-body">客户分析</div>
+					</a>
+				</li>
+				<li v-if="settlementAnalysisAuth" @tap="openSettlementAnalysis" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_fourteen"><img src="../images/icon_jsfx.png"></span>
+						<div class="mui-media-body">结算分析</div>
+					</a>
+				</li>
+				<li v-if="throughputAnalysisAuth" @tap="openThroughputAnalysis" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_fourteen"><img src="../images/icon_jsfx.png"></span>
+						<div class="mui-media-body">吞吐量分析</div>
+					</a>
+				</li>
+				<li v-if="materialInventoryAnalysisAuth" @tap="openMaterialInventoryAnalysis" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_fourteen"><img src="../images/icon_jsfx.png"></span>
+						<div class="mui-media-body">出入库指数</div>
+					</a>
+				</li>
+				<li v-if="loadingAnalysisAuth" @tap="openLoadingAnalysis" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_fourteen"><img src="../images/icon_jsfx.png"></span>
+						<div class="mui-media-body">装卸统计</div>
+					</a>
+				</li>
+				<li v-if="queueRegisterAuth" @tap="openQueueRegister" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_fourteen"><img src="../images/icon_jsfx.png"></span>
+						<div class="mui-media-body">排队登记</div>
+					</a>
+				</li>
+				<li v-if="printAuth" @tap="openPrintLabel" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_one"><img src="../images/icon_two.png"></span>
+						<div class="mui-media-body">标签打印</div>
+					</a>
+				</li>
+				<li v-if="tagDiscernAuth" @tap="openTagDiscern" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+					<a href="#">
+						<span class="icon_one"><img src="../images/icon_two.png"></span>
+						<div class="mui-media-body">吊牌识别</div>
+					</a>
+				</li>
+			</ul>
+			<!--nav_end-->
+
+			<!--fix_end fix_topm-->
+			<div class="mui-slider mt8" id="warehouse-details">
+				<div class="mui-slider-group">
+					<!--第一个内容区容器-->
+					<div v-for="(warehouseList,dx) in inoutputReportsList" class="mui-slider-item">
+						<ul class="mui-table-view mui-grid-view">
+							<li v-for="(warehouseIndex,itemObj) in inoutputReportsList[warehouseList]" class="mui-table-view-cell mui-media mui-col-xs-6">
+								<a href="#">
+									<img class="mui-media-object" :src="itemObj.imgSrc" style="height: 80px;">
+									<div class="mui-media-bodyy">
+										<ul v-if="itemObj.warehouseShortName!='-'">
+											<li class="fb bule" @tap="extrasOpenCustomerExponent($event,itemObj,0)"><span v-text="itemObj.warehouseShortName"></span></li>
+											<li @tap="extrasOpenCustomerExponent($event,itemObj,0)">库存量：<span v-text="itemObj.inventoryWeight" class="fb"></span>吨</li>
+											<li @tap="extrasOpenCustomerExponent($event,itemObj,0)">吞吐量：<span v-text="itemObj.ioWeight" class="fb"></span>吨</li>
+										</ul>
+									</div>
+								</a>
+							</li>
+							<!--<li class="mui-table-view-cell mui-media mui-col-xs-6">
+		                <a href="#">
+		                    <img class="mui-media-object" src="http://placehold.it/400x300">
+		                    <div class="mui-media-body">
+		                    	<ul>
+		                    	 	<li class="fb bule">例杭州仓库</li>
+		                    	 	<li>字段一</li>
+		                    	 	<li><span>字段二</span></li>
+		                    	 </ul> 
+		                    </div>
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell mui-media mui-col-xs-6">
+		                <a href="#">
+		                    <img class="mui-media-object" src="http://placehold.it/400x300">
+		                    <div class="mui-media-body">
+		                    	<ul>
+		                    	 	<li class="fb bule">例杭州仓库</li>
+		                    	 	<li>字段一</li>
+		                    	 	<li><span>字段二</span></li>
+		                    	 </ul> 
+		                    </div>
+		                </a>
+		            </li> -->
+						</ul>
+					</div>
+					<!--第二个内容区-->
+					<!--<div class="mui-slider-item">   
+		        <ul class="mui-table-view mui-grid-view">  
+		            <li class="mui-table-view-cell mui-media mui-col-xs-6">
+		                <a href="#">
+		                    <img class="mui-media-object" src="http://placehold.it/400x300">
+		                    <div class="mui-media-body">
+		                         <ul>
+		                    	 	<li>例杭州仓库</li>
+		                    	 	<li>字段一</li>
+		                    	 	<li><span>字段二</span></li>
+		                    	 </ul> 
+		                    </div>
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell mui-media mui-col-xs-6">
+		                <a href="#">
+		                    <img class="mui-media-object" src="http://placehold.it/400x300">
+		                    <div class="mui-media-body">
+		                    	<ul>
+		                    	 	<li>例杭州仓库</li>
+		                    	 	<li>字段一</li>
+		                    	 	<li><span>字段二</span></li>
+		                    	 </ul> 
+		                    </div>
+		                </a>
+		            </li>
+		        </ul>
+		    </div>-->
+				</div>
+
+				<span class="left-btn c_btn_css mui-icon mui-icon-back " :class="[currenScrollIndex==0? 'invalid' : '']"></span>
+				<span class="right-btn c_btn_css mui-icon mui-icon-forward" :class="[currenScrollIndex==inoutputReportsList.length-1 ? 'invalid' : '']"></span>
+
+			</div>
+			<!--map_end-->
+
+			<div class="scrollDiv mt8" id="s2">
+				<ul class="mui-table-view ">
+
+					<li v-for="(newsflash,idx2) in ioNewsflashList" class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<div class="mui-media-body" style="margin-left:0px;">
+								<span v-text="ioNewsflashList[newsflash].warehouseShortName"></span>
+								<span v-text="ioNewsflashList[newsflash].ioType"></span>
+								<span v-text="ioNewsflashList[newsflash].realWeightTotal+'吨'"></span>
+								<span v-text="ioNewsflashList[newsflash].billDate" class="fr"></span>
+							</div>
+						</a>
+					</li>
+					<!--
+		    <li class="mui-table-view-cell mui-media">
+		        <a href="javascript:;">
+		            <div class="mui-media-body">
+		                                                   湘南库  (字段)                               
+		                <p class="mui-ellipsis">最新消息和内容。</p>
+		            </div>
+		        </a>
+		    </li>
+		    <li class="mui-table-view-cell mui-media">
+		        <a href="javascript:;">
+		            <div class="mui-media-body">
+		                                                 湘南库  (字段)                               
+		                <p class="mui-ellipsis">最新消息和内容。</p>
+		            </div>
+		        </a>
+		    </li> 
+		   -->
+				</ul>
+			</div>
+
+			<!--<div style="height:80px;  width:100%; display: block; background: #ffffff; border-top: 1px solid #f3f3f3; "></div>-->
+
+		</div>
+
+		<!--<script src="../js/jquery-1.10.2.js"></script>-->
+		<script type="text/javascript" id="seajsnode" src="../../../../js/seajs/sea-all.min.js"></script>
+		<script type="text/javascript" src="../../../../js/mui/mui.min.js"></script>
+		<script>
+			//加载主模块
+			seajs.use("../js/index-stat.js", function() {});
+		</script>
+		<script>
+			//获得slider插件对象
+			var gallery = mui('.mui-slider');
+			gallery.slider({
+				interval: 5000 //自动轮播周期，若为0则不自动播放，默认为0；
+			});
+		</script>
+
+		<script type="text/javascript">
+			//滚动插件 
+			/*(function($) {
+			$.fn.extend({
+				Scroll: function(opt, callback) {
+					//参数初始化
+					if (!opt) var opt = {};
+					var _this = this.eq(0).find("ul:first");
+					var lineH = _this.find("li:first").height(), //获取行高
+						line = opt.line ? parseInt(opt.line, 10) : parseInt(this.height() / lineH, 10), //每次滚动的行数，默认为一屏，即父容器高度
+						speed = opt.speed ? parseInt(opt.speed, 10) : 500, //卷动速度，数值越大，速度越慢（毫秒）
+						timer = opt.timer ? parseInt(opt.timer, 10) : 3000; //滚动的时间间隔（毫秒）
+					if (line == 0) line = 1;
+					var upHeight = 0 - line * lineH;
+					//滚动函数
+					scrollUp = function() {
+						_this.animate({  
+							marginTop: upHeight
+						}, speed, function() {
+							for (i = 1; i <= line; i++) {
+								_this.find("li:first").appendTo(_this);
+							}
+							_this.css({
+								marginTop: 0
+							});
+						});
+					}
+					//鼠标事件绑定
+					_this.hover(function() {
+						clearInterval(timerID);
+					}, function() { 
+						timerID = setInterval("scrollUp()", timer);
+					}).mouseout();
+				}
+			});
+		})(jQuery);
+  
+		$(document).ready(function() {
+			$("#s2").Scroll({
+				line: 0.5,
+				speed: 500,
+				timer: 3000
+			});
+		});*/
+		</script>
+
+	</body>
+
+</html>

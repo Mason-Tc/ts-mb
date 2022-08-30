@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>移库列表</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+		<link rel="stylesheet" type="text/css" href="../css/move-register-list.css" />
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in">
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="margin: 1px 0px 0px -3px;" v-text="headTitle"></span>
+						</div>
+					</header>
+					<div id="slider" class="mui-content mui-slider">
+						<div id="menuSliderControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #ffffff;height: 40px; line-height:40px;">
+							<a class="mui-control-item" href="#waitOuting" @tap="onItemSliderClick($event,0)">物资列表</a>
+							<a class="mui-control-item" href="#alreadyOuting" @tap="onItemSliderClick($event,1)">已移库列表</a>
+						</div>
+						<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+						<div id="sliderContent" class="mui-slider-group" style="top: 90px;">
+							<!--物资列表页面-->
+							<div id="pendingList" class="mui-slider-item mui-control-content mui-active">
+								<div class="search-wrap">
+									<div class="search" @tap="showOffExponentQuery">
+										<span class="mui-icon mui-icon-search"></span>
+									</div>
+								</div>
+								<div class="public-list mui-scroll-wrapper" style="margin-bottom: 45px;">
+									<ul class="public-list-wrapper mui-scroll">
+										<li class="item" v-for="(index,listItem) in pendingPage.pendingList">
+											<!--<li class="item" v-for="n in 11">-->
+											<input :id="listItem.cbxId" type="checkbox" name="cbx" @change="onTitleClick($event,listItem)" />
+											<ul>
+												<li class="title" @tap="onTitleClick($event,listItem)"><em class="bold">货主单位:</em><span class="bold" v-text="listItem.owner"></span></li>
+												<li class="materialDes">
+													<em style="width:125px;display: inline-block; text-align: right;">物料描述:</em><span v-text="listItem.materialDesc"></span>
+												</li>
+												<li><em style="width:125px;display: inline-block; text-align: right;">捆包号:</em><span v-text="listItem.packageNo"></span></li>
+												<li><em style="width:125px;display: inline-block; text-align: right;">库位/层号:</em><span v-text="listItem.warehouseInfo"></span></li>
+												<li><em style="width:125px;display: inline-block; text-align: right;">可供数量/重量:</em><span v-text="listItem.itemTotal"></span></li>
+												<li><em style="width:125px;display: inline-block; text-align: right;">仓库:</em><span v-text="listItem.warehouseShortName"></span></li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+								<div class="footer">
+									<input v-if="pendingPage.pendingList.length > 0" id="cbx_all" type="checkbox" name="cbx_all" @change="onCBoxAllChange($event)" />
+									<label v-if="pendingPage.pendingList.length > 0" class="allSelect">全选</label>
+									<span v-if="pendingPage.pendingList.length > 0" class="total">合计:</span>
+									<em v-if="pendingPage.pendingList.length > 0" v-text="totalInfo"></em>
+									<input v-if="isReceivingRegister" type="button" value="移库登记" @tap="openReceivingRegisterHTML" />
+									<span class="mui-badge mui-badge-warning" v-text="selectedPendingList.length" v-if="isReceivingRegister && selectedPendingList.length > 0"></span>
+								</div>
+							</div>
+							<!--已移库列表页面-->
+							<div id="movedList" class="mui-slider-item mui-control-content">
+								<div class="search-wrap">
+									<div class="search" @tap="showOffExponentQuery">
+										<span class="mui-icon mui-icon-search"></span>
+									</div>
+								</div>
+								<div class="public-list mui-scroll-wrapper">
+									<ul class="public-list-wrapper mui-scroll">
+										<li class="item" v-for="(index,listItem) in movedPage.movedList" @tap="openMoveDetailHTML(listItem.id)">
+										<!--<li class="item" v-for="n in 21">-->
+											<ul>
+												<li><em class="bold">移库单号:</em><span class="bold" v-text="listItem.moveCode"></span></li>
+												<li><em style="width:98px;display: inline-block; text-align: right;">移库时间:</em><span v-text="listItem.moveDate"></span></li>
+												<li><em style="width:98px;display: inline-block; text-align: right;vertical-align:top;">货主单位:</em><span v-text="listItem.ownerName" style="display: inline-block;  width:calc(100% - 118px);"></span></li>
+												<li><em style="width:98px;display: inline-block; text-align: right;vertical-align:top;">移库原因:</em><span v-text="listItem.reasonStr" style="display: inline-block;  width:calc(100% - 118px);"></span></li>
+												<li><em style="width:98px;display: inline-block; text-align: right;">制单员:</em><span v-text="listItem.updateName"></span></li>
+												<li><em style="width:98px;display: inline-block; text-align: right;">仓库:</em><span v-text="listItem.warehouseName"></span></li>
+											</ul>
+											<span class="mui-icon mui-icon-trash" v-if="listItem.modifiedFlag == '1'" @tap="processListItem($event, 1, listItem.id)" style=" position: absolute; right:10px;"></span>
+											<span class="mui-icon mui-icon-compose" v-if="listItem.modifiedFlag == '1'" @tap="openModifyListEditHTML($event, listItem)" style="position: absolute; top:10px;right:10px;"></span>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop" @tap="hideOffCanvaQuery"></div>
+				</div>
+				<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-right" id="searchVue" style="width: 90%; background: #F0F0F0;">
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area" @tap="hideOffCanvaQuery">
+							<a id="back-cust-list-btn" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title" style="left:40px; width: 4em; top:3px;">查询条件</h1>
+						</div>
+					</header>
+					<div id="div_search_summary" class="mui-scroll-wrapper" style="margin-bottom: 43px;">
+						<div class="mui-scroll">
+							<div style="margin-top: 38px;height: 5px; background:#fff;">
+							</div>
+							<div class="mui-clearfix"></div>
+							<div class="mui-card" style="margin: 0;">
+								<div v-if="exponentType == 1" id="div_search_top" class="ioexp-top">
+									<span style="margin-left: 10px; font-size: 14px;">时间</span>&nbsp;&nbsp;<input type="text" readonly placeholder="起始时间" :value="movedPage.filterConditions.beginDate" @tap="pickBeginDate" />&nbsp;--&nbsp;<input type="text" readonly placeholder="结束时间" :value="movedPage.filterConditions.endDate" @tap="pickEndDate" />
+								</div>
+								<ul v-if="exponentType == 0" class="info-list">
+									<li class="item" style="position: relative;">
+										<span class="title">捆包号:</span>
+										<input type="text" style="width: 170px;" v-model="pendingPage.filterConditions.packageNo" />
+									</li>
+									<li class="item" style="position: relative;">
+										<span class="title">货物编号:</span>
+										<input type="text" style="width: 170px;" v-model="pendingPage.filterConditions.materialCode" />
+									</li>
+								</ul>
+								<ul class="mui-table-view" style="margin-top: 10px;">
+									<li v-bind:class="[exponentType == 0 ? 'mui-table-view-cell mui-collapse' : 'mui-hidden']" class="mui-table-view-cell mui-collapse">
+										<a class="mui-navigate-right" href="#">货主单位</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="ownerScrollDiv">
+												<div class="mui-scroll">
+													<ul style="background: #fff;">
+														<li v-for="owner in ownerList" class="ownerA" v-text="owner.text" :id="'owner'+owner.id" :mtxId="owner.id" @tap="searchIvntDetail($event,owner.id);" style="font-size:1em; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li id="li_warehouse" class="mui-table-view-cell mui-collapse mui-active">
+										<a class="mui-navigate-right" href="#">仓库</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="warehouseScrollDiv">
+												<div class="mui-scroll">
+													<ul style="background: #fff;">
+														<li v-for="warehouse in conditions.warehouseList" class="warehouseA" v-text="warehouse.text" :id="'warehouse_'+warehouse.id" :mtxId="warehouse.id" @tap="searchIvntDetail($event,warehouse.id);" style="font-size:1em; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li v-bind:class="[exponentType == 0 ? 'mui-table-view-cell mui-collapse' : 'mui-hidden']" class="mui-table-view-cell mui-collapse">
+										<a class="mui-navigate-right" href="#">库位</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="warehousePlaceScrollDiv">
+												<div class="mui-scroll">
+													<ul>
+														<li v-for="warehousePlace in warehousePlaceList" class="warehousePlaceA" v-text="warehousePlace.text" :id="'warehousePlace_'+warehousePlace.id" :mtxId="warehousePlace.id" @tap="searchIvntDetail($event,warehousePlace.id);" style="font-size:1em; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="btnList">
+						<button class="reset" @tap="resetFilter">重置</button>
+						<button class="sure" @tap="complete">完成</button>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/move-register-list.js");
+	</script>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>作业告警</title>
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../../../css/mui.css" />
+    <link rel="stylesheet" href="../../../css/mui.picker.css" />
+    <link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+    <link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+    <link rel="stylesheet" href="../../../css/icons-extra.css" />
+    <link rel="stylesheet" href="../../../css/reset.css" />
+    <link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+    <link rel="stylesheet" type="text/css" href="../css/crane-warn.css" />
+    <style>
+		.layui-layer-btn{
+			padding: 0px !important;
+			bottom: 0 !important;
+			position: absolute !important;
+			width: 100% !important;
+		}
+		.layui-layer-btn .layui-layer-btn0 {
+		    border-color: #4285f4 !important;
+		    background-color: #4285f4 !important;
+		    height: 40px;
+		    line-height: 40px;
+		    width: 100%;
+		        text-align: center;
+		        margin: 0;
+		        font-size: 16px;
+		}
+		
+        /**弹框右上角图标**/
+        .layui-layer-setwin {
+            padding-top: 15px;
+            width: 50px;
+            height: 40px;
+            right: 0 !important;
+            top: 0 !important
+        }
+
+        .layui-layer-setwin .layui-layer-close1 {
+            transform: scale(1.2) !important;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="off-canvas" class="">
+		<!--地磅告警弹出-->
+        <div id="div_alert_weighbridge" style="display:none;padding:20px;">
+            <div style="border:0;">
+                <span id="spn_weighbridge_tag1" class="wb-handleSpan tagActive" @tap="toRadio(1,$event,'2')">不允许出库，请处理后重新过磅</span>
+                <span id="spn_weighbridge_tag2" class="wb-handleSpan" @tap="toRadio(2,$event,'2')" style="margin-left:25px;">允许出库，重刷身份证过磅出园</span>
+            </div>
+            <div>
+                <textarea id="txt_weighbridge_reason" rows="4" placeholder="请输入告警说明" style="padding-left:5px;border:0;"></textarea>
+            </div>
+        </div>
+		<!--地磅告警弹出-->
+		<!--月台告警弹出-->
+		<div id="div_alert_railwayplatform" style="display:none;padding:20px;">
+		    <div style="border:0;">
+		        <span id="spn_railwayplatform_tag1" class="handleSpan tagActive" @tap="toRadio(1,$event,'1')">告警确认，不允许作业</span>
+		        <span class="handleSpan" @tap="toRadio(2,$event,'1')" style="margin-left:25px;">告警确认，允许作业</span>
+		    </div>
+		    <div>
+		        <span style="margin-left:5px;">告警原因:</span>
+		        <select id="sl_railwayplatform_reason" @change="toChange" style="width:80%;padding-left: 5px;border:0;">
+		            <option value="">请选择</option>
+		            <option v-for="di in dataPage.warnDictData" v-value="di.label" v-text="di.label"></option>
+		        </select>
+		    </div>
+		    <div>
+		        <textarea id="txt_railwayplatform_reason" rows="4" placeholder="请输入告警说明" style="padding-left:5px;border:0;"></textarea>
+		    </div>
+		</div>
+		<!--月台告警弹出-->
+        <!-- 侧滑导航根容器 -->
+        <div class="mui-off-canvas-wrap" id="contentDiv">
+            <!-- 主页面容器 -->
+            <div class="mui-inner-wrap">
+                <header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+                    <div class="mui-action-back">
+                        <a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+                        <span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color:#FFFFFF;">作业告警</span>
+                    </div>
+                </header>
+                <div id="slider" class="mui-content mui-slider">
+                    <div id="sliderContent" class="mui-slider-group" style="top: 1px;">
+                        <div id="div_list" class="mui-slider-item mui-control-content">
+                            <div id="divTag">
+                                <span @tap="selectTag('',$event)" style="margin-left:20px;"
+                                    class="tagActive">全部告警</span>
+                                <!-- <span style="margin-left: -4px;" @tap="selectTag(1,$event)">入库告警</span>
+                                <span @tap="selectTag(2,$event)">出库告警</span> -->
+                                <span v-if="wbAuth" @tap="selectTag('2',$event)">地磅告警</span>
+								<span v-if="rpAuth" @tap="selectTag('1',$event)">月台告警</span>
+                            </div>
+                            <div class="search-wrap" style="height: 100%;">
+                                <div class="search-item" style="margin-left: 10px;">
+                                    <span>任务单号:</span>
+                                    <input type="text" style="border:0;width: 150px;    height: 28px;"
+                                        v-model="dataPage.filterConditions.taskCode" />
+                                </div>
+                                <div class="search-item">
+                                    <span style="margin-left: 10px; font-size: 14px;"></span>&nbsp;&nbsp;
+                                    <input style="width: 130px; padding-left: 5px;height: 28px;" type="text" readonly
+                                        placeholder="起始时间" :value="dataPage.filterConditions.beginDate"
+                                        @tap="pickBeginDate" />&nbsp;--&nbsp;
+                                    <input style="width: 130px; padding-left: 5px;height: 28px;" type="text" readonly
+                                        placeholder="结束时间" :value="dataPage.filterConditions.endDate"
+                                        @tap="pickEndDate" />
+                                </div>
+                                <div class="search-item">
+                                    <span>仓库:</span>
+                                    <select style="width: 150px;    height: 28px;"
+                                        v-model="dataPage.filterConditions.warehouseId">
+                                        <option value="">请选择</option>
+                                        <option :value="wa.id" v-for="wa in warehouseList">{{wa.text}}</option>
+                                    </select>
+                                </div>
+                                <div class="search-item"
+                                    style="height: 30px;padding: 6px 20px;background: royalblue;color:white;border: 1px solid #ccc;border-radius: 3px;"
+                                    @tap="complete"><span>查 询</span>
+                                </div>
+                                <div class="public-list mui-scroll-wrapper" style="top: 100px !important;">
+                                    <ul class="public-list-wrapper  mui-row">
+                                        <li v-for="listItem in dataPage.dataList" style="margin-top: 10px;" class="mui-col-sm-12 mui-col-xs-12">
+										<!-- <li v-for="listItem in 11" style="margin-top: 10px;" class="mui-col-sm-12 mui-col-xs-12"> -->
+                                            <div style="display: flex;background: #fff;padding: 10px">
+                                                <div style="flex: 0.9;" class="span-r">
+                                                    <table style="width:100%;line-height: 24px;">
+														<tr>
+															<td>
+																<table style="width:100%;">
+																<tr>
+																    <td style="width:100px;">告警时间：</td>
+																    <td style="width:200px;" v-text="listItem.warnTime"></td>
+																    <td style="width:100px;" v-text="listItem.warnType=='1'? '行车名称：':'地磅名称：'"></td>
+																    <td style="width:200px;" v-text="listItem.deviceName"></td>
+																	<td style="width:100px;">业务类型：</td>
+																	<td style="width:200px;" v-text="listItem.taskType == '1' ? '入库':'出库'"></td>
+																	<td style="width:100px;">任务单号：</td>
+																	<td style="width:200px;" v-text="listItem.taskCode"></td>
+																</tr>	
+																</table>
+															</td>
+														</tr>
+                                                        <tr>
+                                                        	<td style="padding-top: 10px;">
+                                                        		<table style="width:100%;">
+                                                        			<tr>
+                                                        			    
+                                                        			    <td style="width:7%;">车牌号：</td>
+                                                        			    <td style="width:18%;" v-text="listItem.carNo"></td>
+                                                        			    <td style="width:9%;">告警信息：</td>
+                                                        			    <td style="width:200px;" v-html="listItem.warnMsgHtml"></td>
+                                                        			</tr>
+                                                        		</table>
+                                                        	</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div style="flex:0.1">
+                                                    <button @tap="toHandle(listItem)">告警处理</button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mui-off-canvas-backdrop"></div>
+                </div>
+            </div>
+        </div>
+	</div>
+</body>
+
+<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+<script>
+    seajs.use("../js/crane-warn.js");
+</script>
+
+</html>

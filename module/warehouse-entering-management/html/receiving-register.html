@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>收货登记</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/receiving-register.css" />
+	</head>
+
+	<body>
+		<div id="receivingRegister">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title" v-bind:class="type == 0 ? 'wms-title' : 'wms-title-g'" v-text="type == 0 ? '收货登记' : '收货改单('+receivingCode+')'"></span>
+				</div>
+				<input type='text' id='txt_scanner' style="width:0px; background:none; border:none;"></input>
+				<span v-if="!isPDA && type == 0" @tap="scannerQRCode" class="mui-btn-outlined mui-pull-right" style="margin-top: 13px;margin-right: 5px;">
+					<span class="mui-icon-extra mui-icon-extra-sweep"></span>
+				</span>
+			</header>
+			<div id="slider" class="mui-content mui-slider">
+				<div class="fixed-top" style="border-bottom: 1px solid #ebebeb;">
+					<div class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="height: 40px; line-height:40px;">
+						<a class="mui-control-item" href="#div_basic_info" @tap="onItemSliderClick($event,0)">基本信息</a>
+						<a class="mui-control-item" href="#div_attach" @tap="onItemSliderClick($event,1)">附件</a>
+					</div>
+					<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+				</div>
+				<div id="sliderContent" class="mui-slider-group" style="top: -2px;">
+					<!--基本信息-->
+					<div id="div_basic_info" class="mui-slider-item mui-control-content mui-active">
+						<div id="div_basic_info_scroll" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<div id="queryContent">
+									<ul class="query-list">
+										<li class="item" style="position: relative;">
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title">
+										<span style="color: red;">*&nbsp;</span>收货时间
+											</span>
+											<input type="text" readonly placeholder="请选择收货时间" v-model="receivingDate" @tap="pickReceiveTime" />
+											<span v-if="type == 0" class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title"><span style="color: red;">*&nbsp;</span>货主单位</span>
+											<input type="text" readonly placeholder="请选择货主单位" :value="ownerName" @tap="pickOwnerName" />
+											<span v-if="type == 0" class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title"><span style="color: red;">*&nbsp;</span>结算单位</span>
+											<input type="text" readonly placeholder="请选择结算单位" :value="spenderName" @tap="pickSpender" />
+											<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title"><span style="color: red;">*&nbsp;</span>结算方式</span>
+											<input type="text" readonly placeholder="请选择结算方式" :value="paymentMode" @tap="pickPaymentMode" />
+											<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title"><span style="color: red;">&nbsp;</span>运输单位</span>
+											<input type="text" readonly placeholder="请选择运输单位" :value="transporterName" @tap="pickTransportName" />
+											<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+										</li>
+										<li class="item" style="position: relative;">
+											<span class="title"><span style="color: red;">*&nbsp;</span>运输方式</span>
+											<input type="text" readonly placeholder="请选择运输方式" :value="transportMode" @tap="pickTransportMode" />
+											<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+										</li>
+									</ul>
+								</div>
+								<div style="margin-top: 10px; height: 30px; line-height: 30px; margin-right: 5px; margin-bottom: 10px;">
+									<div style="float:left; margin:0px auto; font-size:14px;  color: #333; font-weight: bold;display: block;width: 60%; padding-left: 10px;">物料信息&nbsp;&nbsp;<span v-text="totalStr"></span></div>
+									<div v-if="isBatchAdd" style="float:right; line-height: 28px;height: 30px;  width: 100px; border: 1px solid #ccc; border-radius: 20px; background: #fff; padding: 0px 10px;" @tap="toMaterialInfoPage($event, null, 0)">
+										<div style="float:left;font-size:28px; color: #5677fc; margin-top: -1px; line-height: 25px;">+</div>
+										<div style="float:right;font-size: 14px;">添加物料</div>
+									</div>
+								</div>
+								<div class="public-list">
+									<ul class="public-list-wrapper">
+										<li :id="item.processId" class="item" v-for="(index,item) in materielList">
+											<div class="mui-switch" v-bind:class="[item.isReceived == '1' ? 'mui-switch mui-active' : 'mui-switch']" @tap="toggleSwitch($event, item)">
+												<div class="mui-switch-handle"></div>
+											</div>
+											<span class="mui-icon mui-icon-close" @tap="deleteItem($event, item)"></span>
+											<ul @tap="toMaterialInfoPage($event, item,1)">
+												<li class="materialDes"><em style="width:7em;display: inline-block; text-align: right; vertical-align: top;">物料描述:</em><span v-text="item.materialDesc" style=" display: inline-block;  width:calc(100% - 13em);"></span></li>
+												<li><em style="width:7em;display: inline-block; text-align: right; vertical-align: top;">捆包号:</em><span v-text="item.packageNo"></span></li>
+												<li><em style="width:7em;display: inline-block; text-align: right; vertical-align: top;">库位:</em><span v-text="item.warehousePlaceName"></span></li>
+												<li><em style="width:7em;display: inline-block; text-align: right; vertical-align: top;">实收数量/重量:</em><span v-text="item.realPickInfo"></span>
+												</li>
+											</ul>
+										</li>
+										<!--<li class="item" v-for="n in 11">
+									<input type="checkbox" />
+									<div class="mui-switch" @tap="toggleSwitch($event)">
+										<div class="mui-switch-handle"></div>
+									</div>
+									<span class="mui-icon mui-icon-close" @tap="deleteItem($event, item.id)"></span>
+									<ul @tap="openMaterialDetailsHTML">
+										<li class="materialDes">
+											<em>物料描述:</em><span>品名 规格 材质 产地</span>
+										</li>
+										<li><em>捆包号:</em><span v-text="'GS09933'"></span></li>
+										<li><em>库位:</em><span v-text="'b-10'"></span></li>
+										<li><em>实收数量/实收重量:</em><span v-text="'12件/36吨'"></span></li>
+									</ul>
+								</li>-->
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--附件-->
+					<div id="div_attach" class="mui-slider-item mui-control-content content m-list-time-line">
+						<div style="width: 100%; margin: 10px auto; margin-top: 42px;">
+							<!--文件区域-->
+							<div v-cloak>
+								<ul class="mui-table-view">
+									<li class="mui-table-view-cell mui-media" v-for="file in files">
+										<a class="">
+											<img class="mui-media-object mui-pull-left" style="width:2.5em;" src="../../../images/file.jpg">
+											<div class="mui-media-body">
+												{{file.fileName.length
+												<18?file.fileName:file.fileName.substring(0,5)+ '...'+file.fileName.substr(-9)}} <p class="mui-ellipsis" @tap="openFile(file.id)">
+													</p>
+													<div class="delete" @click="delete(file, 1)">删除</div>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<!--图片区域-->
+							<div v-clock>
+								<ul class="mui-table-view mui-grid-view">
+									<li class="mui-table-view-cell mui-media mui-col-xs-3" v-for="image in imageFiles" style="height: 88px;margin:10px 0;position: relative;">
+										<div class="close" style="background: red; color:#fff; width: 18px; height:18px; position: absolute;top:2px;right: 4px;z-index: 1;border-radius:4px;" @click="delete(image, 2)" id="{{image.id}}">X</div>
+										<img class="" data-preview-src="{{image.previewFileUrl}}" data-preview-group="1" style="position: absolute;top:0;right: 2%; border-radius:4px;margin: 0 auto;width: 96%;" src="{{image.fileUrl}}">
+
+									</li>
+									<li class="mui-table-view-cell mui-media mui-col-xs-12" id="addFile" style="height: 38px; margin:10px 0px 0px 5px;">
+										<a style=" line-height: 10px; font-size: 38px; padding-left: 0px; border-radius:4px;">+<span style="font-size:16px; margin:4px 0px 0px 6px; display: inline-block; position: absolute;">添加</span></a>
+									</li>
+									<!--画布-->
+									<li style="display: none;">
+										<canvas id="shuiyin">
+										</canvas>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--<div style="height: 100px;"></div>-->
+			<nav id="nav_footer" class="mui-bar mui-bar-tab">
+				<div class="nav-left" v-text="totalInfo"></div>
+				<div class="nav-right" @tap="submit">提交</div>
+			</nav>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/receiving-register.js", function(detailVue) {
+			window.detailVue = detailVue;
+		});
+	</script>
+	<style>
+		.mui-table-view.mui-grid-view {
+			width: 100%;
+			margin: 40px auto;
+			margin-bottom: 0px;
+		}
+	</style>
+
+</html>

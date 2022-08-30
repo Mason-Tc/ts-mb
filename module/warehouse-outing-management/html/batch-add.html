@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>批次添加</title>
+		<link rel="stylesheet" type="text/css" href="../css/batch-add.css"/>
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+	</head>
+
+	<body>      
+		<div id="batchAdd">
+			<header class="mui-bar mui-bar-nav"> 
+				<div class="mui-action-back"> 
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title">批次添加</span>
+				</div>  
+			</header>   
+			<div class="mui-content" style="position: relative;">
+				<div class="search-wrap">
+					<input type="text" placeholder="捆包号" v-model="searchVal"/> 
+					<input type="button" value="查询" @tap="search"/>    
+				</div>   
+				<div id="batchAddList" class="public-list mui-scroll-wrapper">  
+					<ul class="public-list-wrapper mui-scroll">     
+						<li class="item" v-for="(index, item) in materielList">   
+						<!--<li class="item" v-for="n in 21"">-->
+							<input type="checkbox" @click="ballDrop($event, index, item.id)" :checked="checkIds.indexOf(item.id)>=0"/>  
+							<ul>
+								<li class="materialDes"> 
+									<em >物料描述:</em><span v-text="item.materialDesc"></span>
+								</li> 
+								<li><em>捆包号:</em><span v-text="item.packageNo"></span></li>
+								<li><em>(可供)数量/重量:</em><span v-text="item.supplyNum+'件/'+item.supplyWeight+'吨'"></span></li>
+								<li><em>库位:</em><span v-text="item.warehousePlace"></span></li>
+								<li><em>入库时间:</em><span v-text="item.enterDate"></span></li>
+							</ul>
+						</li>     
+					</ul>  
+				</div>  
+			</div>             
+			<footer id="btnList">       
+				<input type="checkbox" :checked="checkIds.length===materielList.length" @click="checkedAll" v-if="materielList.length==0?false:true"/>
+				<label class="allSelect" v-if="materielList.length==0?false:true">全选</label>
+				<em v-text="totalInfo"></em> 
+				<input type="button" value="提交" @tap="submit"/>
+				<span class="mui-badge mui-badge-warning" v-text="checkIds.length" v-if="checkIds.length==0?false:true"></span>
+			</footer>   
+		</div>        
+	</body>  
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script> 
+		seajs.use("../js/batch-add.js"); 
+	</script>
+</html>

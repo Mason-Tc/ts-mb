@@ -1,0 +1,87 @@
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 0 auto;
+	text-align: center;
+}
+
+table td,
+table th {
+	border: 1px solid #cad9ea;
+	color: #666;
+	height: 30px;
+}
+
+table thead th {
+	background-color: #CCE8EB;
+	width: 100px;
+}
+
+table tr:nth-child(odd) {
+	background: #fff;
+}
+
+table tr:nth-child(even) {
+	background: #F5FAFA;
+}
+html,body{
+	height: 100%;
+	width: 100%;
+}
+
+
+
+.relative{
+	position: relative !important;	
+}
+
+
+
+.mui-bar .mui-icon {
+font-size: 24px;
+position: relative;
+z-index: 20;
+padding-top: 8px;
+padding-bottom: 10px;
+color: #666;
+}
+
+.m-main-table{ border: 1px solid #ebebeb;}
+.m-main-table  th{ background: #fafafa;}
+.m-main-table th {
+background: #fafafa;
+color: #101010;
+}
+.m-main-table td { background: #fff; }
+
+.mui-title {
+font-size: 17px;
+font-weight: 500;
+line-height: 44px;
+position: absolute;
+display: block;
+width: 100%;
+margin: 0 -10px;
+padding: 0;
+text-align: left;
+white-space: nowrap;
+color: #666666;
+}
+
+h5{
+ background: #fff;
+ padding: 10px 10px 10px 32px;	
+ border-bottom:1px solid #ebebeb; 
+ margin: 0px;	
+}
+.counter { display: block;  font-size: 38px; font-family: Arial; font-weight: bold; height: 68px; text-align: center; background: #fff; padding: 20px 0px;}
+.mui-input-group:before,.mui-input-group:after{ height:0px;}
+
+.query-btn{padding: 3px !important; color: #666;}
+.mui-bar .mui-btn {top:6px;}
+[v-cloak] { display: none }
+.mui-off-canvas-left, .mui-off-canvas-right{
+	width: 90%;
+	background-color: #efeff4;	
+}
+.mui-content ul{ padding: 0px; margin: 0px;}

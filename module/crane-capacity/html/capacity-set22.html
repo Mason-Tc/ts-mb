@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>库容调整</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/capacity-list.css" />
+		<style>
+			.mui-icon-back:before, .mui-icon-left-nav:before {
+			    font-size: 24px;
+			    color: #ffffff;
+			}
+			.underLine{
+				border-bottom:1px solid #CCCCCC;
+				text-align: left;
+				padding-left: 5px;
+			}
+			#tabId td{
+				width:25%;
+			}
+			#subInfo td{
+				border-bottom:1px solid #ccc;
+				text-align: center;
+			}
+			#subTitle td{
+				text-align: center;
+				width:25%;
+			}
+			.detailDiv{
+				margin:5px;background:#e9ecf3;border:1px solid #ccc;border-radius:5px;line-height: 30px;padding:5px
+			}
+			#detailTb{
+				border:1px solid #cccccc;
+			}
+			#detailTb th{
+				border-bottom:1px solid #cccccc;
+				background:#f3f3f3 ;
+			}
+			#detailTb th,td{
+				border-bottom:1px solid #cccccc;
+			}
+			.titleSpan{
+				border-radius:5px;
+				padding:0px 30px;
+				border: 1px solid #cccccc;
+				background:#f3f3f3 ;
+				width:45%;
+			}
+			
+			.cloumnDiv{
+				padding: 1px;
+				border-left:1px dashed #ccc;
+				border-right:1px dashed #ccc;
+				font-size: 12px;
+			}
+			.cloumnSubDiv{
+				display: flex;
+				width:160px;
+				height:120px;
+			}
+			.cloumnSubDivB{
+				display: flex;
+				width:160px;
+				height:240px;
+			}
+			.textDiv{
+				padding-top:20px;
+				text-align: center;
+				word-break:break-all;
+				border: 0.5px solid #cccccc;
+				color:#ffffff;
+			}
+			.imgHide{
+				display:none;
+			}
+			.imgShow{
+				display:block;
+			}
+			.trbg{
+				background: #fcecc8;
+			}  
+			
+			.level1{
+				background: #66cc66;
+			}
+			.level2{
+				background: #4285f4;
+			}
+			.level3{
+				background: #e68b23;
+			}
+			.level4{
+				background: #ff8888;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="off-canvas" >
+			<div id="handleDiv" style="display:none;padding:20px;">
+				<div style="width: 100%;margin-top: 0px;line-height: 30px;">
+					<span class="titleSpan" style="float:left;"><span>库位：</span><span v-text="warehousePlace.warehousePlaceName"></span></span>
+					<span class="titleSpan" style="float:right;"><span>总容量：</span><span v-text="warehousePlace.maxNum"></span></span>
+				</div>
+				<table id='subInfo' style="border:1px solid #ccc;width: 100%;margin-top: 50px;font-size: 14px;line-height: 40px;">
+					<tr style="background:#f3f3f3 ;">
+						<td>子库位</td>
+						<td>物料描述</td>
+						<td>总容量</td>
+						<td>已用容量</td>
+					</tr>
+					<tr v-for="su in warehousePlaceSubList">
+						<td v-text="su.subPlaceName"></td>
+						<td v-text="su.materialDesc"></td>
+						<td><input type="number" v-model="su.capacity" style="width:40px;height: 30px;padding-left: 5px;"></td>
+						<td v-text="su.usedWeight"></td>
+					</tr>
+				</table>
+			</div>
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color:#FFFFFF;">库容调整</span>
+						</div>
+					</header>
+					<div id="slider" style="padding:52px,20px;" class="mui-content mui-slider">
+						<div style="margin-top:5px;display: flex;height: 100%;">
+							<div style="height: 530px;flex:0.8;background: #FFFFFF;">
+								<div style="height: 100%;display: flex;">
+								    <div class="cloumnDiv">
+								        <div class="cloumnSubDiv">
+								            
+								        </div>
+								
+								        <div style="width:160px;height: 20px;text-align: center;margin-top:4px;">月台1</div>
+								
+								        <div class="cloumnSubDivB">
+								            
+								        </div>
+								
+								        <div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台6</div>
+								
+								        <div class="cloumnSubDiv" >
+								            
+								        </div> 
+								    </div>
+								
+								    <div style="width:1px;height: 100%;"></div>
+								
+								    <div class="cloumnDiv">
+								         <div class="cloumnSubDiv">
+								            <div id="38354" @tap="tipDetail(38354)"  class="textDiv" style="width:25%;">
+												<div>一区-A4-1</div>
+								                <!-- <div>盘螺</div>
+								                <div>Φ 11</div>
+								                <div>HRB400E</div>
+								                <div>400吨</div> -->
+												<div id="38354_usable"> </div>
+												<img id="38354_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								            <div id="38355" @tap="tipDetail(38355)"  class="textDiv" style="width:75%;margin-left:1px;">
+												<div>一区-A5-1</div>
+								               <!-- <div>盘螺</div>
+								                <div>Φ 8</div>
+								                <div>HRB400E</div>
+								                <div>1200吨</div> -->
+												<div id="38355_usable"> </div>
+												<img id="38355_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								        </div>
+								
+								        <div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台2</div>
+								
+								        <div class="cloumnSubDivB">
+								            <div id="38395" @tap="tipDetail(38395)"  class="textDiv"  style="width:50%;">
+												<div>一区-B4-1</div>
+								                <!-- <div>盘条</div>
+								                <div>Φ 6</div>
+												<div>HPB300</div>
+												<div>1100吨</div>
+												<div>盘螺</div>
+												<div>Φ 8</div>
+												<div>HRB400E</div>
+												<div>1100吨</div> -->
+												<div id="38395_usable"> </div>
+												<img id="38395_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								            <div  id="38396" @tap="tipDetail(38396)"  class="textDiv" style="width:50%;margin-left:1px;">
+												<div>一区-B5-1</div>
+								                <!-- <div>盘条</div>
+								                <div>Φ 6</div>
+								                <div>HPB300</div>
+								                <div>2300吨</div> -->
+												<div id="38396_usable"> </div>
+												<img id="38396_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								        </div>
+								
+								        <div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台7</div>
+								
+								        <div class="cloumnSubDiv">
+								            <div id="38405" @tap="tipDetail(38405)"  class="textDiv" style="width:33%;">
+												<div>一区-C4-1</div>
+								                <!-- <div>盘条</div>
+								                <div>Φ 11</div>
+								                <div>Q235</div>
+								                <div>600吨</div> -->
+												<div id="38405_usable"> </div>
+												<img id="38405_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								            <div id="38406" @tap="tipDetail(38406)"  class="textDiv" style="width:33%;margin-left:1px;">
+												<div>一区-C5-1</div>
+								                <!-- <div>盘螺</div>
+								                <div>Φ 8</div>
+								                <div>HRB400E</div>
+								                <div>500吨</div> -->
+												<div id="38406_usable"> </div>
+												<img id="38406_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+											<div id="38407" @tap="tipDetail(38407)"  class="textDiv" style="width:33%;margin-left:1px;">
+												<div>一区-C6-1</div>
+								                <!-- <div>盘条</div>
+								                <div>Φ 6.5</div>
+								                <div>Q195</div>
+								                <div>500吨</div> -->
+												<div id="38407_usable"> </div>
+												<img id="38407_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								        </div> 
+								    </div>
+								
+								    <div style="width:1px;height: 100%;"></div>
+								
+								    <div class="cloumnDiv">
+								        <div class="cloumnSubDiv">
+								            <div id="38391" @tap="tipDetail(38391)"  class="textDiv" style="width:50%;">
+												<div>一区-A6-1</div>
+								                <!-- <div>盘螺</div>
+								                <div>Φ 10</div>
+								                <div>HRB400E</div>
+								                <div>800吨</div> -->
+												<div id="38391_usable"> </div>
+												 <img id="38391_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								            <div id="38392" @tap="tipDetail(38392)"  class="textDiv"  style="width:50%;margin-left:1px;">
+								                <div>一区-A7-1</div>
+								                <!-- <div>盘条</div>
+								                <div>Φ 8</div>
+								                <div>HPB300</div>
+								                <div>800吨</div> -->
+												<div id="38392_usable"> </div>
+												 <img id="38392_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								        </div>
+								
+								        <div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台3</div>
+								
+								        <div class="cloumnSubDivB">
+								            <div id="38397" @tap="tipDetail(38397)"  class="textDiv" style="width:100%;">
+								                <div>一区-B6-1</div>
+								               <!-- <div>盘螺</div>
+								                <div>Φ 6</div>
+								                <div>HRB400E</div>
+								                <div>4600吨</div> -->
+												<div id="38397_usable"> </div>
+												 <img id="38397_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								        </div>
+								
+								        <div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台8</div>
+								
+								        <div class="cloumnSubDiv">
+								            <div id="38408" @tap="tipDetail(38408)"  class="textDiv"  style="width:31%;">
+								                <div>一区-C7-1</div>
+								                <!-- <div>盘条</div>
+								                <div>Φ 10</div>
+								                <div>Q235</div>
+								                <div>500吨</div> -->
+												<div id="38408_usable"> </div>
+												 <img id="38408_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								            <div id="38409" @tap="tipDetail(38409)"  class="textDiv"  style="width:69%;margin-left:1px;">
+								                <div>一区-C8-1</div>
+								                <!-- <div>盘螺</div>
+								                <div>Φ 8</div>
+								                <div>HRB400E</div>
+								                <div>1100吨</div> -->
+												<div id="38409_usable"> </div>
+												 <img id="38409_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								        </div>
+								    </div>
+								
+								    <div style="width:1px;height: 100%;"></div>
+								
+								    <div class="cloumnDiv">
+								        <div class="cloumnSubDiv">
+								            <div id="38393" @tap="tipDetail(38393)"  class="textDiv" style="width:25%;">
+								               <div>一区-A8-1</div>
+								               <!-- <div>盘条</div>
+								               <div>Φ 10</div>
+								               <div>HPB300</div>
+								               <div>400吨</div> -->
+											   <div id="38393_usable"> </div>
+											   <img id="38393_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								            <div id="38394" @tap="tipDetail(38394)"  class="textDiv" style="width:75%;margin-left:1px;">
+								                <div>一区-A9-1</div>
+								                <!-- <div>盘条</div>
+								                <div>Φ 6</div>
+								                <div>HPB300</div>
+								                <div>1200吨</div> -->
+												<div id="38394_usable"> </div>
+												<img id="38394_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+								        </div>
+								
+								        <div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台4</div>
+								
+								        <div class="cloumnSubDivB">
+								            <div id="38398" @tap="tipDetail(38398)"  class="textDiv" style="width:35%;">
+								                <div>一区-B7-1</div>
+								                <!-- <div>盘螺</div>
+								                <div>Φ 10</div>
+								                <div>Q235</div>
+								                <div>1400吨</div> -->
+												<div id="38398_usable"> </div>
+												<img id="38398_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+											<div style="width:33%;margin-left:1px;">
+												<div id="38399" @tap="tipDetail(38399)"  class="textDiv" style="width:100%;height:49.5%;">
+												   <div>一区-B8-1</div>
+												   <!-- <div>盘条</div>
+												   <div>Φ 10</div>
+												   <div>HPB300</div>
+												   <div>400吨</div> -->
+												   <div id="38399_usable"> </div>
+												   <img id="38399_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+												</div>
+												<div id="38400" @tap="tipDetail(38400)"  class="textDiv" style="width:100%;height:49.5%;margin-top:2px;">
+												   <div>一区-B8-2</div>
+												   <!-- <div>盘条</div>
+												   <div>Φ 10</div>
+												   <div>HPB300</div>
+												   <div>400吨</div> -->
+												   <div id="38400_usable"> </div>
+												   <img id="38400_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+												</div>
+											</div>
+								            
+											<div style="width:33%;margin-left:1px;">
+												<div id="38401" class="textDiv" @tap="tipDetail('38401')" style="width:100%;height:24.5%;">
+													   <div>一区-B9-1</div>
+													   <!-- <div>盘螺</div>
+													   <div>Φ 10</div>
+													   <div>HRB400E</div> -->
+													   <div id="38401_usable"> </div>
+													   <img id="38401_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;top:-70px;position:relative;" >
+												</div>
+												<div id="38402" class="textDiv" @tap="tipDetail('38402')" style="width:100%;height:24.5%;margin-top:1px;">
+													   <div>一区-B9-2</div>
+													   <!-- <div>盘螺</div>
+													   <div>Φ 12</div>
+													   <div>HRB400E</div> -->
+													   <div id="38402_usable"> </div>
+													   <img id="38402_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;top:-70px;position:relative;" >
+												</div>
+												<div id="38403" class="textDiv" @tap="tipDetail('38403')" style="width:100%;height:24.5%;margin-top:2px;">
+													   <div>一区-B9-3</div>
+													   <!-- <div>盘条</div>
+													   <div>Φ 13,Φ 14</div> 
+													   <div>HPB300</div> -->
+													   <div id="38403_usable"> </div>
+													   <img id="38403_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;top:-70px;position:relative;" >
+												</div>
+												<div id="38404" class="textDiv" @tap="tipDetail('38404')" style="width:100%;height:24.5%;margin-top:1px;">
+													   <div>一区-B9-4</div>
+													   <!-- <div>盘条</div>
+													   <div>Φ 13,7,9,14</div>
+													   <div>Q235</div> -->
+													   <div id="38404_usable"> </div>
+													   <img id="38404_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;top:-70px;position:relative;" >
+												</div>
+											</div>
+											
+								        </div>
+								
+								        <div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台9</div>
+								
+								        <div class="cloumnSubDiv">
+								            <div id="38410" @tap="tipDetail(38410)"  class="textDiv" style="width:25%;height:100%;">
+								               <div>一区-C9-1</div>
+								               <!-- <div>盘条</div>
+								               <div>Φ 8</div>
+								               <div>HPB300</div>
+								               <div>400吨</div> -->
+											   <div id="38410_usable"> </div>
+											   <img id="38410_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+								            </div>
+											<div id="38411" @tap="tipDetail('38411')"  class="textDiv" style="width:25%;height:100%;margin-left:1px;">
+												<div>一区-C10-1</div>
+												<!-- <div>盘条</div>
+												<div>Φ 8</div>
+												<div>HPB300</div>
+												<div>400吨</div> -->
+												<div id="38411_usable"> </div>
+												<img id="38411_img" class="imgHide"   src="../images/target.png" style="margin:0 auto;width:40px;" >
+												   
+											</div>
+											<div id="38412" @tap="tipDetail('38412')" class="textDiv" style="width:50%;height:100%;margin-left:1px;">
+												<div>一区-C11-1</div> 
+												<!-- <div>盘螺</div>
+												<div>Φ 6</div>
+												<div>HRB400E</div> -->
+												<div id="38412_usable"></div>
+												<img id="38412_img" class="imgHide"  src="../images/target.png" style="width:40px;margin:0 auto;" >
+											</div>
+								        </div>
+								    </div>
+								
+								    <div style="width:1px;height: 100%;"></div>
+								    
+								    <div class="cloumnDiv">
+								        <div class="cloumnSubDiv">
+								            
+								        </div>
+								
+								        <div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台5</div>
+								
+								        <div class="cloumnSubDivB">
+								          
+								        </div>
+								
+								        <div style="width:160px;height:20px;text-align: center;margin-top:4px;">月台10</div>
+								
+								        <div class="cloumnSubDiv">
+								            
+								        </div>
+								    </div>
+								</div>
+							</div>
+							<div style="flex:0.2;background: #FFFFFF;font-size: 12px;overflow-y: auto;">
+								<div style="background: #ffffff;width:100%;">
+									<div class="detailDiv">
+										<span>物料描述：</span>
+										<span v-text="proDispatchDetail.materialDesc"></span>
+									</div>
+									<div class="detailDiv">
+										<span>计划重量：</span>
+										<span v-text="proDispatchDetail.weight"></span>
+									</div>
+									<div class="detailDiv">
+										<span>可用库容：</span>
+										<span v-text="capacity"></span>
+									</div>
+									<div class="detailDiv" style="background: #ffffff;">
+										<span>接受重量：</span>
+										<span><input v-model="proDispatchDetail.receiveWeight" type="number" style="width:90px;border:0;" /></span>
+									</div>
+								</div>
+								<div style="text-align: center;">
+<!-- 									<button style="background:#ebf3fe;padding:5px 20px;" @tap="toHandle()" >取消</button>
+ -->									<button style="width:95%;background:#4285f4;padding:5px 20px;color: #ffffff;" @tap="editDetail()" >确 定</button>
+								</div>
+								<table  style="line-height: 30px;text-align: center;width:95%;margin:30px 5px;">
+									<tr>
+										<th>库位</th>
+										<th>占用/吨</th>
+										<th>可用/吨</th>
+									</tr> 
+									<tbody id="detailTb">
+										<tr v-for="sub in subList" :id="sub.warehousePlaceId+'_tr'">
+											<td  v-text="sub.warehousePlaceName"></td>
+											<td v-text="sub.usedWeight"></td>
+											<td><span ></span><span @tap="editCapacity(sub.warehousePlaceId)" style="margin-left: 5px;color:red;" class="mui-icon mui-icon-compose"></span></td>
+										</tr>
+									</tbody>
+									
+									<!-- <tr>
+										<td>库位A</td>
+										<td>53</td>
+										<td><span>32</span><span @tap="editCapacity(1)" style="margin-left: 5px;color:red;"  class="mui-icon mui-icon-compose"></span></td>
+									</tr> -->
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/capacity-set.js");
+	</script>
+
+</html>

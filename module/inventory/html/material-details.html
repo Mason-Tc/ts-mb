@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>物料明细</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/material-details.css" />
+
+	</head>
+
+	<body id="body_material_details">
+		<div>
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title">物料明细</span>
+				</div>
+			</header>
+			<div id="div_material_details" class="mui-content">
+				<ul class="info-list">
+					<li class="item-first">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>物料描述
+						</span>
+						<span class="content" v-text="materialDetails.materialDesc"></span>
+					</li>
+					<li class="item">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>捆包号
+						</span>
+						<input type="text" readonly :value="materialDetails.packageNo" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>原数量
+						</span>
+						<input type="text" readonly style="width: 180px;" :value="materialDetails.num" />
+						<span style="font-size: 16px;" v-text="materialDetails.numUnitStr"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>原重量
+						</span>
+						<input type="text" readonly style="width: 180px;" :value="materialDetails.weight" />
+						<span style="font-size: 16px;" v-text="materialDetails.weightUnitStr"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>盘点数量
+						</span>
+						<input id="txt_real_num" type="number" placeholder="请输入盘点数量" style="width: 180px;" v-model="checkNum" />
+						<span style="font-size: 16px;" v-text="materialDetails.numUnitStr"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>盘点重量
+						</span>
+						<input id="txt_real_weight" type="number" placeholder="请输入盘点重量" style="width: 180px;" v-model="checkWeight" />
+						<span style="font-size: 16px;" v-text="materialDetails.weightUnitStr"></span>
+					</li>
+					<li class="item">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>系统库位
+						</span>
+						<input type="text" readonly :value="materialDetails.warehousePlaceName" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							&nbsp;&nbsp;&nbsp;现场库位
+						</span>
+						<input type="text" readonly placeholder="请选择现场库位" :value="checkWarehousePlaceName" @click="showSelectBox('warehousePlaceList')" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+				</ul>
+			</div>
+			<div style="height: 5px;"></div>
+		</div>
+		<nav id="nav_footer" class="mui-bar mui-bar-tab"> 
+			<div class="nav-div" @tap="submit">提交</div>
+		</nav>
+		<div id="warehousePlaceList" class="select-box">
+			<div class="title">
+				<!--<span class="mui-icon iconfont icon-gangchang5"></span>-->库位选择
+			</div>
+			<div class="content mui-scroll-wrapper">
+				<ul class="mui-scroll">
+					<li v-for="(index, item) in warehousePlaceList" @click="pickWarehousePlace($event, item)" v-bind:class="[item.id == checkWarehousePlaceId ? 'select' : '']" v-text="item.text"></li>
+				</ul>
+			</div>
+			<div class="foot">
+				<button class="close" @click="hideSelectBox('warehousePlaceList', false)">取消</button>
+			</div>
+		</div>
+		<div class="cyq_mask" @click="hideSelectBox()"></div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/material-details.js");
+	</script>
+
+</html>

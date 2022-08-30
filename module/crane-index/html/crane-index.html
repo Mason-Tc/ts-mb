@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <script></script>
+    </script>
+    <title>行车管理</title>
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../../../css/mui.min.css">
+    <link rel="stylesheet" href="../../../css/zmd.css">
+    <link rel="stylesheet" href="../../../css/icons-extra.css" />
+    <link rel="stylesheet" href="../../../css/reset.css" />
+    <link href="../css/crane-index.css" rel="stylesheet" />
+    <style>
+        /**弹框右上角图标**/
+
+        .layui-layer-setwin {
+            padding-top: 15px;
+            width: 50px;
+            height: 40px;
+            right: 0 !important;
+            top: 0 !important
+        }
+
+        .layui-layer-setwin .layui-layer-close1 {
+            transform: scale(1.2) !important;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body id="about-detail">
+    <header class="mui-bar mui-bar-nav" style="background: blue;height:0px;">
+        <div class="mui-action-back" style="color:#FFFFFF">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color:#FFFFFF;"></span>
+            <!--行车管理-->
+        </div>
+    </header>
+    <!-- <header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title" style="margin: -3px;">行车管理</h1>
+		</header> -->
+    <div class="mui-content"
+        style=" background: url(../img/index_bg.jpg) no-repeat;background-size: 100% 100%; padding-top: 8%;height:618px;width: 125%;">
+        <!--
+			<div style="display:flex;margin-left:10px;">
+				<div style="width:28px; height:28px;background:#fff;border-radius:50%;"><img style="width:48px; height:48px; margin-left:-10px;margin-top:-10px;" src="../img/use.png" /></div>
+				<div style="margin-left:10px;margin-top:5px;">
+					<span style="color:#fcecc8;" v-text="user.userName"></span>
+					<span style="color:#ffffff;">，您好！</span>
+				</div>
+			</div>
+			-->
+        <div class="mui-row" style="margin:30px auto;">
+            <table style="margin: 0px auto;">
+                <tr style="padding: 0px; margin: 0px;">
+                    <td>
+                        <div v-if="capacityAuth" class=" ulli" @tap="toCapacity">
+                            <div class="imgDiv"><img src="../img/icon_kucuntz.png"></div>
+                            <div style="margin-top:60px;">容量调整</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="reciveAuth" class="ulli" @tap="toRecive">
+                            <div class="imgDiv"><img src="../img/icon_ytzy.png"></div>
+                            <div style="margin-top:60px;">收货登记</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="warehouseInAuth" class=" ulli" @tap="toCraneWork('crane-work-in')">
+                            <div class="imgDiv"><img src="../img/icon_ruku.png"></div>
+                            <div style="margin-top:60px;">入库作业</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="warehouseOutAuth" class="ulli" @tap="toCraneWork('crane-work-out')">
+                            <div class="imgDiv"><img src="../img/icon_chuku.png"></div>
+                            <div style="margin-top:60px;">出库作业</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="platformAuth" class="ulli" @tap="toCraneConf">
+                            <div class="imgDiv"><img src="../img/hcyt.png"></div>
+                            <div style="margin-top:60px;">作业月台</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="warnAuth" class=" ulli" @tap="toCraneWarn">
+                            <div class="imgDiv"><img src="../img/icon_zyjg.png"></div>
+                            <div style="margin-top:60px;">作业告警</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="emergencyPositionAuth" class=" ulli" @tap="toEmergencyPosition"
+                            style="padding-bottom:45px">
+                            <div class="imgDiv"><img src="../img/position.png"></div>
+                            <div style="margin-top:60px;">定位/吊镑应急</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="emergencyPlatformAuth" class=" ulli" @tap="toEmergencyPlatform"
+                            style="padding-bottom:45px">
+                            <div class="imgDiv"><img src="../img/platform2.png"></div>
+                            <div style="margin-top:60px;">月台验证<br />应急</div>
+                        </div>
+                    </td>
+					<td>
+					    <div v-if="platformStatusAuth" class=" ulli" @tap="toPlatformStatus"
+					        style="">
+					        <div class="imgDiv"><img src="../img/platform.png"></div>
+					        <div style="margin-top:60px;">月台应急</div>
+					    </div>
+					</td>
+					<td>
+					    <div v-if="balanceDiffAuth" class=" ulli" @tap="toBalanceDiff"
+					        style="padding-bottom:45px">
+					        <div class="imgDiv"><img src="../img/position.png"></div>
+					        <div style="margin-top:60px;">超载/磅差应急</div>
+					    </div>
+					</td>
+					<td>
+					    <div v-if="outSideWeighAuth" class=" ulli" @tap="toOutSideWeigh"
+					        style="">
+					        <div class="imgDiv"><img src="../img/position.png"></div>
+					        <div style="margin-top:60px;">室外计重</div> 
+					    </div>
+					</td>
+					<td>
+					    <div v-if="outSideEnterAuth" class=" ulli" @tap="toOutSideEnter"
+					        style="padding-bottom:45px">
+					        <div class="imgDiv"><img src="../img/position.png"></div>
+					        <div style="margin-top:60px;">室外<br>入库作业</div> 
+					    </div>
+					</td>
+					<td>
+					    <div v-if="outSideOutAuth" class=" ulli" @tap="toOutSideOut"
+					        style="padding-bottom:45px">
+					        <div class="imgDiv"><img src="../img/position.png"></div>
+					        <div style="margin-top:60px;">室外<br>出库作业</div> 
+					    </div>
+					</td>
+					<td>
+						<div v-if="hangWeightClear" class=" ulli" @tap="toHangWeight"
+						    style="">
+						    <div class="imgDiv"><img src="../img/position.png"></div>
+						    <div style="margin-top:60px;">吊磅清零</div> 
+						</div>
+						
+					</td>
+					<td>
+					    <div v-if="guidanceScreenAuth" class=" ulli" @tap="toGuidanceScreenManage"
+					        style="padding-bottom:45px">
+					        <div class="imgDiv"><img src="../img/position.png"></div>
+					        <div style="margin-top:60px;">诱导屏<br>管理</div> 
+					    </div>
+					</td>
+
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="platform" style="display: none;">
+        <div style="background-color: #FFFFFF; margin:0px auto;text-align: center;   padding-bottom: 5px;">
+            <div style="text-align: left;margin-left: 20px;margin-top: 20px;">请选择行车</div>
+            <div id="craneDiv" style="display: flex; justify-content: center;">
+                <div v-for="rc in rowcarList" class="contentSpan" :id="'crane'+rc.id"
+                    :class="{'activeBg':rc.selectedFlag}">
+                    <input @change="cliCrane(rc.id)" v-model="rc.selectedId" type="radio" name="crane" :value="rc.id">
+                    <label v-text="rc.deviceName"></label>
+                </div>
+            </div>
+            <div style="text-align: left;margin-left: 20px;">请选择月台</div>
+            <div id="pfBtns" style="display:flex; justify-content: center;">
+                <div v-for="(index,pfg) in pfList">
+                    <div v-for="detail in pfg.platformVOList" :id="'pf'+detail.id"
+                        :class="{'activeBg':detail.selectedFlag}" class="contentSpan">
+                        <input @change="cliMe(detail.id)" v-model="detail.selectedFlag" type='checkbox' name="platform"
+                            :value="detail.id">
+                        <label v-text="detail.name"></label>
+                    </div>
+                    <div class="titleSpan" v-text="pfg.name"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="color:#fff;font-size:12px;position: fixed;bottom:10px;left:45%;">湖南中拓信息科技有限公司</div>
+</body>
+<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+<script>
+    //加载主模块
+    seajs.use("../js/crane-index.js", function () {
+
+    });
+</script>
+
+</html>

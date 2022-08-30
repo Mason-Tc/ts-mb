@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>指数分析</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link href="../css/exponent-report.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/dAHFZjuHwkWsorioAuKK.css" />
+		
+		<style>
+	        canvas#mountNode {
+	            /* background-color: #50577D; */
+	            background-color: #fff;
+	        }
+	    </style>
+	    <style type="text/css">
+			.icon {
+			   width: 1.8em; height: 1.8em;
+			   vertical-align: -0.15em;
+			   fill: currentColor;
+			   overflow: hidden;
+			   margin-right: 33px;
+			   color:#738ffe;
+			}
+			.mui-backdrop {
+			    position: fixed;
+			    top: 0;
+			    right: 0;
+			    bottom: 0;
+			    left: 0;
+			    z-index: 500;
+			    background-color: rgba(0,0,0,.3);
+			}
+		</style>
+	    <script src="../css/font_size/iconfont.js"></script>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-draggable mui-slide-in">
+			
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap mui-draggable" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<!-- 主页面标题 -->
+					<header class="mui-bar mui-bar-nav">
+						<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+						<h1 class="mui-title" v-text="warehouseName"></h1>
+						<span id="query-btn" v-on:tap="showOffExponentQuery" class="mui-btn mui-btn-outlined query-btn mui-pull-right" style=" width: 68px; border:0px;">
+							  <!--<span class="mui-icon  mui-icon-search" style="font-weight: bold; right:18px"></span>-->
+						<svg class="icon" aria-hidden="true">
+						  <use xlink:href="#icon-shaixuan"></use>
+						</svg>
+
+							  <span class="query-btn-label" style="margin-top:-5px; display: inline-block; position: absolute; top:12px; right: 10px; ">筛选</span>
+						</span>
+					</header>
+
+					<div id="slider" class="mui-content mui-slider">
+						<div id="menuSliderControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-segmented-control-primary" style=" background: #ffffff;height: 40px; line-height:40px;">
+							<a class="mui-control-item" href="#iteminventoryexp">库存指数</a>
+							<a class="mui-control-item" href="#itemcustomerexp">客户指数</a>
+							<a class="mui-control-item" href="#itemioexp">出入库指数</a> 
+						</div>
+						<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>
+
+						<div class="mui-slider-group" style="position: relative; top: -2px;">
+							<div id="iteminventoryexp" class="mui-slider-item mui-control-content mui-active">
+								<div id="inventoryWeight">
+									<h5>库存量</h5>
+									<div v-text="inventoryWeight" class="counter"></div>
+								</div>
+								<div class="chart-wrapper">
+									<h5>物料分布</h5>
+									<div id="pieChart" style="width: 600px;height:400px;"></div>
+							        <canvas id="mountNode"></canvas>
+							   </div>
+							</div>
+
+							<div id="itemcustomerexp"  class="mui-slider-item mui-control-content">
+								<div id="ownerfilter" class="mui-content" style="width: 96%; margin: 5px auto;border-radius: 18px; ">
+									<form class="mui-input-group" style="border-radius: 18px;">
+										<div class="mui-input-row" style="height:28px;">
+											<span class="mui-icon mui-icon-search" style="position: absolute; z-index: 100; right:8px; top:6px" @tap="globalDoQuery(warehouseID, warehouseName);"></span>
+											<input id="ownerName" v-model="ownerName" type="search" onkeydown='if(event.keyCode==13){ return false;}' v-on:keydown="searchDoQuery($event)" placeholder="货主单位" style="text-align: left; padding-left:10px; ">
+										</div>
+									</form>
+								</div>
+								<table class="m-main-table">
+									<tr>
+										<th style="width: 15%;">排名</th>
+										<th style="width: 45%;">货主单位</th>
+										<th style="width: 25%;">库存量（吨）</th>
+										<th style="width: 15%;">占比</th>
+									</tr>
+								</table>
+								<div id="customerpullRefresh" class="relative mui-content mui-scroll-wrapper" :style="cstmrListDivStyle"> <!--style="height: 800px;margin-top: 80px;"-->
+									
+									<div class="mui-scroll relative">
+										<table >
+											<tr v-for="exp in customerExpPage.list">
+												<td v-text="exp.ranks" style="width: 15%;"></td>
+												<td v-text="exp.ownerName" style="width: 45%;text-align: left; padding-left: 3px;"></td>
+												<td v-text="exp.inventoryWeight" style="width: 25%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+												<td v-text="format(exp.ratio)" style="width: 15%;text-align: right; padding-left: 3px;"></td>
+											</tr>
+										</table>
+									</div>
+									
+								</div>
+								
+							</div>
+							
+							<div id="itemioexp" class="mui-slider-item mui-control-content">
+								<div id="periodSlider" class="mui-slider">
+									<div id="periodSliderControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-segmented-control-primary" style=" background: #ffffff;height: 40px; line-height:40px;">
+										<a class="mui-control-item" href="#itemfortoday">
+											今日
+										</a>
+										<a class="mui-control-item" href="#itemformonth">
+											本月
+										</a>
+										<a class="mui-control-item" href="#itemforyear">
+											本年
+										</a>
+									</div>
+
+									<div id="sliderperiodselectorBar" class="mui-slider-progress-bar mui-col-xs-4"></div>
+
+									<div id="ioExp" class="mui-slider-group" style="position: relative; top: -2px;">
+										<div id="itemfortoday" class="mui-slider-item mui-control-content">
+											<table>
+												<tr>
+													<th style="width: 10%;">序</th>
+													<th style="width: 45%;">货主单位</th>
+													<th style="width: 15%;">入库量</th>
+													<th style="width: 15%;">出库量</th>
+													<th style="width: 15%;">吞吐量</th>
+												</tr>
+											</table>
+											<div id="itemfortodaypullRefresh" class="relative mui-content mui-scroll-wrapper" :style="ioListDivStyle">
+												<div class="mui-scroll relative">
+													<table>
+														<tr v-for="expd in ioExpDayPage.list">
+															<td v-text="$index+1" style="width: 10%;text-align: left; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expd.ownerName" style="width: 45%;text-align: left; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expd.enterWeight" style="width: 15%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expd.outputWeight" style="width: 15%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expd.throughputWeight" style="width: 15%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+														</tr>
+													</table>
+												</div>
+											</div>
+										</div>
+
+										<div id="itemformonth" class="mui-slider-item mui-control-content">
+											<table class="m-main-table">
+														<tr>
+															<th style="width: 10%;">序</th>
+															<th style="width: 45%;">货主单位</th>
+															<th style="width: 15%;">入库量</th>
+															<th style="width: 15%;">出库量</th>
+															<th style="width: 15%;">吞吐量</th>
+														</tr>
+												</table>
+											<div id="itemformonthpullRefresh" class="relative mui-content mui-scroll-wrapper" :style="ioListDivStyle">
+												<div class="mui-scroll relative">
+													<table class="m-main-table">
+														<tr v-for="expm in ioExpMonPage.list">
+															<td v-text="$index+1" style="width: 10%;text-align: left; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expm.ownerName" style="width: 45%;text-align: left; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expm.enterWeight" style="width: 15%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expm.outputWeight" style="width: 15%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expm.throughputWeight" style="width: 15%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+														</tr>
+													</table>
+												</div>
+											</div>
+										</div>
+
+										<div id="itemforyear" class="mui-slider-item mui-control-content">
+											<table class="m-main-table">
+												<tr>
+													<th style="width: 10%;">序</th>
+													<th style="width: 45%;">货主单位</th>
+													<th style="width: 15%;">入库量</th>
+													<th style="width: 15%;">出库量</th>
+													<th style="width: 15%;">吞吐量</th>
+												</tr>
+											</table>
+											<div id="itemforyearpullRefresh" class="relative mui-content mui-scroll-wrapper"  :style="ioListDivStyle">
+												<div class="mui-scroll relative">
+													<table class="m-main-table">
+														<tr v-for="expy in ioExpYearPage.list">
+															<td v-text="$index+1" style="width: 10%;text-align: left; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expy.ownerName" style="width: 45%;text-align: left; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expy.enterWeight" style="width: 15%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expy.outputWeight" style="width: 15%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+															<td v-text="expy.throughputWeight" style="width: 15%;text-align: right; padding-left: 3px;word-break:break-all;"></td>
+														</tr>
+													</table>
+												</div>
+											</div>
+										</div>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop"></div> 
+				</div>
+				
+				
+				
+				
+				
+			</div>
+			<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-right" id="searchVue">
+					<header class="mui-bar mui-bar-nav">
+						<a id="back-cust-list-btn" v-on:tap="hideOffCanvaQuery" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+						<h1 class="mui-title" style="left:40px;">仓库选择</h1>
+					</header>
+					<div class="mui-scroll-wrapper" id="munuScrollDiv" style="top:48px" >
+						<div class="mui-scroll">
+							<!-- 菜单具体展示内容 -->
+							
+						
+							<div class="mui-content">
+								<ul class="mui-content-padded">
+									<li v-for="warehouse in warehouseList" :class={selectedTD:warehouseID==warehouse.id} v-text="warehouse.warehouseName" v-on:tap="globalDoQuery(warehouse.id, warehouse.warehouseName);" style="font-size:1rem; list-style:none; background: #fff; display: block; width: 100%; height: 38px; line-height: 38px; padding: 0px 20px;"></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</aside>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/exponent-report.js");
+	</script>
+	<!--<script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+	<script src="../js/jquery.waypoints.min.js"></script>
+	<script type="text/javascript" src="../js/jquery.countup.min.js"></script>
+	<script type="text/javascript">
+		$('.counter').countUp();
+	</script>-->
+	<style>
+			table tr td,table tr th{ border: 1px solid #ebebeb;}
+			table tr th{background: #fafafa; }
+			.ap_word{ margin:5px;}
+			
+		</style>
+	
+</html>

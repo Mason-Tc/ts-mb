@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>附件详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/zmd.css">
+		<link rel="stylesheet" href="../../../css/mui.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/icons-extra.css" />
+		<style>
+			img{width: 96%;margin: 0 auto;}
+		</style>
+	</head>
+
+	<body id="m-detail" >
+		<!--导航栏-->
+		<header class="mui-bar mui-bar-nav">
+			<div  class="mui-btn mui-btn-blue mui-btn-link mui-btn-nav mui-pull-left" style="width:100%;z-index: 9999;" >
+				<div id="back">&nbsp;
+					<span class=" mui-icon mui-icon-left-nav mui-pull-left" style="margin-top:8px ;"></span>
+				    <span  style="color:#555555;" class=" mui-pull-left">附件详情</span>	
+				</div>
+				<span @click="openFile()" class="mui-icon  mui-btn  mui-btn-link  mui-icon-download mui-pull-right" style="color:#555555;position: fixed;top:0em;right: 1em;"></span>		
+			</div>
+			
+		</header>
+
+		<div style="margin-top: 50px;">
+			  <div class="content-wrap" style="height: 100%;">
+        <div id="reader"></div>
+    </div>
+
+		</div>
+	
+	</body>
+	<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+
+	<script src="http://static.bcedocument.com/reader/v2/doc_reader_v2.js"></script>
+	<script>
+		//加载主模板块
+		seajs.use("../js/read-document.js", function() {
+
+		});
+	</script>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>待收货详情</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/recive-list.css" />
+		<style>
+			.underLine{
+				border-bottom:1px solid #CCCCCC;
+				text-align: left;
+				padding-left: 5px;
+			}
+			.mui-icon-back:before, .mui-icon-left-nav:before {
+			    font-size: 24px;
+			    color: #ffffff;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in">
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="margin: 1px 0px 0px -3px;left: 80px;color:#FFFFFF;">待收货单</span>
+						</div>
+					</header>
+					<div id="slider" style="padding:0.3125rem,20px;" class="mui-content mui-slider">
+						<div style="font-size: 18px;margin:10px;">基本信息</div>
+						<div style="padding: 10px 0;background: #ffffff;width:100%;">
+							<table  style="width:95%;line-height: 35px;text-align: right;">
+								<tr>
+									<td>时间：</td>
+									<td class="underLine">2020-05-09 10:03</td>
+									<td>短驳单：</td>
+									<td class="underLine">TD99988444</td>
+								</tr>
+								<tr>
+									<td>货主单位：</td>
+									<td class="underLine">湖南中拓</td>
+									<td>车牌号：</td>
+									<td class="underLine">湘A89568</td>
+								</tr>
+								<tr>
+									<td>运输人：</td>
+									<td class="underLine">张大</td>
+									<td>证件号：</td>
+									<td class="underLine">436589654987654562</td>
+								</tr>
+								<tr>
+									<td>备注：</td>
+									<td class="underLine">备注备注备注</td>
+									<td></td>
+									<td></td>
+								</tr>
+							</table>
+						</div>
+						<div style="font-size: 18px;margin:10px;">物料信息</div>
+						<div style="padding: 10px 0;background: #ffffff;width:100%">
+							<table style="width:95%;line-height: 35px;text-align: right;">
+								<tr>
+									<td>物料描述：</td>
+									<td class="underLine">品名  规格  材质 产地</td>
+									<td>捆包号：</td>
+									<td class="underLine">GS09933</td>
+								</tr>
+								<tr>
+									<td>应收数量：</td>
+									<td class="underLine">12件</td>
+									<td style="color:red;">实收重量：</td>
+									<td class="underLine"><input style="width:100%;"></td>
+								</tr>
+								
+							</table>
+						</div>
+						<div style="margin:10px 0;">
+							<button style="background: #47d5ff;width:100%;" @top="saveRecive">确 认</button>
+						</div>
+					</div>
+					
+					
+				</div>
+			
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/recive-detail.js");
+	</script>
+
+</html>

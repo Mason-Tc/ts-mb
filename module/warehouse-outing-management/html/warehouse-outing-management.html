@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>出库列表</title>
+		<link rel="stylesheet" type="text/css" href="../css/warehouse-outing-management.css"/>
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+	</head>
+
+	<body>   
+		<div id="waitOutWareList"> 
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back"> 
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title" v-text="headTitle" style="margin:1px 0px 0px -10px;"></span>
+				</div>
+			</header>      
+			<div id="slider" class="mui-content mui-slider">
+				<div id="menuSliderControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style=" background: #ffffff;height: 40px; line-height:40px;">
+					<a class="mui-control-item" href="#pendingList" @tap="onItemSliderClick($event,0)">待出库列表</a>
+					<a class="mui-control-item" href="#outputList" @tap="onItemSliderClick($event,1)">已出库列表</a>
+				</div>
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+               
+				<div id="sliderContent" class="mui-slider-group" style="top: -2px;">   
+					<!--待出库列表页面--> 
+					<div id="pendingList" class="mui-slider-item mui-control-content mui-active">
+						<div class="search-wrap">
+							<div class="search" @tap="openQueryHTML('pendingListQuery')">
+								<span class="mui-icon mui-icon-search"></span>
+							</div> 
+						</div>
+						<div class="public-list mui-scroll-wrapper">  
+							<ul class="public-list-wrapper mui-scroll">  
+								<li class="item" v-for="(index,listItem) in pendingPage.pendingList" @tap="openDetail(0,listItem.id)"><!-- v-for="(index,listItem) in pendingPage.pendingList" -->
+									<ul>     
+										<li><em class="bold">发货单:</em><span class="bold" v-text="listItem.sendCode"></span><span class="time" v-text="listItem.sendDate"></span></li>
+										<li><em style="width:118px;display: inline-block; text-align: right;">提单号:</em><span v-text="listItem.ladingCode"></span></li>
+										<li><em style="width:118px;display: inline-block; text-align: right;vertical-align:top;">货主单位:</em><span v-text="listItem.ownerName" style=" display: inline-block; width:calc(100% - 118px)"></span></li>
+										<li><em style="width:118px;display: inline-block; text-align: right;">车牌号:</em><span v-text="listItem.carPlateNo"></span></li>
+										<li><em style="width:118px;display: inline-block; text-align: right;">(应发)数量/重量:</em><span v-text="listItem.sendNumTotal+'件/'+listItem.sendWeightTotal+'吨'"></span></li>
+									</ul> 
+								</li>        
+							</ul>       
+						</div>  
+					</div>    
+					<!--已出库列表页面--> 
+					<div id="outputList" class="mui-slider-item mui-control-content">
+						<div class="search-wrap">
+							<div class="search" @tap="openQueryHTML('outputListQuery')">
+								<span class="mui-icon mui-icon-search"></span>
+							</div>    
+						</div>
+						<div class="public-list mui-scroll-wrapper">  
+							<ul class="public-list-wrapper mui-scroll">  
+								<li class="item" v-for="(index,listItem) in outputPage.outputList" @tap="openDetail(1,listItem.id)">
+									<ul>     
+										<li><em class="bold">出库单:</em><span class="bold" v-text="listItem.outputCode"></span><span class="time" v-text="listItem.outputDate"></span></li>
+										<li><em style="width:118px;display: inline-block; text-align: right;">提单号:</em><span v-text="listItem.ladingCode"></span></li>
+										<li><em style="width:118px;display: inline-block; text-align: right; vertical-align:top;">货主单位:</em><span v-text="listItem.ownerName" style=" display: inline-block; width:calc(100% - 118px) "></span></li>
+										<li><em style="width:118px;display: inline-block; text-align: right;">车牌号:</em><span v-text="listItem.carPlateNo"></span></li>
+										<li><em style="width:118px;display: inline-block; text-align: right;">(实提)数量/重量:</em><span v-text="listItem.realNumTotal+'件/'+listItem.realWeightTotal+'吨'"></span></li>
+									</ul>       
+								</li>
+							</ul>        
+						</div> 
+					</div>     
+				</div>      
+			</div>  
+		</div>      
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/warehouse-outing-management.js");   
+	</script> 
+</html>

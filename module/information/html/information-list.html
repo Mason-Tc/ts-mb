@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css">
+		<!--<link rel="stylesheet" href="../../../css/zmd.css">-->
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../css/information-list.css" />
+	</head>
+
+	<body id="body_message" class="mui-fullscreen">
+		<!--列表页面开始-->
+		<div class="mui-off-canvas-wrap mui-draggable mui-slide-in">
+			<!-- 主页面容器开始 -->
+			<div class="mui-inner-wrap">
+				<!--页面标题栏开始-->
+				<header class="mui-bar mui-bar-nav">
+					<div class="mui-action-back">
+						<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+						<span class="wms-title">公告列表</span>
+					</div>
+				</header>
+				<!--页面标题栏结束-->
+				<!-- 主界面具体展示内容开始 -->
+				<div class="mui-content">
+					<div class="mui-media-body" style="position: relative; margin-top: 1px;"></div>
+					<div id="slider" class="mui-slider" style="background-color: white;">
+						<div class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+							<a class="mui-control-item" href="#item1mobile">
+								公告(<label v-text="noticeCount"></label>)
+							</a>
+						</div>
+						<!--<div class="mui-slider-progress-bar mui-col-xs-4"></div>-->
+						<div class="mui-slider-group" style="position: static; height: calc(100% - 85px);">
+							<div id="item1mobile" class="mui-slider-item mui-control-content">
+								<div class="list-count" style="z-index: 999;padding:3px 6px 3px 6px;background: #F0F0F0;height: 55px;">
+									<div>
+										<span style="font-size: 13px;margin-left: 1em;color:#333"> 类型查询：</span>
+										<select v-model="announceType" style="width: 130px; border: 1px solid #bbb!important; border: 1px !important; background-color: #fff; margin-top: 2px; margin-left:10px;padding: 2px; height: 35px;">
+											<option value="">全部</option>
+											<option v-for="option in announceTypeList" v-bind:value="option.value">
+												{{{option.label}}}
+											</option>
+										</select>
+									</div>
+								</div>
+								<div id="div_notice_empty" class="empty">
+									<div>没有查询到相关数据</div>
+								</div>
+								<div id="div_notice_pull_refresh" class="mui-content mui-scroll-wrapper" style="margin-top: 45px;">
+
+									<div class="mui-scroll">
+										<div class="mui-media-body mui-media-body-cutom" v-for="e in noticePage.messageListData" v-on:tap="openNotice(e)">
+											<div class="mui-content-padded" style="background-color: white; margin-left: 15px;">
+												<div class="mui-row mui-row-mtop" style="width: 100%;">
+													<div :id="e.titleId" class="message-title" style="width: 100%;" v-bind:class="[e.hasRead ? 'message-title' : 'message-title bule']"><label v-html="e.title"></label></div>
+
+												</div>
+												<div class="mui-row mui-row-rtop">
+													<div class="split"></div>
+												</div>
+												<div class="mui-row mui-row-more-top">
+													<div class="" style="color: #bbb; line-height: 28px; height: 20px;">
+														<label v-html="e.msgUserName" style="float: left;"></label>
+														<label v-html="e.msgDate"></label>
+														<span style="float: right;">阅读 <label v-html="e.readCnt"></label></span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 主界面具体展示内容结束 -->
+			</div>
+			<!-- 主页面容器结束-->
+		</div>
+		<!--列表页面结束-->
+		<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+		<script type="text/jscript">
+			//加载主模板块
+			seajs.use("../js/information-list.js", function() {
+
+			});
+		</script>
+	</body>
+
+</html>

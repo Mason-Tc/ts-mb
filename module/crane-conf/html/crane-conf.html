@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <script></script>
+    </script>
+    <title>作业月台</title>
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../../../css/mui.min.css">
+    <link rel="stylesheet" href="../../../css/zmd.css">
+    <link href="../css/crane-conf.css" rel="stylesheet" />
+    <style>
+        #contentDiv div {
+            margin-top: 20px;
+        }
+
+        .contentSpan {
+            height: 50px;
+            line-height: 20px;
+            padding: 15px 10px;
+            border: 1px solid #f7f7f7;
+            border-radius: 5px;
+            background: #f7f7f7;
+            margin: 10px 5px;
+			font-size: 14px;
+        }
+		.contentCrane {
+            height: 50px;
+            line-height: 20px;
+            padding: 15px 5px;
+            border: 1px solid #f7f7f7;
+            border-radius: 5px;
+            background: #f7f7f7;
+            margin: 10px 5px;
+			font-size: 14px;
+        }
+        
+
+        .activeBg {
+            background: #1566d2;
+            color: #ffffff;
+            border: 1px solid #1566d2;
+        }
+
+		.titleSpan {
+            line-height: 20px;
+			padding: 10px 10px;
+			margin: 10px 5px;
+			color: #1566D1;
+			font-weight: 700;
+			font-size: 16px;
+        }
+		
+        .mui-icon-back:before,
+        .mui-icon-left-nav:before {
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        #btnList .reset {
+            width: 50%;
+            font-size: 16px !important;
+            border-radius: 0px;
+            line-height: 50px;
+        }
+
+        #btnList .sure {
+            width: 50%;
+            margin-left: -5px;
+            font-size: 16px !important;
+            border-radius: 0px;
+            line-height: 50px;
+            background: #5677fc;
+            color: white;
+        }
+    </style>
+</head>
+
+<body id="about-detail">
+    <header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title" style="margin-top: -3px;color:#FFFFFF;">作业月台</h1>
+    </header>
+    <div class="mui-content" style="height: 616px;">
+        <div
+            style="background-color: #FFFFFF;height: 100%; margin:0px auto;text-align: center;padding-top:10px;  padding-bottom: 5px;">
+            <div style="text-align: left;margin-left: 20px;">请选择行车</div>
+            <div id="craneDiv" style="display: flex; justify-content: center;margin-bottom: 10px;">
+                <div v-for="(index, rc) in rowcarList" class="contentCrane" :id="'crane'+rc.id"
+                    :class="{'activeBg':rc.selectedFlag}">
+                    <input @change="cliCrane(rc.id, index)" v-model="rc.selectedId" type="radio" name="crane" :value="rc.id">
+                    <label v-text="rc.deviceName"></label>
+                </div>
+
+            </div>
+            <div style="text-align: left;margin-left: 20px;">请选择月台</div>
+            <div id="pfBtns" style="display:flex; justify-content: center;">
+                <div v-for="(index,pfg) in pfList">
+                    <div v-for="detail in pfg.platformVOList" :id="'pf'+detail.id"
+                        :class="{'activeBg':detail.selectedFlag}" class="contentSpan">
+                        <input @change="cliMe(detail.id)" v-model="detail.selectedFlag" type='checkbox' name="platform"
+                            :value="detail.id" :id="'pfInput'+detail.id">
+                        <label v-text="detail.name"></label>
+                    </div>
+                    <div class="titleSpan" v-text="pfg.name"></div>
+                </div>
+            </div>
+            <div id="btnList" style="position: absolute;
+            bottom: 0;
+            margin: 0;
+            width: 100%;">
+                <button class="reset" @tap="resetChecked">重 置</button>
+                <button class="sure" @tap="complete">确 定</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+<script>
+    //加载主模块
+    seajs.use("../js/crane-conf.js", function () {
+
+    });
+</script>
+
+</html>

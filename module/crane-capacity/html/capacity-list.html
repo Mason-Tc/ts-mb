@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>待调整列表</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+		<link rel="stylesheet" type="text/css" href="../css/capacity-list.css" />
+		<style>
+			.span-r span{
+				margin-left:1.25rem;
+			}
+			.search-item{
+				margin-left:20px;
+				float: left;
+				margin-top: 5px;
+			}
+			.mui-icon-back:before, .mui-icon-left-nav:before {
+			    font-size: 24px;
+			    color: #ffffff;
+			}
+			.search-item{
+				margin-left:20px;
+				float: left;
+				margin-top: 5px;
+				border: 1px solid #CCCCCC;
+				padding:0px 10px;
+				border-radius:4px;
+				background: #ffffff;
+			}
+			.search-item input{
+				border:0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in">
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+						<div class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color:#FFFFFF;">待调整列表</span>
+						</div>
+					</header>
+					<div id="slider" class="mui-content mui-slider">
+						<div id="sliderContent" class="mui-slider-group" style="top: 1px;">
+							<div id="div_list" class="mui-slider-item mui-control-content">
+								<div class="search-wrap" style="height: 100%;">
+										<div class="search-item" style="">
+											<span class="title">计划单号:</span>
+											<input type="text" style="width: 150px;    height: 28px;" v-model="dataPage.filterConditions.dispatchCode" />
+										</div>
+										<div class="search-item" >
+											<span style="margin-left: 10px; font-size: 14px;"></span>&nbsp;&nbsp;
+												<input style="width: 130px; padding-left: 5px;height: 28px;" type="text" readonly placeholder="起始时间" :value="dataPage.filterConditions.beginDate" @tap="pickBeginDate" />&nbsp;--&nbsp;
+												<input style="width: 130px; padding-left: 5px;height: 28px;" type="text" readonly placeholder="结束时间" :value="dataPage.filterConditions.endDate" @tap="pickEndDate" />
+										</div>
+										<div class="search-item" style="">
+											<span class="title">仓库:</span>
+											<select style="width: 150px;    height: 28px;" v-model="dataPage.filterConditions.warehouseId" >
+												<option value="">请选择</option>
+											    <option :value="wa.id" v-for="wa in warehouseList" >{{wa.text}}</option>                                    
+											</select>
+										</div>
+										<div class="search-item" style="height: 30px;padding: 6px 20px;background: royalblue;color:white;border: 1px solid #ccc;border-radius: 3px;" @tap="complete">查 询</span>
+								</div>
+								<div class="public-list mui-scroll-wrapper" style="top: 55px !important;">
+									<ul class="public-list-wrapper  mui-row">
+										<li v-for="(index,listItem) in dataPage.dataList"  class="mui-col-sm-6 mui-col-xs-12">
+											<div style="display: flex;background: #fff;padding: 10px">
+												<div style="flex: 0.9;" class="span-r">
+													<table style="width:100%;line-height: 24px;">
+														<tr style="">
+															<td class="title">计划单号：</td>
+															<td style="width:200px;" v-text="listItem.dispatchCode"></td>
+															<td class="title" >货主单位：</td>
+															<td style="width:200px;" v-text="listItem.ownerName"></td>
+															<td class="title">时间：</td>
+															<td  style="width:200px;" >{{listItem.dispatchDate | dateFilter}}</td>
+															
+														</tr>
+														<tr>
+															<td class="title">计划重量：</td>
+															<td style="width:200px;">
+																<span v-text="listItem.weight"></span>
+																<!-- <span v-text="listItem.weightUnit"></span> -->
+															</td>
+															<td class="title">接受重量：</td>
+															<td style="width:200px;">
+																<span v-text="listItem.receiveWeight"></span>
+																<!-- <span v-text="listItem.weightUnit"></span> -->
+															</td>
+															<td class="title">物料描述：</td>
+															<td style="text-align: left; width:200px;"  v-text="listItem.materialDesc" colspan=3 ></td>
+															
+														</tr>
+														
+													</table>											
+												</div>
+												<div style="flex:0.1"> 
+													<button @tap="toDetail(listItem.id)"  style="">容量调整</button>
+												</div>
+											</div>
+										</li>
+										<!-- <li  class="mui-col-sm-6 mui-col-xs-12">
+											<div style="display: flex;background: #fff;padding: 10px">
+												<div style="flex: 0.9;" class="span-r">
+													<table style="width:100%;line-height: 24px;">
+														<tr style="">
+															<td class="title">计划单号：</td>
+															<td >JH59885555</td>
+															<td class="title" >货主单位：</td>
+															<td>中拓</td>
+														</tr>
+														<tr>
+															<td class="title">计划重量：</td>
+															<td>43件</td>
+															<td class="title">接受重量：</td>
+															<td>45吨</td>
+														</tr>
+														<tr>
+															<td class="title">时间：</td>
+															<td colspan=3  >2020-09-09  10:31:34</td>
+														</tr>
+														<tr style="line-height: 14px;">
+															<td class="title">物料描述：</td>
+															<td colspan=3 >品名  材质 规格  产地</td>
+															
+														</tr>
+													</table>											
+												</div>
+												<div style="flex:0.1"> 
+													<button @tap="toDetail(1)"  style="">容量调整</button>
+												</div>
+											</div>
+										</li> -->
+										
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/capacity-list.js");
+	</script>
+
+</html>

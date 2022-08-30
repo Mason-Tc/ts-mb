@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>待收货列表</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" href="../../../js/layui/css/layui.mobile.css">
+		<link rel="stylesheet" type="text/css" href="../css/recive-list.css" />
+		<style>
+			
+			
+			.layui-layer-setwin {
+			    padding-top: 15px;
+			    width: 50px;
+			    height: 40px;
+			    right: 0 !important;
+			    top: 0 !important
+			}
+			
+			.layui-layer-setwin .layui-layer-close1 {
+			    transform: scale(1.2) !important;
+			    height: 100%;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="">
+			<div id="relSubPlace" style="display: none;">
+				<ul class="mui-table-view">
+				  <li class="mui-table-view-cell" v-for="item in dataPage.relPlaceSubList" :key="item.id" @tap="relSubPlaceSelect(item.id)">
+				    {{ item.text }}
+				  </li>
+				</ul>
+			</div>
+			
+			<div id="dialogDiv" style="display:none;background-color: #F5F5F5;padding: 0;" class="mui-content mui-slider">
+				<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+					<div class="mui-action-back" @tap="cancelRecive()">
+						<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+						<span class="wms-title" style="left: 60px;color:#FFFFFF;">收货单<span></span></span>
+					</div>
+					<!-- <span @tap="toRefresh" style="color:#ffffff;font-weight: 700;margin-right: 0px;" class="mui-icon mui-icon-loop mui-pull-right"></span> -->
+				</header>
+				
+				<div style="padding:10px 10px 10px 10px;background:#e0e0e0;font-size:18px;margin-top: 60px;">基本信息</div>
+				<div style="line-height: 40px;text-align: left;">
+					<table style="margin-top: -10px;width:100%;margin:0 auto;">
+						<tr>
+							<td style="text-align: right;">时间：</td>
+							<td v-text="dataPage.detailData.receivingDate"></td>
+							<td style="text-align: right;">短驳单：</td>
+							<td v-text="dataPage.detailData.bargeCode"></td>
+							<td style="text-align: left;">
+								车牌号：
+								<span v-text="dataPage.detailData.carNosStr"></span>
+							</td>
+							<!-- <td v-text="dataPage.detailData.carNosStr" style="text-align: left;font-size: 14px;"></td> -->
+						</tr>
+						<tr>
+							<td style="text-align: right;">运输人：</td>
+							<td v-text="dataPage.detailData.driverName"></td>
+							<td style="text-align: right;">货主单位：</td>
+							<td v-text="dataPage.detailData.ownerName"></td>
+						
+							<td font-size: 14px;">
+								<span>证件号：</span>
+								<span v-text="dataPage.detailData.cardNo"></span>
+								<span style="margin-left: 50px">备注：</span>
+								<span v-text="dataPage.detailData.remarks"></span>
+							</td>
+					
+						</tr>
+					</table>
+				</div>
+				
+				<div style="padding:10px 10px 10px 10px;background:#e0e0e0;font-size:18px;">物料信息</div>
+				<div style="margin:0 auto; line-height: 30px;text-align: center;background-color: #F5F5F5;">
+					<div style="margin-top:10px;padding-left:10px;padding-right:10px;">
+					<table style="width:100%;margin:0 auto;background: #fff;" v-for="(index,det) in dataPage.detailData.detailList">
+						
+						<tr> 
+							<td style="text-align: left;"> 
+								<span class="" > 
+									<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;物料描述：</span>    
+									<span v-text="det.materialDesc"></span>
+								</span> 
+							</td>     
+							<td style="text-align: left;">
+								<span class="" >  
+									<span>捆包号：</span>
+									<span v-text="det.packageNo"></span>
+			 					</span>   
+							</td>
+
+						</tr>
+						<tr>
+							<td style="text-align: left;">
+								<span class=""  style="margin-left:0px;">
+									<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;应收数量：</span>
+									<span v-text="det.receivableNum" ></span>
+									<span v-text="det.receivableNumUnitDesc"></span>
+								</span>
+							</td>
+							
+							<td style="text-align: left;"> 
+								<span class="contSpan" style="margin-left:0px;background: #ffffff;">
+									<span>实收数量：</span>
+									<span>
+										<input type="number" style="width:20px;border:0;" v-model="det.realNum">
+										<span v-text="det.realNumUnitDesc"></span>
+									</span>
+								</span>
+							</td>
+							
+							<td style="text-align: left;">
+								<span class="contSpan" style="margin-left:-20px;background: #ffffff;">
+									<span>库位：</span>
+									<input  v-model="det.subPlaceId" type="hidden">
+									<input v-model="det.subPlaceName" @tap="selectSub(det)" style="width:150px;border-radius:2px; border:1px solid;border-color:#ccc;text-align: center;" readonly="true">
+
+								</span>
+								<span style="margin-left: 5px;color: #007AFF" @tap="getRelSubPlace(index)">关联库位</span>
+							</td>
+							
+							
+						</tr>
+					</table>
+					</div>
+				
+					
+				</div>
+			</div>
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+						<div id="mainBackDiv" class="mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color: #FFFFFF;">待收货列表</span>
+						</div>
+					</header>
+					<div id="slider" class="mui-content mui-slider">
+						<div id="sliderContent" class="mui-slider-group" style="top: 1px;">
+							<div id="div_list" class="mui-slider-item mui-control-content">
+								<div ></div>
+								<div class="search-wrap" style="height: 100%;">
+										<div class="search-item" style="margin-left:10px">
+											<span >计划单号:</span>
+											<input type="text" style="border:0;width: 150px;    height: 28px;" v-model="dataPage.filterConditions.dispatchCode" />
+										</div>
+										<div class="search-item" >
+											<span style="margin-left: 10px; font-size: 14px;"></span>&nbsp;&nbsp;
+												<input  style="width: 130px; padding-left: 5px;height: 28px;" type="text" readonly placeholder="起始时间" :value="dataPage.filterConditions.beginDate" @tap="pickBeginDate" />&nbsp;--&nbsp;
+												<input  style="width: 130px; padding-left: 5px;height: 28px;" type="text" readonly placeholder="结束时间" :value="dataPage.filterConditions.endDate" @tap="pickEndDate" />
+										</div>
+										<div class="search-item" style="">
+											<span >仓库:</span>
+											<select style="width: 150px;    height: 28px;" v-model="dataPage.filterConditions.warehouseId" >   
+												<option value="">请选择</option>
+											    <option :value="wa.id" v-for="wa in warehouseList"  >{{wa.text}}</option>                                    
+											</select>
+										</div>
+										<div class="search-item" style="height: 30px;padding: 6px 20px;background: royalblue;color:white;border: 1px solid #ccc;border-radius: 3px;" @tap="complete">查 询</span>
+								</div>
+								<div class="public-list mui-scroll-wrapper" style="top: 60px !important;">
+									<ul class="public-list-wrapper  mui-row">
+										<li v-for="(index,listItem) in dataPage.dataList" class="mui-col-sm-6 mui-col-xs-12">
+											<div style="display: flex;background: #fff;padding: 10px">
+												<div style="flex: 0.9;" class="span-r">
+													<table style="width:100%;line-height: 24px;">
+														<tr style="">
+															<td class="title">计划单号：</td>
+															<td style="width:200px;" v-text="listItem.dispatchCode" ></td>
+															<td class="title">车牌号：</td>
+															<td style="width:120px;"  v-text="listItem.carPlateNo" ></td>
+															<td class="title">时间：</td>
+															<td style="width:200px;"  v-text="listItem.receivingDate"></td>
+														</tr>
+														<tr>
+															<td class="title">货主单位：</td>
+															<td style="width:200px;"  v-text="listItem.ownerName"></td>
+															<td class="title">应收数量/重量：</td>
+															<td style="width:120px;"  >
+																<span v-text="listItem.receivableNumTotal+'/'+listItem.receivableWeightTotal"></span>
+															</td>
+															<td class="title">物料描述：</td>
+															<td  style="width:200px;" v-text="listItem.materialDesc"></td>
+															
+														</tr>
+													</table>											
+												</div>
+												<div style="flex:0.1"> 
+													<button @tap="toDetail(listItem)"  style="">收货登记</button>
+												</div>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/recive-list.js");
+	</script>
+
+</html>

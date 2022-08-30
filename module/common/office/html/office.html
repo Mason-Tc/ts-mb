@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>机构选择</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../../css/zmd.css" />
+		<link rel="stylesheet" href="../../../../js/ztree/css/zTreeStyle/zTreeStyle.css" />
+		<link  rel="stylesheet"  href="../css/office.css" />
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<div class="mui-action-back back-area">
+				<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title" style="width: 4em;">机构选择</h1>
+			</div>
+		</header>
+		<div class="mui-content">
+			<div class="mui-content-padded" style="margin: 5px;">
+				<div id="tree" class="ztree"></div>
+			</div>
+		</div>
+		<footer id="footer" class="mui-bar-footer">
+			<div class="mui-button-row">
+				<button type="button" class="mui-btn" >取消</button>&nbsp;&nbsp;
+				<button type="button" class="mui-btn mui-btn-primary">确认</button>
+			</div>
+		</footer>
+		<script type="text/javascript" id="seajsnode" src="../../../../js/seajs/sea-all-debug.min.js"></script>
+		<script>
+			//加载主模块
+			seajs.use("../js/office.js", function() {});
+		</script>
+	</body>
+</html>

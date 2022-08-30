@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>入库作业</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/crane-work-in.css" />
+		<style>
+			.layui-layer-content{
+				overflow: hidden !important;
+			}
+			.layui-layer-btn{
+				padding: 0px !important;
+				bottom: 0 !important;
+				position: absolute !important;
+				width: 100% !important;
+			}
+			.layui-layer-btn a {
+			    width: 48%;
+			    text-align: center;
+			    padding: 0px 45px !important;
+			    border-radius: 5px;
+				margin: 0px !important;
+				width: 50%;
+				border-radius: 0px !important;
+			
+			}
+			.layui-layer-btn .layui-layer-btn0 {
+			    border-color: #CCCCCC !important;
+			    background-color: #CCCCCC !important;
+			    height: 40px;
+			    line-height: 40px;
+			} 
+			.layui-layer-btn .layui-layer-btn1 {
+            border-color: #4285f4 !important;
+            background-color: #4285f4 !important;
+            height: 40px;
+            line-height: 40px;
+            color: #ffffff;
+        }
+		</style>
+	</head>
+	<body>
+		<div id="off-canvas">
+			<!-- 主页面容器 -->
+			<div class="mui-inner-wrap">
+				<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+					<div class="mui-action-back">
+						<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+						<span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color:#FFFFFF;">入库作业</span>
+					</div>
+					<span @tap="toRefresh" style="color:#ffffff;font-weight: 700;margin-right: 0px;" class="mui-icon mui-icon-loop mui-pull-right"></span>
+				</header>
+				<div style="padding-top:50px;">
+					<div id="divTag">
+						<span v-for="(index,pf) in platforms" :id="'pf_'+pf.id" class="divTagSpan" @tap="getPlatformWarehousing(pf.id)"
+						 v-text="pf.platformName"></span>
+					</div>
+				</div>
+				<div style="padding-bottom: 5px;background: #ffffff;width:100%;font-size: 14px;">
+					<!-- <span class="titleSpan" style="margin-left:10px;"><span>时间：</span><span v-text="proReceiving.receivingDate">20180809 10:03</span></span> -->
+					<span class="titleSpan" style=""><span>收货单号：</span><span v-text="proReceiving.receivingCode">TD986543578</span></span>
+					<span class="titleSpan" style=""><span>车牌号：</span><span style="color:#4285f4;font-weight: 700;" v-text="proReceiving.carNosStr"></span></span>
+					<span class="titleSpan" style="margin-left:10px;"><span>备注：</span><span v-text="proReceiving.remarks"></span></span>
+					<span class="titleSpan" style="width:98.1%;"><span>货主单位：</span><span v-text="proReceiving.ownerName"></span></span>
+				</div>
+				<div id="crane" class="craneAdd" style="display: flex;margin-bottom: 10px;height: 52px;">
+					<div style="flex:1;font-size: 16px;text-align: right;margin-right: 5px;">
+						<div style="line-height: 30px; ">行车当前库位</div>
+						<div style="line-height: 14px; font-size: 14px;">(请按指引顺序进行装卸)</div>
+					</div>
+					<span style="flex:1;text-align:left;margin-left: 5px;" v-text="currentCraneAddr"></span>
+				</div>
+				<div style="overflow-y: auto;height: 340px;">
+					<ul class="public-list-wrapper">
+						<li v-for="(index, detail) in proReceiving.detailList" style="margin-bottom: 10px;text-align: center;">
+							<div style="display: flex;background: #fff;padding: 10px;border-radius:5px">
+								<div style="flex:0.1">
+									<button :class="detail.warehousePlaceName" class="addrBtn" v-text="'位置：'+detail.warehousePlaceName"></button>
+								</div>
+								<div style="flex: 0.9;">
+									<table style="width:100%;margin-left: 15px;">
+										<tr style="line-height: 2rem;">
+											<!-- <td style="text-align: right;width: 120px;"></td> -->
+											<td style="text-align: left;width: 40%;">
+												物料描述：<span v-text="detail.materialDesc"></span>
+											</td>
+											
+											<!-- <td style="text-align: right;width: 50px;background-color: #008000;"></td> -->
+											<td style="text-align: left;width: 33%;">
+												应收数量：
+												<span v-text="detail.receivableNum" style='color:royalblue;font-weight: 700;'></span>
+												<span v-text="detail.receivableNumUnitDesc"></span>
+											</td>
+											
+											<!-- <td style="text-align: right;">捆包号：</td>
+											<td style="text-align: left;"  v-text="detail.packageNo"></td> -->
+										</tr>
+										<tr style="line-height: 2rem;">
+											<!-- <td style="text-align: right;"></td> -->
+											<td style="text-align: left;width: 33%;">
+												应收重量：
+												<span v-text="detail.receivableWeight"></span>
+												<span v-text="detail.receivableWeightUnitDesc"></span>
+											</td>
+											
+											<td style="width: 33%;">
+											    <div class=""
+											        style="margin-left: 0px;background: #ffffff;text-align: left;">
+											        <span style="float: left;">实收数量：</span>
+											        <span>
+											            <span @tap="toAddNum(index)"
+											                style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px;background: #1566d2; padding:3px 15px;"
+											                class="mui-icon mui-icon-plus"></span>
+											            <input id="hangNum" type="number" v-model="detail.realNum"
+											                style="margin-left: 2px;width:20%;border: 1px #C0C0C0 solid;text-align: center;height: 30px; color:#4285f4;font-weight: 700;font-size: 25px;">
+											            <span @tap="toMinusNum(index)"
+											                style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px;background: #1566d2; padding:3px 15px;"
+											                class="mui-icon mui-icon-minus"></span>
+											        </span>
+											    </div>
+											</td>
+											
+											<td style="width: 33%;">
+												<span class="contSpan" style="background: #ffffff;">
+													<span>库位：</span>
+													<input  id="subPlaceInputId{{detail.id}}" type="hidden">
+													<input id="subPlaceInput{{detail.id}}" @tap="selectSub(detail)" style="width:100px;" readonly="true">
+
+												</span>
+											</td>
+											
+										</tr>
+									</table>
+								</div>
+							</div>
+						</li>
+					</ul>
+					<div style="position: absolute; color:#ffffff;width:100%;background:#5677fc;font-size: 18px;bottom:2px;padding:15px;text-align: center;"
+					 v-if="proReceiving.detailList.length>0" @tap="toComplete">确认完成</div>
+				</div>
+				<div class="mui-off-canvas-backdrop"></div>
+			</div>
+			<div id="nocarShade" class="backdrop shadeHide" v-bind:class="{shadeShow9:nocarShadeShow}">
+				<div style="border-radius: 10px;box-shadow:2px 2px 5px gray;" class="backdropText shadeHide" v-bind:class="{shadeShow9:nocarShadeShow}">
+					<div>作业车辆还未到达，</div>
+					<div>无法作业，请等待车辆到达！</div>
+				</div>
+			</div>
+			<div id="carnoShade" class="backdrop shadeHide" v-bind:class="{shadeShow8:carnoShadeShow}">
+				<div style="border-radius: 10px;box-shadow:2px 2px 5px gray;" class="backdropText shadeHide" v-bind:class="{shadeShow8:carnoShadeShow}">
+					<div>当前车牌号与作业任务车牌不一致，</div>
+					<div>无法作业，请联系理货员！</div>
+				</div>
+			</div>
+			<div id='craneShade' class="backdrop shadeHide" v-bind:class="{shadeShow7:craneShadeShow}">
+				<div style="border-radius: 10px;box-shadow:2px 2px 5px gray;" class="backdropText shadeHide" v-bind:class="{shadeShow7:craneShadeShow}">
+					<div>当前行车位置与作业库位不一致，</div>
+					<div>无法作业，请移动到指定库位！</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/crane-work-in.js");
+	</script>
+
+</html>

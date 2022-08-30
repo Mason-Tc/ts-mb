@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>吞吐量分析</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link href="../css/throughput-analysis.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../exponent-report/css/dAHFZjuHwkWsorioAuKK.css" />
+		<!--<style>
+			canvas#mountNode {
+				background-color: #fff;
+			}
+		</style>-->
+		<style type="text/css">
+			.icon {
+				width: 1.8em;
+				height: 1.8em;
+				vertical-align: -0.15em;
+				fill: currentColor;
+				overflow: hidden;
+				margin-right: 33px;
+				color: #738ffe;
+			}
+			
+			.selectedTD {
+				color: #738ffe;
+				font-weight: bold;
+			}
+			
+			.sxing {
+				font-size: 1rem;
+				list-style: none;
+				float: left;
+				height: 30px;
+				line-height: 30px;
+				/* margin-top: 10px; */
+				padding: 0px 10px;
+				border: 1px solid #bbb;
+				border-radius: 4px;
+				margin: 5px;
+			}
+		</style>
+		<script src="../../exponent-report/css/font_size/iconfont.js"></script>
+	</head>
+
+	<body>
+		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in" v-cloak>
+			<!-- 侧滑导航根容器 -->
+			<div class="mui-off-canvas-wrap" id="contentDiv">
+				<!-- 主页面容器 -->
+				<div class="mui-inner-wrap">
+					<!-- 主页面标题 -->
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area mui-action-back">
+							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title">吞吐量分析</h1>
+						</div>
+
+						<span id="query-btn" v-on:tap="showOffExponentQuery" class="mui-btn mui-btn-outlined query-btn mui-pull-right" style=" width: 68px; border:0px;">
+							<svg class="icon" aria-hidden="true">
+								<use xlink:href="#icon-shaixuan"></use>
+							</svg>
+	
+							<span class="query-btn-label" style="margin-top:-5px; display: inline-block; position: absolute; top:12px; right: 10px; ">筛选</span>
+						</span>
+					</header>
+					<div id="slider" class="mui-content mui-slider">
+						<div id="menuSliderControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-hidden" style=" background: #ffffff;height: 40px; line-height:40px;">
+							<a class="mui-control-item" href="#itemsummary" @tap="onItemSliderClick($event,0)">吞吐量统计</a>
+							<a class="mui-control-item" href="#itemtrend" @tap="onItemSliderClick($event,1)">趋势分析</a>
+						</div>
+						<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6 mui-hidden"></div>
+
+						<div id="sliderContent" class="mui-slider-group" style="position: relative; top: -2px;">
+							<div id="itemsummary" class="mui-slider-item mui-control-content  mui-hidden">
+								<div class="mui-scroll-wrapper">
+									<div class="mui-scroll">
+										<div class="top-counter">
+											<div class="page-title">
+												<div class="tip-first">吞吐量</div>
+												<div class="top-div-left" v-text="realNumTotalForSummaryStr"></div>
+												<div class="top-div-right" v-text="realWeightTotalForSummaryStr"></div>
+											</div>
+										</div>
+										<table class="m-main-table" style="margin-top: 3px;">
+											<tbody>
+												<tr>
+													<td class="td-left" style="width: 100px;">
+														<table class="td-left-wrap" style="width: 100%;">
+															<tr>
+																<th class="td2" style="width: 100%;">
+																	仓库名称
+																</th>
+															</tr>
+														</table>
+													</td>
+													<td class="td-right">
+														<div class="t-header">
+															<table class="header-table">
+																<tr>
+																	<th @tap="staInStorageSort($event)">
+																		<div v-bind:class="[sortColumns[0] == sortColumn?'f-sort-active': '']">{{sortColumns[0]}}<span class="mui-icon" v-bind:class="[inStorageSort === 'desc'?'mui-icon-arrowdown': 'mui-icon-arrowup']"></span></div>
+																	</th>
+																	<th>
+																		<div>{{sortColumns[1]}}</div>
+																	</th>
+																	<th>
+																		<div>{{sortColumns[2]}}<span class="mui-icon"></span></div>
+																	</th>
+																</tr>
+															</table>
+														</div>
+													</td>
+												</tr>
+												<tr class="mainBody">
+													<td class="td-top">
+														<div class="t-left">
+															<table class="left-table">
+																<tr v-for="(index,exp) in summaryList">
+																	<td>
+																		<div v-bind:class="[parseInt(exp.warehouseNameShow.length/12)>0?'duohang'+parseInt(exp.warehouseNameShow.length/12) + ' td2' : 'td2']" style="text-align: left;">
+																			<!--<div class="help-tip">
+																		<p>{{exp.warehouseNameShow}}</p>
+																	</div>
+																	{{exp.warehouseNameShowAbb}}-->
+																			{{(index+1) + '.' + exp.warehouseNameShow}}
+																		</div>
+																	</td>
+																</tr>
+															</table>
+														</div>
+													</td>
+													<td class="td-content">
+														<div class="t-content">
+															<table class="content-table">
+																<tr v-for="exp in summaryList">
+																	<td>
+																		<div v-bind:class="[parseInt(exp.warehouseNameShow.length/12)>0?'duohang'+parseInt(exp.warehouseNameShow.length/12): '']" style="text-align: right;">
+																			<div class="limitNum13" style="margin-right: 3px;">{{exp.throughputWeight}}</div>
+																		</div>
+																	</td>
+																	<td>
+																		<div v-bind:class="[parseInt(exp.warehouseNameShow.length/12)>0?'duohang'+parseInt(exp.warehouseNameShow.length/12): '']" style="text-align: right;">
+																			<div class="limitNum13" style="margin-right: 3px;">{{exp.ratioShow}}</div>
+																		</div>
+																	</td>
+																	<td>
+																		<div v-bind:class="[exp.increaseRate >= 0 ? 'increase-rate-red': 'increase-rate-green']" style="text-align: right;">
+																			<div class="limitNum13" style="margin-right: 3px;">{{exp.increaseRateShow}}</div>
+																		</div>
+																	</td>
+																</tr>
+															</table>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<div id="itemtrend" class="mui-slider-item mui-control-content  mui-active" style="background: #fff;">
+								<div id="div_trend_pull_fresh" class="mui-scroll-wrapper">
+									<div class="mui-scroll">
+
+										<div class="tip-second">趋势分析</div>
+										<div id="div_month_chart">
+										</div>
+										<div class="top-counter" style=" margin-top: -150px;">
+											<!--<div class="page-title">
+												<div class="top-div-left" style="position: relative;">{{monthAverageStr}}
+													<div class="tip-first" style="position: absolute;top:10;left: 10;">月均值分析</div>
+												</div>
+												<div class="top-div-right" style="position: relative;">{{dayAverageStr}}
+													<div class="tip-first" style="position: absolute;top:10;left:10;">日均值分析</div>
+												</div>
+											</div>-->
+										</div>
+										<div id="div_materiel" class="top-center" style="position: relative;">
+											<div class="tip-second" style="position: absolute;top:2;left:10;">物料吞吐量top5</div>
+											<div id="div_materiel_chart" style="height: 100%; width: 100%;">
+												<canvas id="cv_day"></canvas>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mui-off-canvas-backdrop" @tap="hideOffCanvaQuery"></div>
+				</div>
+				<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-right" id="searchVue">
+					<header class="mui-bar mui-bar-nav">
+						<div class="back-area" @tap="hideOffCanvaQuery">
+							<a id="back-cust-list-btn" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+							<h1 class="mui-title" style="left:40px; width: 6em; top:2px;">查询条件</h1>
+						</div>
+					</header>
+					<div id="div_search_summary" class="mui-scroll-wrapper" style="margin-bottom: 43px;">
+						<div class="mui-scroll">
+							<div style="margin-top: 48px; background:#fff;">
+							</div>
+							<div class="mui-clearfix"></div>
+							<div class="mui-card" style="margin: 0;">
+								<div v-if="exponentType == 0" id="div_search_top" class="ioexp-top">
+									<table>
+										<tr>
+											<td>
+												<table id="tb_search_top_time">
+													<tr>
+														<td>
+															<span style="margin-left: 18px;">时间:</span>
+														</td>
+														<td id="td_curr_day" class="time-selected tap-time" @tap="selectDate($event, 0, 0)"><span>当月</span></td>
+														<td class="tap-time" @tap="selectDate($event, 0, 1)"><span>近3月</span></td>
+														<td class="tap-time" @tap="selectDate($event, 0, 2)"><span>近6月</span></td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<span style="margin-left: 10px; font-size: 14px;"></span>&nbsp;&nbsp;<input style="width: 100px;" type="text" readonly placeholder="起始时间" :value="filterConditions.beginDate" @tap="pickBeginDate" />&nbsp;--&nbsp;<input style="width: 100px;" type="text" readonly placeholder="结束时间" :value="filterConditions.endDate" @tap="pickEndDate" />
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div v-if="exponentType == 1" id="div_search_second" class="ioexp-top">
+									<table>
+										<tr>
+											<td>
+												<table id="tb_search_second_time">
+													<tr>
+														<td>
+															<span style="margin-left: 18px;">月份:</span>
+														</td>
+														<td class="tap-month" @tap="selectDate($event, 1, 0)"><span>近6个月</span></td>
+														<td id="td_month_12" class="tap-month time-selected" @tap="selectDate($event, 1, 1)"><span>近12个月</span></td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<span style="margin-left: 10px; font-size: 14px;"></span>&nbsp;&nbsp;<input style="width: 100px;" type="text" readonly placeholder="起始月" :value="filterConditions.beginMonth" @tap="pickBeginMonth" />&nbsp;--&nbsp;<input style="width: 100px;" type="text" readonly placeholder="结束月" :value="filterConditions.endMonth" @tap="pickEndMonth" />
+											</td>
+										</tr>
+									</table>
+								</div>
+								<ul class="mui-table-view" style="margin-top: 10px;">
+									<li id="li_warehouse" class="mui-table-view-cell mui-collapse mui-active">
+										<a class="mui-navigate-right" href="#">仓库</a>
+										<div class="mui-collapse-content mtx-content-div">
+											<div class="mui-scroll-wrapper mtx-scroll-div" id="warehouseScrollDiv">
+												<div class="mui-scroll">
+													<ul style="background: #fff;">
+														<li v-for="warehouse in warehouseList" class="warehouseA" v-text="warehouse.text" :id="'warehouse_'+warehouse.id" :mtxid="warehouse.id" @tap="searchIvntDetail($event,warehouse.id);" style="font-size:1rem; list-style:none; float: left; height: 38px; line-height: 38px; padding: 0px 10px;"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="btnList">
+						<button class="reset" @tap="resetFilter">重置</button>
+						<button class="sure" @tap="complete">完成</button>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/throughput-analysis.js");
+	</script>
+
+</html>

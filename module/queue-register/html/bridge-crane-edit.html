@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>移库登记</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/bridge-crane-edit.css" />
+	</head>
+
+	<body>
+		<div id="div_detail">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title" v-text="'配置'"></span>
+				</div>
+			</header>
+			<div id="slider" class="mui-content mui-slider">
+				<div id="sliderContent" class="mui-slider-group" style="top: -43px;">
+					<div id="div_cost" class="mui-slider-item mui-control-content">
+						<div class="cost-top">
+							<div v-if="isBatchAdd" style="float:left; line-height: 28px;height: 30px;  width: 75px; border: 1px solid #ccc; border-radius: 20px; background: #fff; padding: 0px 10px; margin-top: 10px; margin-left: 20px;" @tap="toEdit($event, null, 0)">
+								<div style="float:left;font-size:28px; color: #5677fc; margin-top: -1px; line-height: 25px;">+</div>
+								<div style="float:right;font-size: 14px;">添加</div>
+							</div>
+						</div>
+						<div id="div_cost_scroll" class="public-list mui-scroll-wrapper" style="margin-top: 45px;">
+							<ul class="public-list-wrapper mui-scroll">
+								<li class="item" v-for="(index,item) in bridgeCraneList" style="position: relative;" @tap="toEdit($event, item, 1)">
+									<!--<li class="item" v-for="(index,item) in 11">-->
+									<ul>
+										<li class="materialDes">
+											<em style="width:8em;display: inline-block; text-align: right; vertical-align:top;">行车名称:</em><span style="display: inline-block; width:calc(100% - 8em);" v-text="item.bridgeCraneName"></span>
+										</li>
+										<li class="materialDes" style="margin-top: 5px;">
+													<em style="width:8em;display: inline-block; text-align: right; vertical-align:top;">说明:</em><span style="display: inline-block;  width:calc(100% - 8em);" v-text="item.bridgeCraneDesc"></span>
+										</li>
+									</ul>
+									<span class="mui-icon mui-icon-trash" style="position: absolute; right:10px;" @tap="deleteItem($event, item)"></span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<nav id="nav_footer" class="mui-bar mui-bar-tab">
+				<div class="nav-bottom" @tap="submit">提交</div>
+			</nav>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/bridge-crane-edit.js");
+	</script>
+
+</html>

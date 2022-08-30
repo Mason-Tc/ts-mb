@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>排队登记</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/queue-register-edit.css" />
+	</head>
+
+	<body id="body_queue_register_edit">
+		<div class="main">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title" v-bind:class="[processType == 2 ? 'wms-title-update' : 'wms-title']" v-text="topTitle"></span>
+				</div>
+			</header>
+			<div id="div_queue_register_edit" class="mui-content">
+				<ul class="info-list">
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>业务类型
+						</span>
+						<template v-if="processType != 2">
+							<input type="button" value="出库业务" class="selected-business" style="margin-left: 5px; margin-top: 4px;" v-bind:class="[businessType=='1' ? 'selected-business' : 'unselected-business']" @tap="changeBusinessType('1')" /><input type="button" value="入库业务" class="unselected-business" style="margin-left: 15px; margin-top: 4px;" v-bind:class="[businessType=='2' ? 'selected-business' : 'unselected-business']" @tap="changeBusinessType('2')" />
+						</template>
+						<template v-if="processType == 2">
+							<input type="text" readonly placeholder="" :value="businessTypeName" />
+						</template>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>排队号码
+						</span>
+						<input type="text" readonly :placeholder="businessType == '1' ? '请选择排队号码' : ''" :value="validCode" @click="getValidCode" />
+						<span v-if="businessType=='1'" class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<template v-if="businessType=='1'">
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>行车
+							</span>
+							<input type="text" style="width: 198px;" placeholder="请选择行车" readonly :value="bridgeCraneName" @click="getBridgeCrane" />
+							<!--<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 80px; top: 6px;"></span>-->
+							<input type="button" value="配置" class="selected-business" style="position: absolute;margin-top: 4px; width: 50px;right:8px;" @tap="setBridgeCrane" />
+						</li>
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>提单号
+							</span>
+							<input type="text" readonly placeholder="" :value="ladingCode" />
+						</li>
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>发货单号
+							</span>
+							<input type="text" style="width: 158px;" :placeholder="processType==1 ? '请输入正确的发货单号' : ''" :readonly="processType!=1" v-model="sendCode" />
+							<input v-if="processType==1" type="button" value="查询" class="selected-business" style="margin-left: 8px; margin-top: 4px; width: 50px;" @tap="searchInfo" />
+						</li>
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>物料描述
+							</span>
+							<input type="text" readonly placeholder="" :value="materialDesc" />
+						</li>
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>提单数量/重量
+							</span>
+							<input type="text" readonly placeholder="" :value="ladingInfo" />
+						</li>
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>车牌号
+							</span>
+							<input type="text" readonly placeholder="" :value="carPlateNo" />
+						</li>
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>车辆到达时间
+							</span>
+							<input type="text" readonly placeholder="请选择车辆到达时间" :value="arriveDate" @click="pickArriveDate" />
+							<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+						</li>
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>手机号码
+							</span>
+							<input type="text" placeholder="请填写手机号码" v-model="phone" maxlength="11" />
+						</li>
+					</template>
+					<template v-if="businessType=='2'">
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>登记车辆数
+							</span>
+							<input type="tel" placeholder="" v-model="carNum" maxlength="4" />
+						</li>
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>作业状态
+							</span>
+							<input type="button" value="作业中" class="selected-business" style="margin-left: 5px; margin-top: 4px;" v-bind:class="[enterBusinessStatus=='1' ? 'selected-business' : 'unselected-business']" @tap="changeTaskStatus('1')" /><input type="button" value="暂停中" class="" style="margin-left: 15px; margin-top: 4px;" v-bind:class="[enterBusinessStatus=='2' ? 'selected-business' : 'unselected-business']" @tap="changeTaskStatus('2')" />
+						</li>
+						<li class="item" style="position: relative; border-bottom: none;">
+							<span class="title">
+							<span style="color: red;">*&nbsp;</span>有效起止时间
+							</span>
+							<input type="text" readonly placeholder="起始时间" class="selected-time" style="margin-left: 5px; margin-top: 4px;" :value="startDate" @tap="pickStartDate" />
+						</li>
+						<li class="item" style="position: relative;">
+							<span class="title">
+							<span style="color: red;">&nbsp;</span>
+							</span>
+							<input type="text" readonly placeholder="截止时间" class="selected-time" style="margin-left: 5px; margin-top: 4px;" :value="endDate" @tap="pickEndDate" />
+						</li>
+					</template>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>登记时间
+						</span>
+						<input type="text" readonly :placeholder="processType != 2 ? '请选择登记时间' : ''" :value="registerDate" @tap="pickRegisterDate" />
+						<span v-if="processType != 2" class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>仓库
+						</span>
+						<input type="text" readonly placeholder="" :value="warehouseName" />
+					</li>
+				</ul>
+			</div>
+		</div>
+		<nav id="nav_footer" class="mui-bar mui-bar-tab">
+			<div class="nav-div" @tap="submit" v-text="processText"></div>
+		</nav>
+		<div id="validCodeList" class="select-box">
+			<div class="title">排队号码选择</div>
+			<div class="content mui-scroll-wrapper">
+				<ul class="mui-scroll">
+					<li v-for="(index, item) in validCodeList" @click="pickValidCodeList($event, item)" v-bind:class="[validCode == item ? 'select' : '']" v-text="item"></li>
+				</ul>
+			</div>
+			<div class="foot">
+				<button class="close" @click="hideSelectBox('validCodeList', false)">取消</button>
+			</div>
+		</div>
+		<div id="bridgeCraneList" class="select-box">
+			<div class="title">行车选择</div>
+			<div class="content mui-scroll-wrapper">
+				<ul class="mui-scroll">
+					<li v-for="(index, item) in bridgeCraneList" @click="pickBridgeCrane($event, item)" v-bind:class="[bridgeCraneId == item.id ? 'select' : '']" v-text="item.bridgeCraneName"></li>
+				</ul>
+			</div>
+			<div class="foot">
+				<button class="close" @click="hideSelectBox('bridgeCraneList', false)">取消</button>
+			</div>
+		</div>
+		<div class="cyq_mask" @click="hideSelectBox()"></div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/queue-register-edit.js");
+	</script>
+
+</html>

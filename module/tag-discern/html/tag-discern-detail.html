@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>识别登记</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/tag-discern-detail.css" />
+	</head>
+
+	<body id="body_content">
+		<div class="main">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title" v-text="titleStr"></span>
+				</div>
+			</header>
+			<div id="slider" class="mui-content mui-slider">
+				<!--基本信息-->
+				<div id="div_basic_info" class="mui-slider-item mui-control-content mui-active" style="overflow-x: hidden;overflow-y: hidden; height: 562px">
+					<div id="queryContent">
+						<ul class="query-list">
+							<li class="item">
+								<span class="title">
+										<span style="color: red;">*&nbsp;</span>时间
+								</span>
+								<input type="text" readonly :value="signsDate" />
+							</li>
+							<li class="item" style="position: relative;">
+								<span class="title"><span style="color: red;">*&nbsp;</span>产地</span>
+								<input style="display: inline-block; width:calc(100% - 8em);" type="text" readonly placeholder="" :value="placesteelName" />
+							</li>
+							<li class="item" style="position: relative;">
+								<span class="title"><span style="color: red;">*&nbsp;</span>品名</span>
+								<input style="display: inline-block; width:calc(100% - 8em);" type="text" readonly placeholder="" :value="brandName" />
+							</li>
+							<li class="item" style="position: relative;">
+								<span class="title"><span style="color: red;">*&nbsp;</span>货主单位</span>
+								<input style="display: inline-block; width:calc(100% - 8em);" type="text" readonly placeholder="" :value="ownerName" />
+							</li>
+							<li class="item" style="position: relative;">
+								<span class="title">车船号</span>
+								<input style="display: inline-block;  width:calc(100% - 8em);" type="text" placeholder="" :value="transportNo" />
+							</li>
+							<li class="item" style="position: relative;">
+								<span class="title"><span style="color: red;">*&nbsp;</span>仓库</span>
+								<input style="display: inline-block; width:calc(100% - 8em);" type="text" readonly placeholder="" :value="warehouseName" />
+							</li>
+							<li class="item" style="position: relative;">
+								<span class="title"><span style="color: red;">*&nbsp;</span>制单员</span>
+								<input style="display: inline-block;  width:calc(100% - 8em);" type="text" readonly placeholder="" :value="createBy" />
+							</li>
+							<li class="item" style="position: relative; height: 77px;">
+								<span class="title" style="position: absolute;">备注</span>
+								<textarea style="width:calc(100% - 7em); height: 60px; margin-left: 17px; margin-top: 9px; position: absolute; left:5em;" readonly :value="remarks"></textarea>
+							</li>
+						</ul>
+					</div>
+					<div style="height:38px; line-height: 38px; display: block; margin-right: 0px;">
+						<div style="float:left; margin:0px auto; font-size:14px;  color: #333; font-weight: bold;display: block;width: 60%; padding-left: 10px;">物料信息&nbsp;&nbsp;<span v-text="totalStr"></span></div>
+					</div>
+					<div id="div_material_list" class="public-list mui-scroll-wrapper">
+						<ul class="public-list-wrapper mui-scroll" style="padding-bottom: 42px;">
+							<li class="item" v-for="(index,item) in detailPage.materialList">
+								<!--<li class="item" v-for="(index,item) in 11">-->
+								<ul class="uibg">
+									<!--改变背景颜色 uibga 或  uibg-->
+									<li class="materialDes">
+										<em style="width:110px;display: inline-block;  text-align:right;">材质:</em><span v-text="item.textureName"></span>
+									</li>
+									<li class="materialDes">
+										<em style="width:110px;display: inline-block;  text-align:right;">规格:</em><span v-text="item.specificationName"></span>
+									</li>
+									<li><em style="width:110px;display: inline-block; text-align:right; padding-left: 0px; ">数量/重量:</em><span v-text="item.signsInfo"></span></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+					<!--<div style="height: 145px; position: relative;">
+					</div>-->
+				</div>
+			</div>
+		</div>
+		<nav id="nav_footer" class="mui-bar mui-bar-tab">
+			<div class="nav-right" @tap="close">关闭</div>
+		</nav>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/tag-discern-detail.js");
+	</script>
+	<style>
+		.mui-table-view.mui-grid-view {
+			width: 100%;
+			margin: 40px auto;
+			margin-bottom: 0px;
+		}
+	</style>
+
+</html>

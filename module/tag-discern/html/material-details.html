@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>物料明细</title>
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../css/material-details.css" />
+
+	</head>
+
+	<body id="body_material_details">
+		<div class="main">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-action-back">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<span class="wms-title">物料明细</span>
+				</div>
+			</header>
+			<div id="div_material_details" class="mui-content">
+				<ul class="info-list">
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>物料描述
+						</span>
+						<input type="text" readonly placeholder="" :value="materialDesc" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;&nbsp;</span>捆包号
+						</span>
+						<input type="text" readonly placeholder="" :value="packageNo" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>原数量
+						</span>
+						<input type="text" readonly placeholder="" :value="supplyNum" />
+						<span class="unit" v-text="supplyNumUnitDesc"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>原重量
+						</span>
+						<input type="text" readonly placeholder="" :value="supplyWeight" />
+						<span class="unit" v-text="supplyWeightUnitDesc"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>移库数量
+						</span>
+						<input type="text" placeholder="请填写移库数量" v-model="moveNum" />
+						<span class="unit" v-text="moveNumUnitDesc"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>移库重量
+						</span>
+						<input type="text" placeholder="请填写移库重量" v-model="moveWeight" />
+						<span class="unit" v-text="moveWeightUnitDesc"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>原库位
+						</span>
+						<input type="text" readonly placeholder="" :value="oldWarehousePlace" />
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">*&nbsp;</span>新库位
+						</span>
+						<input type="text" readonly placeholder="请选择新库位" :value="newWarehousePlace" @click="showSelectBox('warehousePlaceList')" />
+						<span class="mui-icon mui-icon-arrowright" style="position: absolute; right: 0; top: 6px;"></span>
+					</li>
+					<li class="item" style="position: relative;">
+						<span class="title">
+							<span style="color: red;">&nbsp;&nbsp;</span>层号
+						</span>
+						<input type="text" placeholder="请填写层号" v-model="storeyNo" />
+					</li>
+				</ul>
+			</div>
+		</div>
+		<nav id="nav_footer" class="mui-bar mui-bar-tab">
+			<div class="nav-div" @tap="submit">确定</div>
+		</nav>
+		<div id="warehousePlaceList" class="select-box">
+			<div class="title">新库位选择</div>
+			<div class="content mui-scroll-wrapper">
+				<ul class="mui-scroll">
+					<li v-for="(index, item) in warehousePlaceList" @click="pickWarehousePlace($event, item)" v-text="item.text"></li>
+				</ul>
+			</div>
+			<div class="foot">
+				<button class="close" @click="hideSelectBox('warehousePlaceList', false)">取消</button>
+			</div>
+		</div>
+		<div class="cyq_mask" @click="hideSelectBox()"></div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/material-details.js");
+	</script>
+
+</html>
