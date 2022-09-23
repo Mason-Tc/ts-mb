@@ -1,103 +1,144 @@
 <!DOCTYPE html>
 <html>
-
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>待收货详情</title>
-		<!--标准mui.css-->
-		<link rel="stylesheet" href="../../../css/mui.css" />
-		<link rel="stylesheet" href="../../../css/icons-extra.css" />
-		<link rel="stylesheet" href="../../../css/reset.css" />
-		<link rel="stylesheet" type="text/css" href="../css/recive-list.css" />
-		<style>
-			.underLine{
-				border-bottom:1px solid #CCCCCC;
-				text-align: left;
-				padding-left: 5px;
-			}
-			.mui-icon-back:before, .mui-icon-left-nav:before {
-			    font-size: 24px;
-			    color: #ffffff;
-			}
-			
-		</style>
+		<meta name="viewport"
+			content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/new_style.css">
+		<link rel="stylesheet" type="text/css" href="../css/recive-detail.css">
+		<title>收货登记</title>
 	</head>
-
-	<body>
-		<div id="off-canvas" class="mui-off-canvas-wrap mui-slide-in">
-			<!-- 侧滑导航根容器 -->
-			<div class="mui-off-canvas-wrap" id="contentDiv">
-				<!-- 主页面容器 -->
-				<div class="mui-inner-wrap">
-					<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
-						<div class="mui-action-back">
-							<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
-							<span class="wms-title" style="margin: 1px 0px 0px -3px;left: 80px;color:#FFFFFF;">待收货单</span>
-						</div>
-					</header>
-					<div id="slider" style="padding:0.3125rem,20px;" class="mui-content mui-slider">
-						<div style="font-size: 18px;margin:10px;">基本信息</div>
-						<div style="padding: 10px 0;background: #ffffff;width:100%;">
-							<table  style="width:95%;line-height: 35px;text-align: right;">
-								<tr>
-									<td>时间：</td>
-									<td class="underLine">2020-05-09 10:03</td>
-									<td>短驳单：</td>
-									<td class="underLine">TD99988444</td>
-								</tr>
-								<tr>
-									<td>货主单位：</td>
-									<td class="underLine">湖南中拓</td>
-									<td>车牌号：</td>
-									<td class="underLine">湘A89568</td>
-								</tr>
-								<tr>
-									<td>运输人：</td>
-									<td class="underLine">张大</td>
-									<td>证件号：</td>
-									<td class="underLine">436589654987654562</td>
-								</tr>
-								<tr>
-									<td>备注：</td>
-									<td class="underLine">备注备注备注</td>
-									<td></td>
-									<td></td>
-								</tr>
-							</table>
-						</div>
-						<div style="font-size: 18px;margin:10px;">物料信息</div>
-						<div style="padding: 10px 0;background: #ffffff;width:100%">
-							<table style="width:95%;line-height: 35px;text-align: right;">
-								<tr>
-									<td>物料描述：</td>
-									<td class="underLine">品名  规格  材质 产地</td>
-									<td>捆包号：</td>
-									<td class="underLine">GS09933</td>
-								</tr>
-								<tr>
-									<td>应收数量：</td>
-									<td class="underLine">12件</td>
-									<td style="color:red;">实收重量：</td>
-									<td class="underLine"><input style="width:100%;"></td>
-								</tr>
-								
-							</table>
-						</div>
-						<div style="margin:10px 0;">
-							<button style="background: #47d5ff;width:100%;" @top="saveRecive">确 认</button>
-						</div>
-					</div>
-					
-					
+	<body style="background: white;">
+		<div id="app" v-cloak>
+			<div class="new_popover tip_popover" v-if="popoverSure" v-cloak>
+				<div class="new_popover_header">
+					操作提醒
+					<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openTip"></span>
 				</div>
-			
+				<div class="new_popover_body" style="padding-top: 0;">
+					<div class="comp_tip tip_tip" style="margin-bottom: 0;text-align: center;font-size: 16px;">
+						{{ tipContent }}
+					</div>
+					<div class="tip_button_box">
+						<button class="tip_button light_blue_button" @click="sure">提交</button>
+					</div>
+				</div>
+			</div>
+			<div class="new_mask" v-show="popover||popoverSure" v-cloak></div>
+			<!--导航栏-->
+			<header class="mui-bar mui-bar-nav" style="background: #1566d2;z-index: 9999;">
+				<button class="mui-action-back mui-btn mui-btn mui-btn-link mui-btn-nav mui-pull-left">
+					<span class="mui-icon mui-icon-left-nav" style="color: #fff;"></span>
+					<span style="color: #fff">收货登记</span>
+				</button>
+			</header>
+			<div id="slider" class="new_navigation_box mui-slider">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control">
+					<a class="mui-control-item new_nav_arrow_fir mui-active" href="#tab1">基本信息</a>
+					<a class="mui-control-item new_nav_arrow_last" href="#tab2">附件上传</a>
+				</div>
+			</div>
+			<div class="mui-slider-group">
+				<div id="tab1" class="mui-slider-tiem mui-control-content mui-active" v-cloak>
+					<div class="new_search_box" v-cloak>
+						<ul class="info_list_ul">
+							<li class="info_list_li">
+								<div class="new_list_object new_list_object_field">
+									<span class="new_list_property search_property">预报单号</span>
+									<span class="new_list_value car_num">{{ allInfo.forecastCode }}</span>
+								</div>
+							</li>
+							<li class="info_list_li">
+								<div class="new_list_object new_list_object_field">
+									<span class="new_list_property search_property">预报时间</span>
+									<span class="new_list_value ">{{ allInfo.forecastDate }}</span>
+								</div>
+							</li>
+							<li class="info_list_li">
+								<div class="new_list_object new_list_object_field">
+									<span class="new_list_property search_property">货主单位</span>
+									<span class="new_list_value">{{ allInfo.ownerName }}</span>
+								</div>
+							</li>
+							<li class="info_list_li" style="background-color: white;">
+								<div class="new_list_object new_list_object_field" >
+									<label class="new_list_property search_property">车牌号</label>
+									<select class="new_select2 q-carNumber-name"></select>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="new_list_box material_list_box all_list_box deep_bg" v-cloak>
+						<ul class="material_list_ul">
+							<li class="material_list_li all_list_li" v-for="(idx, material) in allInfo.detailList" v-cloak >
+								<div class="line_info">
+									<div class="new_list_object">
+										<span class="new_list_property">物料描述</span>
+										<span class="new_list_value">{{ material.materialDesc || '' }}</span>
+									</div>
+									<div class="new_list_object">
+										<span class="new_list_property">捆包号</span>
+										<span class="new_list_value">{{ material.packageNo || '' }}</span>
+									</div>
+									<div class="new_list_object material_object">
+										<span class="new_list_property">应收数量/重量</span>
+										<span class="new_list_value">{{material.receivableNum||0}}件/{{material.receivableWeight}}吨</span>
+									</div>
+									<div style="flex: 1;"></div>
+								</div>	
+								<div class="line_info">
+									<div class="new_list_object material_object">
+										<span class="new_list_property">实收数量</span>
+										<span>
+										    <span class="mui-icon mui-icon-plus" @click="onPlus(material)"></span>
+											<input type="number" v-model="material.realNum" oninput=" value=value.replace(/[-+e.]/g,'') " />
+										    <span class="mui-icon mui-icon-minus" @click="onSub(material)"></span>
+										</span>
+									</div>
+									<div class="new_list_object material_object">
+										<span class="new_list_property ">月台</span>
+										<select :class=" 'new_select2 '+'platform_select_'+idx " ></select>
+									</div>
+									<div class="new_list_object material_object">
+										<span class="new_list_property">库位</span>
+										<select :class=" 'new_select2 '+ 'warehouse_select_'+idx "></select>
+									</div>
+									<div style="flex: 1;font-size: 14px;color:#0091ff;opacity: 0;">关联库位</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div id="tab2" class="mui-slider-tiem mui-control-content">
+					<div class="file_box">
+						<div v-cloak style="width: 98%;">
+							<div class="image_box" v-for="file in imagesFiles">
+								<div class="del_img" @tap="delFile(file.id)">
+									<span class="mui-icon mui-icon-trash"></span>
+								</div>
+								<img class="" style="width:100%;" :src="file.fileUrl">
+							</div>
+						</div>
+						<button type="button" id="addFile">添加 +</button>
+					</div>
+				</div>
+				<div class="new_bottom_box">
+					<span class="new_all_accounts" v-cloak>
+						实收总计:&nbsp;&nbsp;&nbsp;<b>{{ allNum }}</b>&nbsp;&nbsp;&nbsp;件
+					</span>
+					<button class="new_bottom_button blue_button" @click="openTip">
+						提交
+					</button>
+				</div>
 			</div>
 		</div>
-	</body>
-	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
-	<script>
-		seajs.use("../js/recive-detail.js");
-	</script>
+		<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+		<script>
+			//加载主模板块
+			seajs.use("../js/recive-detail.js", function() {
 
+			});
+		</script>
+	</body>
 </html>

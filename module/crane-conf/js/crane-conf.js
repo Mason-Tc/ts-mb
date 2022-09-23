@@ -35,8 +35,8 @@ define(function(require, module, exports) {
 			selectedRowCar:function(){
 				m.ajax(app.api_url + '/api/rowcar/getRowCar', {
 					data: {},
-					dataType: 'json', 
-					type: 'get', 
+					dataType: 'json',
+					type: 'get',
 					timeout: 10000,
 					success: function(res) {
 						aboutVue.rowcarList=res;
@@ -51,18 +51,13 @@ define(function(require, module, exports) {
 				var has=$("#pf"+flag).hasClass("activeBg");
 				if(has){
 					$("#pf"+flag).removeClass("activeBg");
-					//$("#pf"+flag).addClass("contentSpan");
 				}else{
-					//$("#pf"+flag).removeClass("contentSpan");
 					$("#pf"+flag).addClass("activeBg");
 				}
 			},
 			// 选择行车时的效果
 			cliCrane:function(flag, index){
-				if(index === 0) {
-					index = 1; // 月台1组有行车01南北
-				}
-				var correspondingPFList =  this.pfList[index-1].platformVOList;
+				var correspondingPFList =  this.pfList[index].platformVOList;
 				
 				$("#pfBtns .contentSpan").removeClass("activeBg");
 				$("#pfBtns .contentSpan input[name='platform']").prop('checked', false);
@@ -76,7 +71,6 @@ define(function(require, module, exports) {
 				$("#craneDiv .contentCrane").removeClass("activeBg")
 				$("#crane"+flag).addClass("activeBg");
 			},
-			
 			resetChecked: function() {
 				$("input").prop("checked", false);
 				$(".activeBg").removeClass("activeBg").addClass("contentSpan");
@@ -92,7 +86,6 @@ define(function(require, module, exports) {
 				let craneId=$(radioEls[0]).val();
 				let craneName=$(radioEls[0]).next().text();
 				craneName=craneName.replace("行车","").replace("北","").replace("南","");
-				//console.log($(radioEls[0]).val());
 				var els = $("#pfBtns input:checked");
 				if (els.length > 0) {
 					if (els.length > 2) {
@@ -102,23 +95,27 @@ define(function(require, module, exports) {
 						if (els.length == 2) {
 							let a = $(els[0]).val();
 							let b = $(els[1]).val();
-							let abs = Math.abs(parseFloat(a) - parseFloat(b));
-							if (abs == 5) {
-								let tempNum=(parseFloat(a) - parseFloat(craneName))+(parseFloat(b) - parseFloat(craneName));
-								if(tempNum!=5&&tempNum!=15&&tempNum!=25){
-									m.toast("行车和月台不匹配",{duration:10000,type:'div'});
-									return;
-								}else{
-									pfs = a + "," + b;
-								}
-							} else {
+							let list = this.pfList[parseInt(craneName)-1].platformVOList
+							if(a==list[0].id&&b==list[1].id){
+								pfs = a + "," + b;
+							}
+							if(a==list[1].id&&b==list[0].id){
+								pfs = a + "," + b;
+							}
+							if(!pfs){
 								m.toast("月台不能跨组选择",{duration:10000,type:'div'});
 								return;
 							}
 						} else {
 							let a = $(els[0]).val();
-							let n=parseFloat(a) - parseFloat(craneName);
-							if(n==0||n==5||n==10){
+							let key = false;
+							let list = this.pfList[parseInt(craneName)-1].platformVOList
+							for(let k=0;k<list.length;k++){
+								if(list[k].id===a){
+									key=true
+								}
+							}
+							if(key){
 								pfs = a;
 							}else{
 								m.toast("行车和月台不匹配",{duration:10000,type:'div'});

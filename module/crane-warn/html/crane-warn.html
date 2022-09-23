@@ -96,10 +96,8 @@
                             <div id="divTag">
                                 <span @tap="selectTag('',$event)" style="margin-left:20px;"
                                     class="tagActive">全部告警</span>
-                                <!-- <span style="margin-left: -4px;" @tap="selectTag(1,$event)">入库告警</span>
-                                <span @tap="selectTag(2,$event)">出库告警</span> -->
                                 <span v-if="wbAuth" @tap="selectTag('2',$event)">地磅告警</span>
-								<span v-if="rpAuth" @tap="selectTag('1',$event)">月台告警</span>
+								<span v-if="rpAuth" @tap="selectTag('1',$event)">磅差告警</span>
                             </div>
                             <div class="search-wrap" style="height: 100%;">
                                 <div class="search-item" style="margin-left: 10px;">
@@ -131,7 +129,6 @@
                                 <div class="public-list mui-scroll-wrapper" style="top: 100px !important;">
                                     <ul class="public-list-wrapper  mui-row">
                                         <li v-for="listItem in dataPage.dataList" style="margin-top: 10px;" class="mui-col-sm-12 mui-col-xs-12">
-										<!-- <li v-for="listItem in 11" style="margin-top: 10px;" class="mui-col-sm-12 mui-col-xs-12"> -->
                                             <div style="display: flex;background: #fff;padding: 10px">
                                                 <div style="flex: 0.9;" class="span-r">
                                                     <table style="width:100%;line-height: 24px;">
@@ -141,13 +138,13 @@
 																<tr>
 																    <td style="width:100px;">告警时间：</td>
 																    <td style="width:200px;" v-text="listItem.warnTime"></td>
-																    <td style="width:100px;" v-text="listItem.warnType=='1'? '行车名称：':'地磅名称：'"></td>
+																    <td style="width:100px;" v-text="'行车名称：'"></td>
 																    <td style="width:200px;" v-text="listItem.deviceName"></td>
 																	<td style="width:100px;">业务类型：</td>
 																	<td style="width:200px;" v-text="listItem.taskType == '1' ? '入库':'出库'"></td>
 																	<td style="width:100px;">任务单号：</td>
 																	<td style="width:200px;" v-text="listItem.taskCode"></td>
-																</tr>	
+																</tr>
 																</table>
 															</td>
 														</tr>

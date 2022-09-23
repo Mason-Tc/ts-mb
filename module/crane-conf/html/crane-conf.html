@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <script></script>
     </script>
-    <title>作业月台</title>
+    <title>行车配置</title>
     <!--标准mui.css-->
     <link rel="stylesheet" href="../../../css/mui.min.css">
     <link rel="stylesheet" href="../../../css/zmd.css">
     <link href="../css/crane-conf.css" rel="stylesheet" />
     <style>
-        #contentDiv div {
-            margin-top: 20px;
-        }
-
+		html,body{
+			height: 100%;
+		}
         .contentSpan {
             height: 50px;
             line-height: 20px;
@@ -64,7 +62,8 @@
             width: 50%;
             font-size: 16px !important;
             border-radius: 0px;
-            line-height: 50px;
+            line-height: 48px;
+			background-color: #EBF3FE;
         }
 
         #btnList .sure {
@@ -72,7 +71,7 @@
             margin-left: -5px;
             font-size: 16px !important;
             border-radius: 0px;
-            line-height: 50px;
+            line-height: 48px;
             background: #5677fc;
             color: white;
         }
@@ -81,31 +80,29 @@
 
 <body id="about-detail">
     <header class="mui-bar mui-bar-nav" style="background: #1566d2;">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title" style="margin-top: -3px;color:#FFFFFF;">作业月台</h1>
+        <button class="mui-action-back mui-btn mui-btn mui-btn-link mui-btn-nav mui-pull-left">
+        	<span class="mui-icon mui-icon-left-nav" style="color: #fff;"></span>
+        	<span style="color: #fff">行车配置</span>
+        </button>
     </header>
-    <div class="mui-content" style="height: 616px;">
+    <div class="mui-content" style="height: 100%;padding-top:48px;">
         <div
             style="background-color: #FFFFFF;height: 100%; margin:0px auto;text-align: center;padding-top:10px;  padding-bottom: 5px;">
             <div style="text-align: left;margin-left: 20px;">请选择行车</div>
             <div id="craneDiv" style="display: flex; justify-content: center;margin-bottom: 10px;">
-                <div v-for="(index, rc) in rowcarList" class="contentCrane" :id="'crane'+rc.id"
-                    :class="{'activeBg':rc.selectedFlag}">
+                <div v-for="(index, rc) in rowcarList" class="contentCrane" :id="'crane'+rc.id" :class="{'activeBg':rc.selectedFlag}">
                     <input @change="cliCrane(rc.id, index)" v-model="rc.selectedId" type="radio" name="crane" :value="rc.id">
                     <label v-text="rc.deviceName"></label>
                 </div>
-
             </div>
             <div style="text-align: left;margin-left: 20px;">请选择月台</div>
             <div id="pfBtns" style="display:flex; justify-content: center;">
                 <div v-for="(index,pfg) in pfList">
-                    <div v-for="detail in pfg.platformVOList" :id="'pf'+detail.id"
-                        :class="{'activeBg':detail.selectedFlag}" class="contentSpan">
+                    <div v-for="detail in pfg.platformVOList" :id="'pf'+detail.id" :class="{'activeBg':detail.selectedFlag}" class="contentSpan">
                         <input @change="cliMe(detail.id)" v-model="detail.selectedFlag" type='checkbox' name="platform"
                             :value="detail.id" :id="'pfInput'+detail.id">
                         <label v-text="detail.name"></label>
                     </div>
-                    <div class="titleSpan" v-text="pfg.name"></div>
                 </div>
             </div>
             <div id="btnList" style="position: absolute;

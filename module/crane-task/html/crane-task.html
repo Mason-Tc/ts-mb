@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>行车作业</title>
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../../css/icons-extra.css" />
+		<link rel="stylesheet" href="../../../css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/new_style.css">
+		<link rel="stylesheet" type="text/css" href="../css/crane-task.css" />
+	</head>
+	<body>
+		<div id="off-canvas">
+			<!-- 主页面容器 -->
+			<div class="mui-inner-wrap">
+				<header class="mui-bar mui-bar-nav" style="background: #1566d2;border: none;">
+					<div class="nav-head">
+						<a class="mui-icon mui-icon-left-nav mui-pull-left" @click="back" style="color: white;"></a>
+						<span class="wms-title" @click="back" style="left: 80px;margin: 1px 0px 0px 10px;color:#FFFFFF;line-height: 48px;">行车作业</span>
+						<span style="color:#ffffff;font-weight: 700;margin-right: 0px;" class="mui-icon mui-icon-loop mui-pull-right"></span>	
+					</div>
+				</header>
+				<div class="nav-tabs">
+					<span v-for="plat in platformList" @click="gotoNav(plat.id)" :class="['nav-items',activePlat==plat.id ? 'active':'' ]" >{{plat.name}}</span>
+					<span class="order">叫号</span>
+				</div>
+				<div class="container">
+					<iframe :src="src" id="iframe"></iframe>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
+	<script>
+		seajs.use("../js/crane-task.js");
+	</script>
+</html>

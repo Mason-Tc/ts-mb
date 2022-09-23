@@ -84,6 +84,20 @@ define(function(require, module, exports) {
 					$("#craneDiv .contentSpan").removeClass("activeBg")
 					$("#crane"+flag).addClass("activeBg");
 				},
+				//跳转排班设置
+				toTeam:function(){
+					m.openWindow({
+						id: 'toTeam',
+						"url": '../../group-team-manage/html/group-team-manage.html',
+						show: {
+							aniShow: 'pop-in'
+						},
+						waiting: {
+							autoShow: true
+						},
+						extras: {}
+					})
+				},
 				// 跳转容量调整
 				toCapacity: function() {
 					m.openWindow({
@@ -239,49 +253,53 @@ define(function(require, module, exports) {
 					});
 				},
 				// 跳转出入库作业
-				toCraneWork: function(inOut) {
+				toCraneWork: function() {
 					//查询用户是否已选择了月台
-					var waiting = plus.nativeUI.showWaiting();
-					m.ajax(app.api_url + '/api/rowcar/isSelected', {
-						data: {},
-						dataType: 'json',
-						type: 'get',
-						timeout: 10000,
+					// var waiting = plus.nativeUI.showWaiting();
+					// m.ajax(app.api_url + '/api/rowcar/isSelected', {
+					// 	data: {},
+					// 	dataType: 'json',
+					// 	type: 'get',
+					// 	timeout: 10000,
+					// 	success: function(res) {
+					// 		waiting.close();
+					// 		if (res.sysDevice) {
+					// 		} else {
+					// 			layer.msg("请先选择作业月台");
+					// 		}
+					// 	},
+					// 	error: function(xhr, type, errorThrown) {
+					// 		waiting.close();
+					// 		m.toast("网络异常，请重新试试");
+					// 	}
+					// });
+					let waiting = plus.nativeUI.showWaiting()
+					m.ajax(app.api_url + '/api/rowcar/getPlatformTaskByPlatformId', {
+						data: { platformId: '1' },
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为60秒
 						success: function(res) {
 							waiting.close();
-							if (res.sysDevice) {
+							if(res.code==='200'){
 								m.openWindow({
-									id: 'toCraneWork',
-									"url": '../../'+inOut+'/html/'+inOut+'.html',
+									id: 'crane-task',
+									"url": '../../crane-task/html/crane-task.html',
 									show: {
 										aniShow: 'pop-in'
 									},
 									waiting: {
 										autoShow: true
 									},
-									extras: {'rowCar': res.sysDevice,'platforms': res.sysPlatformList}
+									extras: { allInfo: res.data , platformId:'1', type:res.resultType }
 								});
-							} else {
-								layer.msg("请先选择作业月台");
-								/* layer.open({
-									type: 1,
-									shade: 0.3,
-									title: "选择月台",
-									content: $('#platform'),
-									btn: ['确 定'],
-									area: ['600px', '400px'],
-									cancel: function(index) {
-										return true;
-									},
-									yes:function(index, layero){
-										aboutVue.savePlatform(index,inOut);
-									}
-								}); */
+							}else{
+								m.toast(res.msg)
 							}
 						},
 						error: function(xhr, type, errorThrown) {
 							waiting.close();
-							m.toast("网络异常，请重新试试");
+							m.toast('网络异常，请稍候重试')
 						}
 					});
 				},
@@ -290,6 +308,19 @@ define(function(require, module, exports) {
 					m.openWindow({
 						id: 'hangweight-list',
 						"url": '../../crane-hangweight/html/crane-hangweight.html',
+						show: {
+							aniShow: 'pop-in'
+						},
+						waiting: {
+							autoShow: true
+						},
+						extras: {}
+					});
+				},
+				toOverload:function(){
+					m.openWindow({
+						id: 'overweight-handle',
+						"url": '../../overweight-handle/html/overweight-handle.html',
 						show: {
 							aniShow: 'pop-in'
 						},

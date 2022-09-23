@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -11,7 +10,8 @@
 		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
 		<link rel="stylesheet" href="../../../css/icons-extra.css" />
 		<link rel="stylesheet" href="../../../css/reset.css" />
-		<link rel="stylesheet" type="text/css" href="../css/crane-work-in.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/new_style.css">
+		<link rel="stylesheet" type="text/css" href="../css/crane-in.css" />
 		<style>
 			.layui-layer-content{
 				overflow: hidden !important;
@@ -30,7 +30,6 @@
 				margin: 0px !important;
 				width: 50%;
 				border-radius: 0px !important;
-			
 			}
 			.layui-layer-btn .layui-layer-btn0 {
 			    border-color: #CCCCCC !important;
@@ -48,129 +47,187 @@
 		</style>
 	</head>
 	<body>
-		<div id="off-canvas">
+		<div id="app">
+			<div class="new_popover" v-show="popover" v-cloak>
+				<div class="new_popover_header">
+					计量<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openComputation"></span>
+				</div>
+				<div class="new_popover_body">
+					<ul class="info_list_ul">
+						<li class="new_disabled_info_list_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">物料描述</span>
+								<span class="new_list_value" v-text="compute.materialDesc"></span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li pover_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">捆包号</span>
+								<input class="new_input" placeholder="请输入捆包号" v-model="compute.packageNo" />
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li pover_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">库位</span>
+								<select class="new_select2 q-warehousePlace-id" ></select>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li pover_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">列</span>
+								<input class="new_input pot_input" type="number" v-model="compute.col" oninput=" value=value.replace(/[-+e.]/g,'') "/>
+								<span class="new_list_property computation_property">层</span>
+								<input class="new_input pot_input" type="number" v-model="compute.row" oninput=" value=value.replace(/[-+e.]/g,'') "/>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property" style="width: 90px;">应收数量/重量</span>
+								<span class="new_list_value">{{compute.receivableNum||0}} 件 / {{compute.receivableWeight||0}} 吨</span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li pover_li">
+							<div class="new_input_select">
+								<span class="new_list_property">起吊数量</span>
+								<button class="pover_button" @click="toMinusNum">—</button>
+								<input class="pot_input" type="number" style="width: 60px !important;" v-model="compute.workNum" oninput=" value=value.replace(/[-+e.]/g,'') "/>
+								<button class="pover_button" @click="toAddNum">+</button>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li" style="text-align: center;">
+							<span class="pover_line">计重重量</span>
+							<span style="display:inline-block;color: #FF4500;width: 80px;text-align: center;">0</span>
+							<span class="pover_line">吨</span>
+						</li>
+						<li class="new_disabled_info_list_li pover_li">
+							<span class="pover_line">计重重量</span>
+							<input class="pot_input" type="number" style="width: 100px !important;border:none !important;" v-model="compute.workWeight"oninput=" value=value.replace(/[-+e.]/g,'') " />
+							<span class="pover_line">吨</span>
+							<button class="com_sure" @click="addCompute">确认</button>
+						</li>
+					</ul>
+					<div class="comp_table_box">
+						<table class="new_table">
+							<thead class="new_table_thead">
+								<th class="new_table_th">序</th>
+								<th class="new_table_th">过磅时间</th>
+								<th class="new_table_th">物料描述</th>
+								<th class="new_table_th">数量(件)</th>
+								<th class="new_table_th">重量(吨)</th>
+							</thead>
+							<tr class="new_table_tr" v-for="(idx, comp) in computeList">
+								<td class="new_table_td">{{ idx + 1 }}</td>
+								<td class="new_table_td">{{ comp.hangTime }}</td>
+								<td class="new_table_td">{{ comp.materialDesc }}</td>
+								<td class="new_table_td">{{ comp.realNum }}</td>
+								<td class="new_table_td">{{ comp.realWeight }}</td>
+							</tr>
+							<tr class="new_table_tr">
+								<td class="new_table_td">合计</td>
+								<td class="new_table_td"></td>
+								<td class="new_table_td"></td>
+								<td class="new_table_td" v-text="allNum"></td>
+								<td class="new_table_td" v-text="allWeight"></td>
+							</tr>
+						</table>
+					</div>
+					<span class="comp_tip">
+						计量明细清除后，计量数据将全部清除
+					</span>
+					<div class="comp_button_box">
+						<button class="light_blue_button comp_button" @click="clearComp">计量明细清除</button>
+						<button class="blue_button comp_button" style="float: right;" @click="sureCompute">确定</button>
+					</div>
+				</div>
+			</div>
+			<div class="new_popover tip_popover" v-show="popoverSure" v-cloak>
+				<div class="new_popover_header">
+					操作提醒
+					<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openTip"></span>
+				</div>
+				<div class="new_popover_body" style="padding-top: 0;">
+					<div class="comp_tip tip_tip" style="margin-bottom: 0;text-align: center;font-size: 16px;">
+						{{ tipContent }}
+					</div>
+					<div class="tip_button_box">
+						<button class="tip_button light_blue_button" @click="openTip">取消</button>
+						<button class="tip_button light_blue_button" @click="onSure" >确认</button>
+					</div>
+				</div>
+			</div>
+			<div class="new_mask" v-show="popover||popoverSure" v-cloak></div>
 			<!-- 主页面容器 -->
 			<div class="mui-inner-wrap">
-				<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
-					<div class="mui-action-back">
-						<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
-						<span class="wms-title" style="left: 80px;margin: 1px 0px 0px -3px;color:#FFFFFF;">入库作业</span>
-					</div>
-					<span @tap="toRefresh" style="color:#ffffff;font-weight: 700;margin-right: 0px;" class="mui-icon mui-icon-loop mui-pull-right"></span>
-				</header>
-				<div style="padding-top:50px;">
-					<div id="divTag">
-						<span v-for="(index,pf) in platforms" :id="'pf_'+pf.id" class="divTagSpan" @tap="getPlatformWarehousing(pf.id)"
-						 v-text="pf.platformName"></span>
-					</div>
-				</div>
 				<div style="padding-bottom: 5px;background: #ffffff;width:100%;font-size: 14px;">
-					<!-- <span class="titleSpan" style="margin-left:10px;"><span>时间：</span><span v-text="proReceiving.receivingDate">20180809 10:03</span></span> -->
-					<span class="titleSpan" style=""><span>收货单号：</span><span v-text="proReceiving.receivingCode">TD986543578</span></span>
-					<span class="titleSpan" style=""><span>车牌号：</span><span style="color:#4285f4;font-weight: 700;" v-text="proReceiving.carNosStr"></span></span>
-					<span class="titleSpan" style="margin-left:10px;"><span>备注：</span><span v-text="proReceiving.remarks"></span></span>
-					<span class="titleSpan" style="width:98.1%;"><span>货主单位：</span><span v-text="proReceiving.ownerName"></span></span>
+					<span class="titleSpan" style="margin-left:10px;"><span>时间：</span><span v-text="allInfo.receivingDate">20180809 10:03</span></span>
+					<span class="titleSpan" style=""><span>收货单号：</span><span v-text="allInfo.receivingCode">TD986543578</span></span>
+					<span class="titleSpan" ><span>货主单位：</span><span v-text="allInfo.ownerName"></span></span>
+					<span class="titleSpan" style="margin-left:10px;"><span>车牌号：</span><span style="color:#4285f4;font-weight: 700;" v-text="allInfo.carPlateNos"></span></span>
+					<span class="titleSpan" ><span>备注：</span><span v-text="allInfo.remarks || '无'"></span></span>
 				</div>
-				<div id="crane" class="craneAdd" style="display: flex;margin-bottom: 10px;height: 52px;">
-					<div style="flex:1;font-size: 16px;text-align: right;margin-right: 5px;">
-						<div style="line-height: 30px; ">行车当前库位</div>
-						<div style="line-height: 14px; font-size: 14px;">(请按指引顺序进行装卸)</div>
+				<div id="crane" class="craneAdd" style="display: flex;height: 52px;">
+					<div style="flex:1;font-size: 30px;text-align: right;margin-right: 5px;">
+						<div style="line-height: 50px; ">行车当前库位:</div>
 					</div>
-					<span style="flex:1;text-align:left;margin-left: 5px;" v-text="currentCraneAddr"></span>
+					<span style="flex:1;text-align:left;margin-left: 5px;font-size: 30px;">暂无</span>
 				</div>
-				<div style="overflow-y: auto;height: 340px;">
+				<div style="overflow-y: auto;height: calc(100% - 285px);">
 					<ul class="public-list-wrapper">
-						<li v-for="(index, detail) in proReceiving.detailList" style="margin-bottom: 10px;text-align: center;">
-							<div style="display: flex;background: #fff;padding: 10px;border-radius:5px">
-								<div style="flex:0.1">
-									<button :class="detail.warehousePlaceName" class="addrBtn" v-text="'位置：'+detail.warehousePlaceName"></button>
-								</div>
-								<div style="flex: 0.9;">
+						<li style="margin:0 8px 8px 8px;text-align: center;overflow: hidden;" v-for="detail in allInfo.detailList" :key="detail.id">
+							<div style="background: #fff;padding: 5px;border-radius:3px;position: relative;">
+								<button class="addrBtn" @click="openComputation(detail)">计量</button>
+								<button :class="detail.isWeight=='0'?'iscomp_n':'iscomp'" >{{detail.isWeight=='0'?'未计量':'已计量'}}</button>
+								<div>
 									<table style="width:100%;margin-left: 15px;">
 										<tr style="line-height: 2rem;">
-											<!-- <td style="text-align: right;width: 120px;"></td> -->
-											<td style="text-align: left;width: 40%;">
+											<td style="text-align: left;width: 33%;">
 												物料描述：<span v-text="detail.materialDesc"></span>
 											</td>
-											
-											<!-- <td style="text-align: right;width: 50px;background-color: #008000;"></td> -->
 											<td style="text-align: left;width: 33%;">
-												应收数量：
+												<span style="float: left;">应收数量：</span>
 												<span v-text="detail.receivableNum" style='color:royalblue;font-weight: 700;'></span>
 												<span v-text="detail.receivableNumUnitDesc"></span>
-											</td>
-											
-											<!-- <td style="text-align: right;">捆包号：</td>
-											<td style="text-align: left;"  v-text="detail.packageNo"></td> -->
-										</tr>
-										<tr style="line-height: 2rem;">
-											<!-- <td style="text-align: right;"></td> -->
-											<td style="text-align: left;width: 33%;">
-												应收重量：
-												<span v-text="detail.receivableWeight"></span>
+												<span v-text="detail.receivableWeight" style='color:royalblue;font-weight: 700;'></span>
 												<span v-text="detail.receivableWeightUnitDesc"></span>
 											</td>
-											
+										</tr>
+										<tr style="line-height: 2rem;">
+											<td style="text-align: left;width: 33%;">
+												捆包号：
+												<span v-text="detail.packageNo"></span>
+											</td>
 											<td style="width: 33%;">
 											    <div class=""
 											        style="margin-left: 0px;background: #ffffff;text-align: left;">
 											        <span style="float: left;">实收数量：</span>
-											        <span>
-											            <span @tap="toAddNum(index)"
-											                style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px;background: #1566d2; padding:3px 15px;"
-											                class="mui-icon mui-icon-plus"></span>
-											            <input id="hangNum" type="number" v-model="detail.realNum"
-											                style="margin-left: 2px;width:20%;border: 1px #C0C0C0 solid;text-align: center;height: 30px; color:#4285f4;font-weight: 700;font-size: 25px;">
-											            <span @tap="toMinusNum(index)"
-											                style="margin-left:2px;color: #ffffff;border: 1px  solid;border-radius: 5px;background: #1566d2; padding:3px 15px;"
-											                class="mui-icon mui-icon-minus"></span>
-											        </span>
+											        <span v-text="detail.realNum" style='color:royalblue;font-weight: 700;'></span>
+													<span v-text="detail.realNumUnitDesc"></span>
+													<span v-text="detail.realWeight" style='color:royalblue;font-weight: 700;'></span>
+													<span v-text="detail.realWeightUnitDesc"></span>
 											    </div>
 											</td>
 											
 											<td style="width: 33%;">
-												<span class="contSpan" style="background: #ffffff;">
-													<span>库位：</span>
-													<input  id="subPlaceInputId{{detail.id}}" type="hidden">
-													<input id="subPlaceInput{{detail.id}}" @tap="selectSub(detail)" style="width:100px;" readonly="true">
-
-												</span>
+												<div class=""
+												    style="margin-left: 0px;background: #ffffff;text-align: left;">
+												    <span style="float: left;">位置：</span>
+												    <span >{{detail.warehousePlaceName}}</span>
+												</div>
 											</td>
-											
 										</tr>
 									</table>
 								</div>
 							</div>
 						</li>
 					</ul>
-					<div style="position: absolute; color:#ffffff;width:100%;background:#5677fc;font-size: 18px;bottom:2px;padding:15px;text-align: center;"
-					 v-if="proReceiving.detailList.length>0" @tap="toComplete">确认完成</div>
-				</div>
-				<div class="mui-off-canvas-backdrop"></div>
-			</div>
-			<div id="nocarShade" class="backdrop shadeHide" v-bind:class="{shadeShow9:nocarShadeShow}">
-				<div style="border-radius: 10px;box-shadow:2px 2px 5px gray;" class="backdropText shadeHide" v-bind:class="{shadeShow9:nocarShadeShow}">
-					<div>作业车辆还未到达，</div>
-					<div>无法作业，请等待车辆到达！</div>
 				</div>
 			</div>
-			<div id="carnoShade" class="backdrop shadeHide" v-bind:class="{shadeShow8:carnoShadeShow}">
-				<div style="border-radius: 10px;box-shadow:2px 2px 5px gray;" class="backdropText shadeHide" v-bind:class="{shadeShow8:carnoShadeShow}">
-					<div>当前车牌号与作业任务车牌不一致，</div>
-					<div>无法作业，请联系理货员！</div>
-				</div>
-			</div>
-			<div id='craneShade' class="backdrop shadeHide" v-bind:class="{shadeShow7:craneShadeShow}">
-				<div style="border-radius: 10px;box-shadow:2px 2px 5px gray;" class="backdropText shadeHide" v-bind:class="{shadeShow7:craneShadeShow}">
-					<div>当前行车位置与作业库位不一致，</div>
-					<div>无法作业，请移动到指定库位！</div>
-				</div>
-			</div>
+			<div class="sure_btn" @click="openTip">确认完成</div>
 		</div>
 	</body>
 	<script type="text/javascript " id="seajsnode " src="../../../js/seajs/sea-all.min.js"></script>
 	<script>
-		seajs.use("../js/crane-work-in.js");
+		seajs.use("../js/crane-in.js");
 	</script>
 
 </html>

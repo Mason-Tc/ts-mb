@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/new_style.css">
+		<link rel="stylesheet" type="text/css"  href="../css/work-out-input.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/icons-extra.css">
+		<title>作业处理</title>
+	</head>
+	<body style="background: white;">
+		<div id="app" v-cloak>
+			<div class="jl_worning" :class="{show_jl_worning:showJl}">库存已发生改变,请重新计量 ! ! !</div>
+			<div class="new_popover" v-show="popover" style="transform: translate(calc(-50%), calc(-50% + 24px));" v-cloak>
+				<div class="new_popover_header">
+					计量 <span style="color: #4285F4;" v-show="currentType">({{currentType}})</span>
+					<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openComputation"></span>
+				</div>
+				<div class="new_popover_body">
+					<ul class="info_list_ul">
+						<li class="info_list_li half_info info_list_input_li new_disabled_info_list_li" style="font-size: 14px;text-align: center;overflow: hidden;white-space: nowrap;">
+							{{ computation.materialDesc }}
+						</li>
+						<li class="info_list_li half_info info_list_input_li half_info_right new_disabled_info_list_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">应发数量/重量</span>
+								<span class="new_list_value">{{ computation.sendNum }}件 / {{ computation.sendWei }}吨</span>
+							</div>
+						</li>
+						<li class="info_list_li half_info info_list_input_li new_disabled_info_list_li">
+							<div class="new_input_select">
+								<label class="new_label">库位</label>
+								<span class="new_list_value">{{ computation.warehousePlaceName }}</span>
+								<!-- <select id="subPlaceInput{{det.id}}" class="new_select2 q-subPlaceInput-name" itemIndex={{index}}>
+								</select> -->
+							</div>
+						</li>
+						<li class="info_list_li half_info info_list_input_li half_info_right new_disabled_info_list_li">
+							<div class="new_input_select">
+								<label class="new_label">垛位</label>
+								<span class="new_list_value">{{ computation.subPlaceName }}</span>
+								<!-- <select id="subPlaceSonInput{{det.id}}" class="new_select2 q-subPlaceSonInput-name" itemIndex={{index}}>
+								</select> -->
+							</div>
+						</li>
+						<li class="info_list_li half_info info_list_input_li new_disabled_info_list_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">入库重量</span>
+								<span class="new_list_value">{{ enterWeight }} 吨</span>
+							</div>
+						</li>
+						<li class="info_list_li half_info info_list_input_li half_info_right">
+							<div class="new_list_object" style="width: 100%;padding-right: 10px;">
+								<span class="new_list_property computation_property">起吊数量(件)</span>
+								<button class="reserved_num_control_minus computation_control_minus computation_control_plus" @click="computeNum('-')" style="margin-left: 10px;">—</button>
+								<input class="new_control_input" type="number" v-model="computation.num" />
+								<button class="reserved_num_control_minus computation_control_minus" @click="computeNum('+')">+</button>
+							</div>
+						</li>
+					</ul>
+					<div class="computation_weight_box">
+						<div class="computation_true_weight_box">
+							<button class="weight_button blue_button" v-if="countMode" @click="addCompList('average')" style="float: left;width: 80px;">入库重量</button>
+							<span class="weight_title">计量数据</span>
+							<span class="true_weight">{{ trueWeight }}</span>
+							<span class="weight_title">吨</span>
+						</div>
+						<div class="computation_input_weight_box">
+							<span class="weight_title" style="margin-left: 10px;">计量数据</span>
+							<input class="reserved_num_control_num input_weight" type="number" oninput="value=value.match(/^\d+(\.)?\d{0,3}/)[0]" v-model="inputWeight" style="background-color: white;border:none;height: 34px;"/>
+							<span class="weight_title">吨</span>
+							<button class="weight_button blue_button" @click="addCompList('')">确认</button>
+						</div>
+					</div>
+					<div class="comp_table_box">
+						<table class="new_table">
+							<thead class="new_table_thead">
+								<th class="new_table_th">序</th>
+								<th class="new_table_th">过磅时间</th>
+								<th class="new_table_th">物料描述</th>
+								<th class="new_table_th">数量(件)</th>
+								<th class="new_table_th">重量(吨)</th>
+							</thead>
+							<tr class="new_table_tr" v-for="(idx, comp) in compList">
+								<td class="new_table_td">{{ idx + 1 }}</td>
+								<td class="new_table_td">{{ comp.weightTime }}</td>
+								<td class="new_table_td">{{ comp.materialDesc }}</td>
+								<td class="new_table_td">{{ comp.num }}</td>
+								<td class="new_table_td">{{ comp.weight }}</td>
+							</tr>
+						</table>
+					</div>
+					<div class="comp_tip">
+						<span>计量明细清除后，计量数据将全部清除</span>
+						<label v-if="!countMode">
+							<input type="checkbox" v-model="isRealWeight"/>
+							<b>磅出</b>
+						</label>
+						<span v-if="!countMode">勾选后，合计计量重量将取过磅重量</span>
+					</div>
+					<div class="comp_button_box">
+						<button class="light_blue_button comp_button" @click="clean">计量明细清除</button>
+						<button class="blue_button comp_button" style="float: right;" @click="sureCompute">确定</button>
+					</div>
+				</div>
+			</div>
+			<div class="new_popover tip_popover" v-if="popoverSure" v-cloak>
+				<div class="new_popover_header">
+					操作提醒
+					<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openTip"></span>
+				</div>
+				<div class="new_popover_body" style="padding-top: 0;">
+					<div class="comp_tip tip_tip" style="margin-bottom: 0;" v-html="tipContent"></div>
+					<div class="tip_button_box">
+						<button class="tip_button light_blue_button" @click="sure">提交</button>
+						<!-- <button class="tip_button blue_button" v-show="!workList.length" @click="toWorkTab">工作量录入</button> -->
+						<!-- <button class="tip_button blue_button">费用录入</button> -->
+					</div>
+				</div>
+			</div>
+			<div class="new_popover shopping_popover" style="width: 80%;" v-if="popoverShop" v-cloak>
+				<div class="new_popover_header">
+					收纳篮
+					<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openShop"></span>
+				</div>
+				<div class="new_popover_body shop_table_box" style="padding-top: 0;">
+					<table class="new_table">
+						<thead class="new_table_thead">
+							<th class="new_table_th">序</th>
+							<th class="new_table_th">层号</th>
+							<th class="new_table_th">货主单位</th>
+							<th class="new_table_th">货物描述</th>
+							<th class="new_table_th">计量方式</th>
+							<th class="new_table_th">客户名称</th>
+							<th class="new_table_th">库位/垛位</th>
+							<th class="new_table_th">实发数量/重量</th>
+						</thead>
+						<tr class="new_table_tr" v-for="(idx, shop) in shopList">
+							<td class="new_table_td">{{ idx + 1 }}</td>
+							<td class="new_table_td">{{ shop.storeyNo }}</td>
+							<td class="new_table_td">{{ shop.ownerName }}</td>
+							<td class="new_table_td">{{ shop.materialDesc }}</td>
+							<td class="new_table_td">{{ shop.countWeightModeDesc }}</td>
+							<td class="new_table_td">{{ shop.downCustomerName }}</td>
+							<td class="new_table_td">{{ shop.warehousePlaceName + '/' + shop.subPlaceName }}</td>
+							<td class="new_table_td">{{ shop.realNum + '/' + shop.realWeight }}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="new_popover" v-if="showChooseCrane">
+				<div class="new_popover_header">
+					请选择库位/垛位（仅支持选择该行车下的）
+					<span class="mui-icon mui-icon-closeempty new_popover_close" @click="changeDetail"></span>
+				</div>
+				<div class="new_popover_body">
+					<ul class="info_list_ul">
+						<li class="info_list_li half_info info_list_input_li ">
+							<div class="new_input_select">
+								<label class="new_label">库位</label>
+								<select class="new_select2 q-subPlaceInput-name"></select>
+							</div>
+						</li>
+						<li class="info_list_li half_info info_list_input_li ">
+							<div class="new_input_select">
+								<label class="new_label">垛位</label>
+								<select class="new_select2 q-subPlaceSonInput-name"></select>
+							</div>
+						</li>
+					</ul>
+					<div class="btns">
+						<button type="button" style="background-color: rgb(189, 189, 189);" @click="changeDetail">取消</button>
+						<button type="button" class="blue_button" @click="sureChange">确定</button>
+					</div>
+				</div>
+			</div>
+			<div class="new_mask" v-show="popover||popoverSure||popoverShop||showChooseCrane" v-cloak></div>
+			<!--导航栏-->
+			<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+				<button @click="tempSaveOutput" class="mui-action-back mui-btn mui-btn mui-btn-link mui-btn-nav mui-pull-left">
+					<span class="mui-icon mui-icon-left-nav" style="color: #fff;"></span>
+					<span style="color: #fff">作业处理</span>
+			   </button>
+			</header>
+			<div id="slider" class="new_navigation_box mui-slider">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control">
+					<a class="mui-control-item new_nav_arrow_fir mui-active" href="#tab1">1 计量录入</a>
+					<a class="mui-control-item new_nav_arrow_mid" href="#tab2" @tap="openWorkTip">2 工作量录入</a>
+					<a class="mui-control-item new_nav_arrow_last" href="#tab3">3 附件上传</a>
+				</div>
+			</div>
+			<div class="mui-slider-group">
+				<div id="tab1" class="mui-slider-tiem mui-control-content mui-active" v-cloak>
+					<div class="new_search_box">
+						<ul class="info_list_ul" >
+							<li class="info_list_li" style="width: 9.5%;">
+								<div class="new_list_object new_list_object_field">
+									<span class="new_list_value car_num" style="margin: 0 0 0 10px;">{{ allInfo.carPlateNo }}</span>
+								</div>
+							</li>
+							<li class="info_list_li" style="width: 17%;">
+								<div class="new_list_object new_list_object_field">
+									<span class="new_list_property" style="width:50px;">提单号</span>
+									<span class="new_list_value" style="margin: 0;">{{ allInfo.ladingCode }}</span>
+								</div>
+							</li>
+							<li class="info_list_li" style="width: 18.5%;">
+								<div class="new_list_object new_list_object_field">
+									<span class="new_list_property" style="width:60px;">作业单号</span>
+									<span class="new_list_value" style="margin: 0;">{{ allInfo.taskCode }}</span>
+								</div>
+							</li>
+							<li class="info_list_li" style="width: 16.5%;">
+								<div class="new_list_object new_list_object_field">
+									<span class="new_list_property" style="width: 50px;">IC卡号</span>
+									<span class="new_list_value" style="margin: 0;">{{ allInfo.icCardNo }}</span>
+								</div>
+							</li>
+							<li class="info_list_li" style="background-color: white;border: none;">
+								<div class="new_list_object" style="transform: translate(0,2px);">
+									<span class="new_list_property" style="width: 30px;">备注</span>
+									<input type="text" style="padding:0;margin: 0 ;width:280px;height: 38px;" v-model="reMark">
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="new_list_box material_list_box all_list_box deep_bg " v-if="sendType==1">
+						<ul class="material_list_ul">
+							<li class="material_list_li all_list_li" v-for="(idx, material) in allInfo.materialList" :class=" activeItem === idx ? 'active_item' : '' ">
+								<span class="new_no">{{ idx + 1 }}</span>
+								<span style="color: #0091FF;font-size:12px;vertical-align: top;">{{material.storeyNo}}</span>
+								<div class="new_list_object" >
+									<span class="new_list_property">物料描述</span>
+									<span class="new_list_value">{{ material.materialDesc }}</span>
+								</div>
+								<span :class="material.isWeight === '0' ? 'new_list_status' : 'new_list_status1'">{{ material.isWeight === '0' ? '未计量' : '已计量' }}</span>
+								<br/>
+								<div class="new_list_object material_object" style="width: 200px !important;">
+									<span class="new_list_property material_property">库位/垛位</span>
+									<span class="new_list_value">{{ material.warehousePlaceName }} / {{ material.subPlaceName }}</span>
+								</div>
+								<div class="new_list_object material_object" style="width: 200px !important;">
+									<span class="new_list_property" style="text-align: left;">计量方式</span>
+									<span class="new_list_value">{{ material.countWeightModeDesc }}</span>
+								</div>
+								<div class="new_list_object material_object">
+									<span class="new_list_property material_property">客户名称</span>
+									<span class="new_list_value">{{ material.downCustomerName }}</span>
+								</div>
+								<div class="new_list_object material_object" style="width: 140px !important;">
+									<span class="new_list_property" style="text-align: left;">切边</span>
+									<span class="new_list_value">{{ material.cutEdge }}</span>
+								</div>
+								<button class="new_button reserve_button blue_button all_list_button" @click="openComputation(material.id, '2', '2', material.materialDesc, material.workNum, material.workWeight, material.counterpoise, material.countWeightModeDesc,'',material,idx)">计量</button>
+								<div class="new_list_object" style="min-width: 200px;">
+									<span class="new_list_property" style="text-align: left;">捆包号</span>
+									<span class="new_list_value">{{ material.packageNo.length<6 ? material.packageNo : material.packageNo.slice(0,6)+'...' }}</span>
+									<span style="color:#4989F4;font-size: 13px;float:right;" v-if="material.packageNo&&material.packageNo.length>6" @click="folder($event,material.packageNo,6)">展开</span>
+								</div>
+								<div class="new_list_object material_object" style="width: 200px !important;">
+									<span class="new_list_property material_property">应发数量</span>
+									<span class="new_list_value">{{ material.workNum }}件 / {{ material.workWeight }}吨</span>
+								</div>
+								<div class="new_list_object material_object" style="width: 200px !important;">
+									<span class="new_list_property" style="text-align: left;">实发数量</span>
+									<span class="new_list_value">{{ material.realNum ? material.realNum : 0 }}件 / {{ material.realWeight ? material.realWeight : 0 }}吨</span>
+								</div>
+								
+								<!-- <div class="new_list_object material_object" style="width: 180px !important;">
+									<span class="new_list_property" style="text-align: left;">层号</span>
+									<span class="new_list_value">{{ material.storeyNo }}</span>
+								</div> -->
+								<div v-if="!material.sendRemarks" class="new_list_object material_object" style="width: 100% !important;">
+									<span class="new_list_property" style="text-align: left; float: left;">备注</span>
+								</div>
+								<div v-if="material.sendRemarks && material.sendRemarks.length<23" class="new_list_object material_object" style="width: 100% !important;">
+									<span class="new_list_property" style="text-align: left; float: left;">备注</span>
+									<span class="new_list_value openAndCloseValue font_red_color">{{ material.sendRemarks }}</span>
+									<span class="openAndClose openAndCloseHidden">展开</span>
+								</div>
+								<div v-if="material.sendRemarks.length>=23" class="new_list_object material_object" style="width: 100% !important;">
+									<span class="new_list_property" style="text-align: left; float: left">备注</span>
+									<span class="new_list_value openAndCloseValue font_red_color">{{material.sendRemarks.substring(0, 23)+"..." }}</span>
+									<span class="openAndClose" @click="openAndclose(idx,material.sendRemarks)">展开</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="new_list_box material_list_box all_box" v-if="sendType==2">
+						<div class="left-part deep_bg">
+							<ul class="material_list_ul">
+								<li class="material_list_li" v-for="(idx, material) in allInfo.materialList" :class=" activeAll === idx ? 'active_item' : '' " @click="getMaterial(material,idx)">
+									<span class="new_no">{{ idx+1 }}</span>
+									<div class="new_list_object">
+										<span class="new_list_property">物料描述*</span>
+										<span class="new_list_value">{{ material.materialDesc }}</span>
+									</div>
+									<br/>
+									<div class="new_list_object material_object">
+										<span class="new_list_property material_property">库位/垛位</span>
+										<span class="new_list_value">{{ material.warehousePlaceName }} / {{ material.subPlaceName }}</span>
+									</div>
+									<div class="new_list_object material_object">
+										<span class="new_list_property" style="text-align: left;">计量方式</span>
+										<span class="new_list_value">{{ material.countWeightModeDesc }}</span>
+									</div>
+									<div class="new_list_object material_object" style="width: 100% !important;">
+										<span class="new_list_property material_property">货主单位</span>
+										<span class="new_list_value">{{ material.ownerName }}</span>
+									</div>
+									<div class="new_list_object material_object">
+										<span class="new_list_property material_property">客户名称</span>
+										<span class="new_list_value">{{ material.downCustomerName }}</span>
+									</div>
+									<div class="new_list_object material_object">
+										<span class="new_list_property" style="text-align: left;">切边</span>
+										<span class="new_list_value">{{ material.cutEdge }}</span>
+									</div>
+									<div class="new_list_object material_object" style="display: inline-block;">
+										<span class="new_list_property material_property">应发</span>
+										<span class="new_list_value">{{ material.workNum }}件 / {{ material.workWeight }}吨</span>
+									</div>
+									<div class="new_list_object material_object" style="display: inline-block;width: 40% !important;">
+										<span class="new_list_property" style="text-align: left;">实发</span>
+										<span class="new_list_value">{{ material.realNum ? material.realNum : 0 }}件 / {{ material.realWeight ? material.realWeight : 0 }}吨</span>
+									</div>
+									<div v-if="!material.sendRemarks" class="new_list_object material_object" style="width: 100% !important;">
+										<span class="new_list_property" style="text-align: left; float: left;">备注</span>
+									</div>
+									<div v-if="material.sendRemarks && material.sendRemarks.length<23" class="new_list_object material_object" style="width: 100% !important;">
+										<span class="new_list_property" style="text-align: left; float: left;">备注</span>
+										<span class="new_list_value openAndCloseValue font_red_color">{{ material.sendRemarks }}</span>
+										<span class="openAndClose openAndCloseHidden">展开</span>
+									</div>
+									<div v-if="material.sendRemarks.length>=23" class="new_list_object material_object" style="width: 100% !important;">
+										<span class="new_list_property" style="text-align: left; float: left">备注</span>
+										<span class="new_list_value openAndCloseValue font_red_color">{{material.sendRemarks.substring(0, 23)+"..." }}</span>
+										<span class="openAndClose" @click="openAndclose(idx,material.sendRemarks)">展开</span>
+									</div>
+								</li>
+							</ul>
+						</div>
+						<div class="right-part" :class="{deep_bg:activeAll!=-1}">
+							<p class="box_title" v-if="activeAll==-1">
+								库存明细
+							</p>
+							<img class="box_img" src="../../../img/left-material.png" v-if="activeAll==-1"/>
+							<div class="lengthSearch" v-if="activeAll!=-1">
+								<div class="input_label">长度</div>
+								<div class="input_box">
+									<input type="number" id="lengthSearch" style="height: 32px;" v-model="lengthSearch">
+								</div>
+								<div class="showSite" >库位/垛位: <span>{{ changeRes ? showWPName+'/'+showSPName : detail.warehousePlaceName+'/'+detail.subPlaceName }}</span></div>
+								<!-- <div class="showSite" >库位/垛位: <span>{{detail.warehousePlaceName+'/'+detail.subPlaceName}}</span></div> -->
+								<button type="button" class="changeDetial blue_button"  @click="changeDetail()">换货</button>
+							</div>
+							<div class="flex_box">
+								<ul class="reserved_list_ul">
+									<div v-if="!showReservedList.length&&activeAll!=-1" style="text-align: center;margin-top: 60px;">当前无数据</div>
+									<li class="reserve_list_li reserved_list_li" v-for="(idx,reserved) in showReservedList" :class=" activeItem === idx ? 'active_item' : '' ">
+										<div class="used" v-if="reserved.isUsed==1">{{ '用' + reserved.usedNum  }}</div>
+										<span class="car_num">{{ reserved.storeyNo }}</span> <span class="revlabel">层</span>
+										&nbsp;&nbsp;&nbsp;<span>{{ reserved.materialDesc }}</span>
+										&nbsp;&nbsp;&nbsp;<span>{{ reserved.countWeightModeDesc }}</span>
+										&nbsp;&nbsp;&nbsp;<span :class=" reserved.isWeight === '0' ? 'new_list_status' : 'new_list_status1'">{{ reserved.isWeight === '0' ? '未计量' : '已计量' }}</span>
+										<br/>
+										<span class="revlabel">客户名称</span>&nbsp;&nbsp;&nbsp;<span class="">{{ reserved.downCustomerName }}</span>
+										<span class="revlabel">切边</span>&nbsp;&nbsp;&nbsp;<span class="">{{ reserved.cutEdge }}</span>
+										<br/>
+										<span class="revlabel">实物</span>&nbsp;&nbsp;&nbsp;<span class="">{{ reserved.num }}件 / {{ reserved.weight }}吨</span>
+										&nbsp;&nbsp;&nbsp;<span class="revlabel">实发</span>&nbsp;&nbsp;&nbsp;<span class="">{{ reserved.outputNum ? reserved.outputNum : 0 }}件 / {{ reserved.outputWeight ? reserved.outputWeight : 0 }}吨</span>
+										<br/>
+										<span class="revlabel">捆包号</span>&nbsp;&nbsp;&nbsp;<span class="">{{ reserved.packageNo.length<20 ? reserved.packageNo : reserved.packageNo.slice(0,20)+'...' }}</span>
+										<span style="color:#4989F4;font-size:13px;" v-if="reserved.packageNo&&reserved.packageNo.length>=20" @click="folder($event,reserved.packageNo,20)">展开</span>
+										<button class="new_button reserve_button blue_button" style="margin-top: -30px;" @click="openComputation(reserved.id, '2', '2', reserved.materialDesc, reserved.num, reserved.weight, reserved.counterpoise,reserved.countWeightModeDesc,reserved.billDetailId,reserved,idx,reserved.outputNum)">计量</button>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="tab2" class="mui-slider-tiem mui-control-content">
+					<div class="work_box">
+						<table class="new_table" style="table-layout: fixed;">
+							<thead class="new_table_thead">
+								<th class="new_table_th">操作</th>
+								<th class="new_table_th">品名</th>
+								<th class="new_table_th" v-for="workType in allInfo.worktypeList">{{ workType.worktypeName }}</th>
+								<th class="new_table_th">工作量(件)</th>
+								<th class="new_table_th">工作重量(吨)</th>
+							</thead>
+							<tr class="new_table_tr" v-for="work in workList">
+								<td class="new_table_td"></td>
+								<td class="new_table_td">{{ work.materialDesc }}</td>
+								<td class="new_table_td" v-for="workType in allInfo.worktypeList">
+									<select multiple="multiple" class="new_table_select" v-model="work[workType.id]" @change="getName(work[workType.id], workType.allUserList, work, workType.worktypeName)">
+										<option :value="worker.workUserId" v-for="worker in workType.allUserList">{{ worker.workUserName }}</option>
+									</select>
+									<span class="new_table_select_span">{{ work[workType.worktypeName] }}</span>
+									<span class="mui-icon mui-icon-arrowdown new_table_select_icon"></span>
+								</td>
+								<td class="new_table_td">
+									<input class="new_input new_table_input" oninput="value=value.match(/^\d+/)[0]" type="number" v-model="work.workNum" style="width: 100% !important;" />
+								</td>
+								<td class="new_table_td">
+									<input class="new_input new_table_input" oninput="value=value.match(/^\d+(\.)?\d{0,3}/)[0]" type="number" v-model="work.workload" style="width: 100% !important;" />
+								</td>
+								<!-- <td class="new_table_td" style="color: #007AFF;"><span class="mui-icon mui-icon-trash"></span></td> -->
+							</tr>
+							<tr class="new_table_tr" v-for="(idx, work) in humanWorkList">
+								<td class="new_table_td new_table_ope" style="text-align: center;">
+									<span class="mui-icon mui-icon-trash" @click="deleteHumanWork(idx)"></span>
+								</td>
+								<td class="new_table_td">
+									<select class="new_table_select" v-model="work.brandId" @change="getBrandName(work)">
+										<option :value="brand.id" v-for="brand in brandList">{{ brand.text }}</option>
+									</select>
+									<span class="new_table_select_span">{{ work.materialDesc }}</span>
+									<span class="mui-icon mui-icon-arrowdown new_table_select_icon"></span>
+								</td>
+								<td class="new_table_td" v-for="workType in allInfo.worktypeList">
+									<select multiple="multiple" class="new_table_select" v-model="work[workType.id]" @change="getName(work[workType.id], workType.allUserList, work, workType.worktypeName)">
+										<option :value="worker.workUserId" v-for="worker in workType.allUserList">{{ worker.workUserName }}</option>
+									</select>
+									<span class="new_table_select_span">{{ work[workType.worktypeName] }}</span>
+									<span class="mui-icon mui-icon-arrowdown new_table_select_icon"></span>
+								</td>
+								<td class="new_table_td">
+									<input class="new_input new_table_input" oninput="value=value.match(/^\d+/)[0]" type="number" v-model="work.workNum" style="width: 100% !important;" />
+								</td>
+								<td class="new_table_td">
+									<input class="new_input new_table_input" oninput="value=value.match(/^\d+(\.)?\d{0,3}/)[0]" type="number" v-model="work.workload" style="width: 100% !important;" />
+								</td>
+								<!-- <td class="new_table_td" style="color: #007AFF;"><span class="mui-icon mui-icon-trash"></span></td> -->
+							</tr>
+						</table>
+						<span class="new_table_add" @click="addWorkHumanList">+</span>
+					</div>
+				</div>
+				<div id="tab3" class="mui-slider-tiem mui-control-content">
+					<div class="file_box" >
+						<div v-cloak style="width: 98%;" >
+							<div class="image_box" v-for="file in imagesFiles">
+								<div class="del_img" @tap="delFile(file.id)">
+									<span class="mui-icon mui-icon-trash"></span>
+								</div>
+								<img  class="" style="width:100%;" :src="file.fileUrl" @tap='openFile(file.id)'>
+							</div>
+						</div>
+						<button type="button" id="addFile">添加 +</button>
+					</div>
+				</div>
+				<div :class="{new_bottom_box:true,padding_left:sendType==2}">
+					<span
+						class="mui-icon-extra new_mui_icon mui-icon-extra-cart mui_shop" 
+						style="color: #888;font-weight: bold;vertical-align: middle;position: relative;"
+						v-if="sendType==2"
+						@tap="openShop"
+					>
+						<span class="shop_tip" v-show="shopList.length">{{ shopList.length }}</span>
+					</span>
+					<span class="new_all_accounts">
+						实发总计&nbsp;&nbsp;&nbsp;<b style="color: rgb(255, 87, 34);font-size:22px">{{ allNum }}</b> 件 / <b style="color: rgb(255, 87, 34);font-size:22px">{{ allWei }}</b> 吨
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工作量合计&nbsp;&nbsp;&nbsp;<b style="color: rgb(255, 87, 34);font-size:22px">{{ allWorkNum }}</b> 件 / <b style="color: rgb(255, 87, 34);font-size:22px">{{ allWorkWeight }}</b> 吨
+					</span>
+					<button class="new_bottom_button blue_button" @click="openTip">
+						提交
+					</button>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+		<script>
+		  	//加载主模板块
+		    seajs.use("../js/work-out-input.js",function(){
+		      
+		    })
+		</script>
+	</body>
+</html>

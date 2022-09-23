@@ -1,22 +1,20 @@
 define(function(require, exports, module) {
 	var debug = true;//是否开启调试
 
-	//api 调用地址
-
-	// var api_url="http://lip.vaiwan.com/";//dev环境
+	// api 调用地址
+	var api_url="http://10.124.26.42:8090";//dev环境
+	// var api_url="http://192.168.0.57/";//test环境
 //  var api_url="http://10.124.169.156:8083/";//prod环境
-   var api_url="http://120.132.241.213/";//prod环境
-//	var api_url="http://222.240.195.27:8888/";//test环境
-//	var api_url="http://192.168.0.90:8080/";//stage环境
-
+   // var api_url="http://120.132.241.213/";//prod环境
+	// var api_url="http://222.240.195.27:8888/";//test环境
+	// var api_url="http://192.168.0.90:8080/";//stage环境
 	
 	// websocket地址
+	var ws_url = "ws://10.124.26.42:8090/";//dev环境
+	// var ws_url = "ws://192.168.0.57/";//test环境
 	//var ws_url = "ws://10.124.169.156:8083/";//prod环境
-	 var ws_url = "ws://120.132.241.213/";//prod环境
-//	var ws_url = "ws://192.168.0.57/";//test环境
+	// var ws_url = "ws://120.132.241.213/";//prod环境
 //	var ws_url = "ws://192.168.0.90:8080/";//stage环境
-	
-	
 	//当前用户token
 	var _token = '';
 	var isCheckUpdate = true;//是否检测app版本
@@ -24,7 +22,7 @@ define(function(require, exports, module) {
 	var user = {
 		userName:'',//用户名(手机号)
 		password:'',//密码
-		warehouse:'',//用户所属仓库（可能为空）
+		warehouse:'',//用户所属仓库（可能为空
 		autoLogin:true,//是否自动登录
 		flUserId:'',//fl系统用户id
 		userDisplayName:'',//系统用户显示名字

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/overweight-handle.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/new_style.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/icons-extra.css">
+		<title>作业处理</title>
+	</head>
+	<body style="background: #f6f6f6;">
+		<div id="app">
+			<!--导航栏-->
+			<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+				<button class="mui-action-back mui-btn mui-btn mui-btn-link mui-btn-nav mui-pull-left">
+					<span class="mui-icon mui-icon-left-nav" style="color: #fff;"></span>
+					<span style="color: #fff">作业处理</span>
+			    </button>
+			</header>
+			<div class="mui-slider-group" style="margin-top: 48px;">
+				<div id="tab1" class="mui-slider-tiem mui-control-content mui-active">
+					<div class="new_search_box" style="overflow: hidden;display: flex;">
+						<!-- <select class="new_input" v-model="searchList.warnType" style="width: 23.5% !important;"> -->
+							<!-- <option value="" selected style="display: none;">告警类型</option> -->
+							<!-- <option value="2">磅差告警</option> -->
+							<!-- <option value="3">超重告警</option> -->
+						<!-- </select> -->
+						<input type="text" class="new_input" placeholder="请输入车牌号" v-model="searchList.carPlateNo" style="width: 23.5% !important;">
+						<input type="text" class="new_input" placeholder="请输入提单号" v-model="searchList.ladingCode" style="width: 23.5% !important;">
+						<select class="new_input" v-model="searchList.warehouseId" style="width: 23.5% !important;">
+							<option value="" selected style="display: none;">请选择仓库</option>
+							<option :value="ware.id" v-for="ware in warehouseList">{{ ware.text }}</option>
+						</select>
+						<div class="new_right_button_box" style="width: 320px;">
+							<button class="new_button new_reset_button" @click="clean">重置</button>
+							<button class="new_button new_sure_button" @click="getTaskList">查询</button>
+						</div>
+					</div>
+					<div class="new_list_box work_list_box" v-cloak>
+						<ul class="list_ul">
+							<li class="list_li" v-for="(idx,task) in taskList" v-if="task.warnType!=4">
+								<div class="list_header">
+									<div class="new_list_object">
+										<span class="new_list_property">车牌号</span>
+										<span class="new_list_value car_num">{{ task.carPlateNo }}</span>
+									</div>
+									<div class="new_list_object">
+										<span class="new_list_property">手机号</span>
+										<span class="new_list_value">{{ task.phone }}</span>
+									</div>
+									<div class="new_list_object">
+										<span class="new_list_property">提单号</span>
+										<span class="new_list_value">{{ task.ladingCode }}</span>
+									</div>
+									<div class="new_list_object">
+										<span class="new_list_property">作业单号</span>
+										<span class="new_list_value">{{ task.taskCode }}</span>
+									</div>
+									<div class="new_list_object"><span class="type_tag">{{ task.sendType == '1' ? '明细' : '汇总' }}</span></div>
+								</div>
+								<div class="new_list_body">
+									<div class="new_list_object" style="min-width: 150px;">
+										<span class="new_list_property">告警类型</span>
+										<span class="new_list_value car_num">{{ task.warnTypeDesc }}</span>
+									</div>
+									<div class="new_list_object long_list_object">
+										<span class="new_list_property long_list_property">应发总件数/重量</span>
+										<span class="new_list_value">{{ task.workNumTotal }}件 / {{ task.workWeightTotal }}吨</span>
+									</div>
+									<div class="new_list_object long_list_object">
+										<span class="new_list_property">IC卡号</span>
+										<span class="new_list_value">{{ task.icCardNo }}</span>
+									</div>
+									<br/>
+									<div class="new_list_object" style="min-width: 150px;">
+										<span class="new_list_property">货主单位</span>
+										<span class="new_list_value">{{ task.ownerName }}</span>
+									</div>
+									<div class="new_list_object long_list_object">
+										<span class="new_list_property long_list_property">实提总件数/重量</span>
+										<span class="new_list_value">{{ task.craneNum ? task.craneNum :0 }}件 / {{ task.craneWeight? task.craneWeight:0 }}吨</span>
+									</div>
+									<button class="new_button new_sure_button task_button" @click="toWorkOutInput(task.id)">重新计量</button>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+		<script>
+		  	//加载主模板块
+		    seajs.use("../js/overweight-handle.js",function(){
+		      
+		    });
+		</script>
+	</body>
+</html>

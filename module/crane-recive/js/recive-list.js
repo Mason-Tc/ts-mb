@@ -1,441 +1,497 @@
 define(function(require, module, exports) {
-	var m = require("mui");
-	var app = require("app");
-	var Vue = require("vue");
-	var com = require("computer");
-	require("mui-picker");
-	require("mui-poppicker");
-	require("mui-dtpicker");
-	require("moment");
-	require("layui");
-	var $ = require("zepto");
-	require("../../../js/common/common.js");
-	// require("mui-picker");
-	// require("mui-poppicker");
-
-	m.init();
-
-	m.plusReady(function() {
-		var swaiting = null;
-		var twaiting = null;
-		var dataPullRefresh = null;
-		var layer = null;
-		var slider = m("#slider").slider();
-		var beginDate = moment().subtract(3, 'day').format('YYYY-MM-DD 00:00');
-		var endDate = moment().format('YYYY-MM-DD 23:59');
-		var dtPicker1 = new mui.DtPicker({
-			"type": "datetime",
-			"value": beginDate
-		});
-		var dtPicker2 = new mui.DtPicker({
-			"type": "datetime",
-			"value": endDate
-		});
-		
-		m('#div_list .public-list').scroll({
-			deceleration: 0.01, //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
-			indicators: false
-		});
-		m('.mui-scroll-wrapper').scroll({
-			deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
-		});
-		m('#warehouseScrollDiv').scroll({
-			deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
-		});
-		
-		
-		slider.setStopped(true); //禁止滑动
-		layui.use(['layer'], function() {
-			layer = layui.layer;
-		});
-		
-		var layerIndex;
-		var relSubPlaceLayerIndex;
-		
-		var picker = new mui.PopPicker();
-		
-		var globalVue = new Vue({
-			el: '#off-canvas',
-			data: {
-				conditions: {},
-				selectedMtxs: {},
-				warehouseList: [],
-				dataPage: {
-					dataList: [],
-					detailData:{},
-					placeSubList: [], // 全部库位数据
-					relPlaceSubList: [], // 关联库位数据
-					realNum:[],
-					pageSize: 10,
-					pageNo: 1, //当前页数
-					totalPage: 0, //总页数
-					totalListCount: 0, //总条数
-					filterConditions: { // 筛选条件
-						"dispatchCode": "", //单据号
-						"warehouseId": app.getUser().warehouse.id, //仓库ID
-						"beginDate": "", //开始时间
-						"endDate": "" //结束时间
-					}
-				}
-			},
-			methods: {
-				toDetail:function(listItem){
-					// globalVue.dataPage.detailData=listItem;
-					// layerIndex=layer.open({
-					// 	type:1,
-					// 	title:'收货单',
-					// 	area:['800px','400px'],
-					// 	content:$("#dialogDiv")
-					// })
-					 m.ajax(app.api_url + '/api/proReceiving/bargeReceiveForm?_t=' + new Date().getTime(), {
-						data: {id:listItem.id},
-						dataType: 'json', //服务器返回json格式数据
-						type: 'post', //HTTP请求类型
-						timeout: 10000, //超时时间设置为60秒； 
-						success: function(res) {
-							// debugger
-							if(res.msg.length>0){
-								m.toast(res.msg);
-							}else{
-								globalVue.dataPage.detailData=res.proReceiving;
-								
-								m.openWindow({
-									id: 'recive-detail',
-									"url": '../html/recive-detailR.html',
-									show: {
-										aniShow: 'pop-in'
-									},
-									waiting: {
-										autoShow: true
-									},
-									extras: {
-										reciveDetail: res.proReceiving, 
-										warehouseId: globalVue.dataPage.filterConditions.warehouseId
-									}
-								});
-								
-								// layerIndex=layer.open({
-								// 	type:1,
-								// 	// shade: 0.3,
-								// 	title:false,
-								// 	// shadeClose: true,
-								// 	closeBtn: 0,
-								// 	area:['100%','100%'],
-								// 	content:$("#dialogDiv"),
-								// 	btn: ['取 消','确 定'],
-								// 	// 取消按钮
-								// 	btn1:function(index, layero) {
-								// 		globalVue.cancelRecive();
-								// 	},
-								// 	// 确定按钮
-								// 	btn2: function(index) {
-								// 		globalVue.saveRecive();
-								// 		return false;
-								// 	}
-									
-								// })
-							}
-						
-						}
-					}) 
-				},
-				cancelRecive:function(){
-					// debugger
-					layer.close(layerIndex);
-					layerIndex = undefined;
-					event.stopPropagation();
-				},
-				saveRecive:function(){
-					// debugger
-					var self = this;
-					var detailList=globalVue.dataPage.detailData.detailList;
-					for(var i=0;i<detailList.length;i++){
-						var rnum=detailList[i].realNum;
-						var tSubPlaceId = detailList[i].subPlaceId;
-						if(rnum==null||rnum==undefined||rnum.length<=0||parseFloat(rnum)<=0){
-							m.toast("物料信息第"+(i+1)+"行，请填写正确的实收数量");
-							return false;
-						}
-						if(tSubPlaceId==null||tSubPlaceId==undefined||tSubPlaceId.length<=0||parseFloat(tSubPlaceId)<0) {
-							m.toast("物料信息第"+(i+1)+"行，库位为空");
-							return false;
-						}
-					}
-					var params=new Map();
-					params["id"]=globalVue.dataPage.detailData.id;
-					params["bargeId"]=globalVue.dataPage.detailData.bargeId;
-					for(var i=0;i<detailList.length;i++){
-						params['detailList[' + i +'].realNum'] = detailList[i].realNum;
-						params['detailList[' + i +'].id'] = detailList[i].id;
-						params['detailList[' + i +'].subPlaceId'] = detailList[i].subPlaceId;
-					}
-					
-					m.ajax(app.api_url + '/api/proReceiving/saveNum?_t=' + new Date().getTime(), {
-						data: params,
-						dataType: 'json', //服务器返回json格式数据
-						type: 'post', //HTTP请求类型
-						timeout: 10000, //超时时间设置为60秒； 
-						success: function(res) {
-							// debugger
-							if(res.msg.length>0){
-								m.toast(res.msg);
-							}else{
-								self.doDataListQuery({
-									"pageNo": 1,
-									"pageSize": 10,
-									"dispatchCode": self.dataPage.filterConditions.dispatchCode,
-									"warehouseId": self.dataPage.filterConditions.warehouseId,
-									"receivingStart": self.dataPage.filterConditions.beginDate,
-									"receivingEnd": self.dataPage.filterConditions.endDate
-								}, function() {
-									layer.close(layerIndex);
-									m.toast("操作成功");
-								});
-							}
-						}
-					})
-					
-				},
-				pickBeginDate: function() {
-					var self = this;
-					dtPicker1.show(function(selectItems) {
-						self.dataPage.filterConditions.beginDate = selectItems.value;
-						$('.tap-time').each(function() {
-							var obj = $(this);
-							obj.removeClass('time-selected');
-						});
-					});
-				},
-				pickEndDate: function() {
-					var self = this;
-					dtPicker2.show(function(selectItems) {
-						self.dataPage.filterConditions.endDate = selectItems.value;
-						$('.tap-time').each(function() {
-							var obj = $(this);
-							obj.removeClass('time-selected');
-						});
-					});
-				},
-				getWarehouseConditions: function() {
-					var self = this;
-					//获取基础数据 品名 材质 规格 产地
-					m.getJSON(app.api_url + '/api/proInventoryApi/warehouseConditions', function(data) {
-						self.warehouseList = data.warehouseList;
-					});
-				},
-				selectSub:function(item){
-					// debugger
-					picker.show(function (selectItems) {
-						item.subPlaceName=selectItems[0].text;
-						item.subPlaceId=selectItems[0].id;
-					})
-				},
-				getPlaceSubList: function() { // 全部库位
-					var self = this;
-					var relPath = '/api/sysBusinessBasis/subPlaceInfos?warehouseId=' + 
-					self.dataPage.filterConditions.warehouseId;
-					
-					m.getJSON(app.api_url + relPath, function(data) {
-						// debugger
-						self.dataPage.placeSubList = data;
-						picker.setData(data);
-					});
-				},
-				getRelSubPlace: function(index) { // 获取关联子库位
-				
-					var self = this;
-					
-					var meterItem = globalVue.dataPage.detailData.detailList[index];
-					
-					var relPath = '/api/sysBusinessBasis/subPlaceInfos?warehouseId=' + 
-					self.dataPage.filterConditions.warehouseId + '&brandId=' + meterItem.brandId +
-					'&textureId=' + meterItem.textureId + '&specificationId=' + meterItem.specificationId +
-					'&placesteelId=' + meterItem.placesteelId;
-					
-					m.getJSON(app.api_url + relPath, function(data) {
-						// debugger
-						self.dataPage.relPlaceSubList = data;
-					});
-					
-					self.dataPage.detailData.curSubPlaceIndex = index; // 当前关联库位index
-					relSubPlaceLayerIndex = layer.open({
-					  type: 1,
-					  title: "关联库位",
-					  area: ['220px', '330px'],
-					  content: $("#relSubPlace")
-					});
-					
-					
-				},
-				relSubPlaceSelect: function(id) {
-					globalVue.dataPage.detailData.detailList[globalVue.dataPage.detailData.curSubPlaceIndex].subPlaceId = id;
-					layer.close(relSubPlaceLayerIndex);
-				},
-				complete: function() {
-					var self = this;
-					self.doDataListQuery({
-						"pageNo": 1,
-						"pageSize": 10,
-						"dispatchCode": self.dataPage.filterConditions.dispatchCode,
-						"warehouseId": self.dataPage.filterConditions.warehouseId,
-						"receivingStart": self.dataPage.filterConditions.beginDate,
-						"receivingEnd": self.dataPage.filterConditions.endDate
-					}, function() {
-						dataPullRefresh.scrollTo(0, 0, 0);
-					});
-				},
-				doDataListQuery: function(params, callback) {
-					var self = this;
-					if(window.plus) {
-						swaiting = plus.nativeUI.showWaiting('处理中...');
-					}
-					m.ajax(app.api_url + '/api/proReceiving/bargeReceiveList?_t=' + new Date().getTime(), {
-						data: params,
-						dataType: 'json', //服务器返回json格式数据
-						type: 'post', //HTTP请求类型
-						timeout: 10000, //超时时间设置为60秒； 
-						success: function(res) {
-							if(swaiting) {
-								swaiting.close();
-							}
-							if(app.debug) {
-								console.log("doDataListQuery:" + JSON.stringify(res));
-							}
-							self.dataPage.pageNo = res.pageNo;
-							self.dataPage.pageSize = res.pageSize;
-							self.dataPage.totalListCount = res.count;
-							self.dataPage.totalPage = res.totalPage;
-							if(self.dataPage.pageNo == 1) {
-								self.dataPage.dataList = res.list;
-							} else {
-								self.dataPage.dataList = self.dataPage.dataList.concat(res.list);
-							}
-							if(typeof callback === "function") {
-								callback();
-							}
-						},
-						error: function(xhr, type, errorThrown) {
-							if(swaiting) {
-								swaiting.close();
-							}
-							m.toast("网络异常，请重新试试");
-						}
-					});
-				},
-				
-				/**
-				下拉查询
-				*/
-				pullDownQuery: function() {
-					var self = this;
-					self.dataPage.pageNo = 1;
-					//						self.dataPage.pageSize = 10;
-					self.doDataListQuery({
-						"pageNo": self.dataPage.pageNo,
-						"auditCode": self.dataPage.filterConditions.auditCode,
-						"warehouseIds": self.dataPage.filterConditions.warehouseId,
-						"receivingStart": self.dataPage.filterConditions.beginDate,
-						"receivingEnd": self.dataPage.filterConditions.endDate
-					}, function() {
-						m.toast("加载成功!");
-						dataPullRefresh.endPulldownToRefresh();
-						dataPullRefresh.scrollTo(0, 0, 0);
-						if(self.dataPage.totalPage > 1) {
-							dataPullRefresh.refresh(true);
-						}
-					});
-				},
-				/**
-				 * 上拉查询
-				 */
-				pullUpQuery: function() {
-					var self = this;
-					if(self.dataPage.pageNo < self.dataPage.totalPage) {
-						self.dataPage.pageNo++;
-						self.doDataListQuery({
-							"pageNo": self.dataPage.pageNo,
-							"auditCode": self.dataPage.filterConditions.auditCode,
-							"warehouseIds": self.dataPage.filterConditions.warehouseId,
-							"receivingStart": self.dataPage.filterConditions.beginDate,
-							"receivingEnd": self.dataPage.filterConditions.endDate
-						}, function() {
-							dataPullRefresh.endPullupToRefresh();
-						});
-					} else {
-						dataPullRefresh.endPullupToRefresh(true);
-						window.setTimeout(function() {
-							dataPullRefresh.disablePullupToRefresh();
-						}, 1500);
-					}
-				}
+	var m = require("mui")
+	var app = require("app")
+	var Vue = require("vue")
+	var $ = require("jquery")
+	var waiting = null
+	var pullRefresh = null
+	require("../../../js/common/select2.full.js")
+	window.onload = function() {
+		window.addEventListener('refresh2', function() {
+			if(globalVue.isFirst){
+				globalVue.isFirst = false
+				globalVue.allNum = 0
+				globalVue.allWei = 0
+				globalVue.choosedTaskList = []
+				globalVue.shopList = []
+				globalVue.pullDownQuery()
 			}
-		});
-		
-		dataPullRefresh = m('#div_list .public-list').pullRefresh({
+		})
+		window.addEventListener('scanner', function(e) {
+			globalVue.queryScan(e.detail.qRCode)
+		})
+	}
+	function formatState(state) {
+	    var $state = $(
+		    '<div style="position: relative;z-index: 999;font-size: 13px;display: block;border-bottom: 1px solid #ebebeb;background: white;opacity: 1;padding: 10px 0 10px 15px;margin: 0;">' + state.text + '</div>'
+	    );
+	    return $state;
+	}
+	m.plusReady(function () {
+		m.init({
+			statusBarBackground: '#f7f7f7',
+			swipeBack: false //启用右滑关闭功能
+		})
+	    globalVue.getCustomer()
+		//待出库作业下拉&上拉刷新
+		pullRefresh = m('.mui-scroll-wrapper').pullRefresh({
 			down: {
 				contentrefresh: '加载中...',
 				callback: function() {
-					globalVue.pullDownQuery();
+					globalVue.pullDownQuery()
 				}
 			},
 			up: {
 				contentrefresh: '正在加载...',
 				contentnomore: '没有更多数据了',
 				callback: function() {
-					var self = this;
-					globalVue.pullUpQuery();
+					globalVue.pullUpQuery()
 				}
 			}
 		});
-		
-		globalVue.dataPage.filterConditions.beginDate = beginDate;
-		globalVue.dataPage.filterConditions.endDate = endDate;
-		globalVue.getWarehouseConditions();
-		globalVue.doDataListQuery({
-			"warehouseId": app.getUser().warehouse.id,
-			"pageNo": 1,
-			"pageSize": 10,
-			"receivingStart": globalVue.dataPage.filterConditions.beginDate,
-			"receivingEnd": globalVue.dataPage.filterConditions.endDate
-		});
-		globalVue.getPlaceSubList(); // 获取全部库位
-		
-		document.addEventListener("popup", function(e) {
-			// debugger
-			var message = e.detail.msg;
-			globalVue.complete(); // 查询
-			if(message !== undefined && message !== null && message !== '') {
-				// m.toast(message);
-				layer.alert(message);
+		var backDefault = m.back;
+		function detailBack() {
+			if(waiting) {
+				waiting.close();
 			}
-			
-		}, false);
-		
-		
-		// var old_back = m.back;
-		// m.back = function() {
-		// 	// debugger
-		// 	if(layerIndex === undefined) {
-		// 		old_back();
-		// 	}else {
-		// 		globalVue.cancelRecive();
-		// 	}
-		// };
-		
-	});
-
-	// document.addEventListener("refreshDataList", function(e) {
-	// 	globalVue.doDataListQuery({
-	// 		"pageNo": 1,
-	// 		"pageSize": 10,
-	// 		"businessType": globalVue.dataPage.filterConditions.businessType,
-	// 		"auditCode": globalVue.dataPage.filterConditions.auditCode,
-	// 		"warehouseIds": globalVue.dataPage.filterConditions.warehouseId,
-	// 		"beginDate": globalVue.dataPage.filterConditions.beginDate,
-	// 		"endDate": globalVue.dataPage.filterConditions.endDate
-	// 	}, function() {
-	// 		dataPullRefresh.scrollTo(0, 0, 0);
-	// 		dataPullRefresh.refresh(true);
-	// 	});
-	// }, false);
-});
+			backDefault();
+		}
+		m.back = detailBack;
+	})
+	var globalVue = new Vue({
+		el: "#app",
+		data: {
+			isFirst:false,
+			taskWaitList: [], // 待入库作业列表
+			completeTask: null, // 确认收货的对象
+			choosedTaskList: [], // 已选择的作业列表
+			shopList: [], // 收纳篮列表
+			allChecked: false,
+			allNum: 0,
+			allWei: 0,
+			popoverSure: false,
+			popoverShop: false,
+			searchObj: {
+				forecastCode:'',
+				carPlateNos:'',
+				ownerId:'',
+				brandId:'',
+				specificationId:'',
+				textureId:'',
+				placesteelId:'',
+				packageNo:'',
+			},
+			pageNo:1,
+			pageSize:5,
+		},
+		methods: {
+			pullUpQuery: function(){ //上拉刷新
+				var self = this
+				self.pageNo = self.pageNo + 1;
+				self.onSearch(()=>{
+					pullRefresh.endPullupToRefresh();
+				});
+			},
+			pullDownQuery: function(){ //下拉刷新
+				var self = this
+				self.pageNo = 1;
+				self.onSearch(()=>{
+					pullRefresh.endPulldownToRefresh();
+					pullRefresh.scrollTo(0, 0, 100);
+					pullRefresh.refresh(true);
+				});
+			},
+			getCustomer: function () { // 获取货主名称
+				var self = this
+				var relPath = '/api/sysBusinessBasis/customerInfo'
+				waiting = plus.nativeUI.showWaiting()
+				m.getJSON(app.api_url + relPath, function(data) {
+					waiting.close()
+					//货主名称
+					self.searchObj.ownerId = ''
+					$('.q-customer-name').select2({
+						containerCssClass:"select_box",
+						templateResult: formatState,
+						data: data,
+						placeholder: '请选择货主名称'
+					})
+					$(".q-customer-name").val('').trigger("change")
+					$(".q-customer-name").on("select2:select", function (e) {
+						self.searchObj.ownerId = e.params.data.id
+					})
+					self.getMaterial()
+				})
+			},
+			getMaterial: function () { // 获取品名规格材质产地
+				var self = this
+				var relPath = '/api/sysBusinessBasis/materialConditions'
+				waiting = plus.nativeUI.showWaiting()
+				m.getJSON(app.api_url + relPath, function(data) {
+					waiting.close()
+					//品名
+					self.searchObj.brandId = ''
+					$('.q-brand-name').select2({
+						containerCssClass:"select_box",
+						templateResult: formatState,
+						data: data.brandList,
+						placeholder: '请选择品名',
+					})
+					$(".q-brand-name").val('').trigger("change")
+					$(".q-brand-name").on("select2:select", function (e) {
+						self.searchObj.brandId = e.params.data.id
+						let instance = $('.q-quality-name').data('select2')
+						if (instance) {
+							$('.q-quality-name').select2('destroy').empty()
+						}
+						let order = '_' + self.searchObj.brandId
+						self.searchObj.textureId = ''
+						$('.q-quality-name').select2({
+							containerCssClass:"select_box",
+							templateResult: formatState,
+							data: data.textureMap[order] || [],
+							placeholder: '请选择材质'
+						})
+						$(".q-quality-name").val('').trigger("change")
+					})
+					//产地
+					self.searchObj.placesteelId = ''
+					$('.q-field-name').select2({
+						containerCssClass:"select_box",
+						templateResult: formatState,
+						data: data.placesteelList,
+						placeholder: '请选择产地'
+					})
+					$(".q-field-name").val('').trigger("change")
+					$(".q-field-name").on("select2:select", function (e) {
+						self.searchObj.placesteelId = e.params.data.id
+					})
+					//规格
+					self.searchObj.specificationId = ''
+					$('.q-specification-name').select2({
+						containerCssClass:"select_box",
+						templateResult: formatState,
+						data: data.specificationList.slice(0,30),
+						placeholder: '请选择规格',
+						query: function (query) {
+							var res = {results: []};
+							if(query.term){
+								if(data.specificationList.length>0){
+									data.specificationList.forEach((val)=>{
+										if(val.text.indexOf(query.term)>=0){
+											res.results.push(val)
+										}
+									})
+								}
+							}else{
+								if(data.specificationList.length>0){
+									res.results=data.specificationList.slice(0,30)
+								}
+							}
+							query.callback(res);
+						}
+					})
+					$(".q-specification-name").val('').trigger("change")
+					$(".q-specification-name").on("select2:select", function (e) {
+						self.searchObj.specificationId = e.params.data.id
+					})
+					let order = '_' + self.searchObj.brandId
+					self.searchObj.textureId = ''
+					$('.q-quality-name').select2({
+						containerCssClass:"select_box",
+						templateResult: formatState,
+						data: data.textureMap[order] || [],
+						placeholder: '请选择材质'
+					})
+					$(".q-quality-name").val('').trigger("change")
+					$(".q-quality-name").on("select2:select", function (e) {
+						self.searchObj.textureId = e.params.data.id
+					})
+					self.onSearch()
+				})
+			},
+			onSearch:function(callback){
+				var self = this
+				waiting = plus.nativeUI.showWaiting()
+				m.ajax(app.api_url + '/api/proReceiving/toReceiveList', {
+					data: {
+						'pageNo':self.pageNo,
+						'pageSize':self.pageSize,
+						'forecastCode':self.searchObj.forecastCode,
+						'carPlateNos':self.searchObj.carPlateNos,
+						'ownerId':self.searchObj.ownerId,
+						'brandId':self.searchObj.brandId,
+						'specificationId':self.searchObj.specificationId,
+						'textureId':self.searchObj.textureId,
+						'placesteelId':self.searchObj.placesteelId,
+						'packageNo':self.searchObj.packageNo,
+					},
+					dataType: 'json', // 服务器返回json格式数据
+					type: 'POST', // HTTP请求类型
+					timeout: 60000, // 超时时间设置为1分钟
+					success: function (data) {
+						waiting.close()
+						let list = data.list || []
+						if(self.pageNo == 1){
+							self.taskWaitList=[]
+						}
+						if(self.pageNo<=data.totalPage){
+							for (let i in list) {
+								list[i].checked = false
+								self.taskWaitList.push(list[i])
+							}
+							for(let i in self.taskWaitList){
+								let checked = false
+								for(let j in self.shopList){
+									if(self.shopList[j].id===self.taskWaitList[i].id){
+										checked = true
+										break;
+									}
+								}
+								self.taskWaitList[i].checked = checked
+							}
+							if(typeof callback === 'function'){
+								callback()
+							}
+						}else{
+							pullRefresh.endPullupToRefresh(true);
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						waiting.close()
+						m.toast('网络连接失败，请稍后重试')
+					}
+				})
+			},
+			reForm: function () { // 重置
+				var self = this
+				self.searchObj = {
+					forecastCode:'',
+					carPlateNos:'',
+					ownerId:'',
+					brandId:'',
+					specificationId:'',
+					textureId:'',
+					placesteelId:'',
+					packageNo:'',
+				}
+				$(".q-customer-name").val('').trigger("change")
+				$(".q-brand-name").val('').trigger("change")
+				$(".q-field-name").val('').trigger("change")
+				$(".q-specification-name").val('').trigger("change")
+				$(".q-quality-name").val('').trigger("change")
+			},
+			toScan: function () { // 跳转扫描界面
+				m.openWindow({
+					id: 'read-qrcode',
+					"url": '../../barcode/html/read-qrcode.html',
+					extras: {
+					},
+					show: {
+						aniShow: 'pop-in'
+					},
+					waiting: {
+						autoShow: true
+					}
+				})
+			},
+			openTip: function () { // 打开提示框
+				if (this.popoverSure === false) {
+					this.popoverSure = true
+				} else {
+					this.popoverSure = false
+				}
+			},
+			openShop: function () { // 打开收纳篮
+				if (this.popoverShop === false) {
+					this.popoverShop = true
+				} else {
+					this.popoverShop = false
+				}
+			},
+			chooseWork: function (task) { // 选择作业
+				if(this.shopList.length>0){
+					if(this.shopList[0].forecastCode!==task.forecastCode||this.shopList[0].ownerId!==task.ownerId){
+						m.toast('必须选择相同预报单号,相同货主单位的作业')
+						return
+					}
+				}
+				this.allNum = 0
+				this.allWei = 0
+				this.choosedTaskList = []
+				this.shopList = []
+				if (task.checked) {
+					task.checked = false
+				} else {
+					task.checked = true
+				}
+				let checkedNum = 0
+				for (let i in this.taskWaitList) {
+					if (this.taskWaitList[i].checked) {
+						this.allNum += this.taskWaitList[i].num
+						this.allWei += this.taskWaitList[i].weight
+						this.choosedTaskList.push(this.taskWaitList[i].id)
+						this.shopList.push(this.taskWaitList[i])
+						checkedNum++
+					}
+				}
+				if(checkedNum == this.taskWaitList.length){
+					this.allChecked = true
+				}else{
+					this.allChecked = false
+				}
+			},
+			allCheck: function () { // 全选
+				if (this.allChecked) {
+					for (let i in this.taskWaitList) {
+						this.taskWaitList[i].checked = false
+					}
+					this.allNum = 0
+					this.allWei = 0
+					this.choosedTaskList = []
+					this.shopList = []
+					this.allChecked = false
+				} else {
+					let key = this.taskWaitList.every((val)=>{
+						return val.forecastCode == this.taskWaitList[0].forecastCode
+					})
+					if(key){
+						this.allChecked = true
+						this.choosedTaskList = []
+						this.shopList = []
+						this.allNum = 0
+						this.allWei = 0
+						for (let i in this.taskWaitList) {
+							this.taskWaitList[i].checked = true
+							this.allNum += this.taskWaitList[i].num
+							this.allWei += this.taskWaitList[i].weight
+							this.choosedTaskList.push(this.taskWaitList[i].id)
+							this.shopList.push(this.taskWaitList[i])
+						}
+					}else{
+						m.toast('必须选择预报单号相同的作业')
+					}
+				}
+			},
+			sure: function () { // 确定按钮提交表单
+				var self = this
+				if (this.choosedTaskList.length <= 0) {
+					m.toast('请先选择需要入库登记的预报单号')
+				} else {
+					let choosedStringId = this.choosedTaskList.join(',')
+					waiting = plus.nativeUI.showWaiting()
+					m.ajax(app.api_url + '/api/proReceiving/newForm', {
+						data: {
+							'forecastDetailIds': choosedStringId,
+						},
+						dataType: 'json', // 服务器返回json格式数据
+						type: 'POST', // HTTP请求类型
+						timeout: 20000, // 超时时间设置为2分钟
+						success: function (data) {
+							waiting.close()
+							if(data){
+								self.isFirst = true
+								m.openWindow({
+									id: 'recive-detail',
+									url: '../html/recive-detail.html',
+									show: {
+										aniShow: 'pop-in'
+									},
+									extras: {
+										allInfo:data
+									},
+									waiting: {
+										autoShow: true
+									}
+								})
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							waiting.close()
+							m.toast('网络连接失败，请稍后重试')
+						}
+					})
+				}
+			},
+			complete: function () { // 确认收货
+				var self = this
+				waiting = plus.nativeUI.showWaiting()
+				m.ajax(app.api_url + '/api/proReceiving/receiveConfirm', {
+					data: {
+						'id': self.completeTask.id,
+					},
+					dataType: 'json', // 服务器返回json格式数据
+					type: 'POST', // HTTP请求类型
+					timeout: 20000, // 超时时间设置为2分钟
+					success: function (data) {
+						m.toast(data.msg)
+						waiting.close()
+						self.openTip()
+                        for(let i in self.shopList){
+                            if(self.shopList[i].id==self.completeTask.id){
+                                self.allNum -= self.shopList[i].num
+                                self.allWei -= self.shopList[i].weight
+                                self.shopList.splice(i,1)
+                                self.choosedTaskList.splice(i,1)
+								break;
+                            }
+                        }
+						self.pullDownQuery()
+					},
+					error: function(xhr, type, errorThrown) {
+						waiting.close()
+						m.toast('网络连接失败，请稍后重试')
+					}
+				})
+			},
+			setComTask: function (task) { // 设置确认收货的对象
+				this.completeTask = task
+				this.openTip()
+			},
+			queryScan: function (tId) { // 查询出库作业
+				var self = this
+				var scanSuc = false
+				for (let i in self.taskWaitList) {
+					if (tId == self.taskWaitList[i].id) {
+						scanSuc = true
+						m.toast('扫描成功，您扫描的作业单号为' + tId)
+						m.ajax(app.api_url + '/api/proReceiving/newForm', {
+							data: {
+								'forecastDetailIds': tId,
+							},
+							dataType: 'json', // 服务器返回json格式数据
+							type: 'POST', // HTTP请求类型
+							timeout: 20000, // 超时时间设置为2分钟
+							success: function (data) {
+								if(data){
+									m.openWindow({
+										id: 'recive-detail',
+										"url": '../html/recive-detail.html',
+										show: {
+											aniShow: 'pop-in'
+										},
+										extras: {
+											allInfo:data
+										},
+										waiting: {
+											autoShow: true
+										}
+									})
+								}
+							},
+							error: function(xhr, type, errorThrown) {
+								m.toast('网络连接失败，请稍后重试')
+							}
+						})
+						break
+					}
+				}
+				if (!scanSuc) {
+					m.toast('扫描失败，请扫描有效的二维码')
+				}
+			},
+			close: function () { // 关闭当前页面
+				m.back()
+			},
+		},
+	})
+})

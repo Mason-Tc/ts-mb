@@ -2,13 +2,28 @@ define(function(require, module, exports) {
 	var m = require("mui");
 	var app = require("app");
 	var Vue = require("vue");
+	var $ = require("jquery")
 	require("../../../js/common/common.js");
-	var $ = require("zepto");
+	require("../../../js/common/select2.full.js")
 	require("layui");
-	
 	require("mui-picker");
 	require("mui-poppicker");
-	
+	function formatState(state) {
+	    var $state = $(
+		  '<div style="position: relative;z-index: 4;font-size: 13px;display: block;border-bottom: 1px solid #ebebeb;background: white;opacity: 1;padding: 10px 0 10px 15px;margin: 0;">' + state.text + '</div>'
+	    )
+	    return $state
+	}
+	function timestampToTime(timestamp) {
+		var date = new Date(timestamp);
+		var Y = date.getFullYear() + '-';
+		var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1):date.getMonth()+1) + '-';
+		var D = (date.getDate()< 10 ? '0'+date.getDate():date.getDate())+ ' ';
+		var h = (date.getHours() < 10 ? '0'+date.getHours():date.getHours())+ ':';
+		var m = (date.getMinutes() < 10 ? '0'+date.getMinutes():date.getMinutes()) + ':';
+		var s = date.getSeconds() < 10 ? '0'+date.getSeconds():date.getSeconds();
+		return Y+M+D+h+m+s;
+	}
 	var layer;
 	layui.use(['layer'], function() {
 		layer  = layui.layer;
@@ -16,18 +31,17 @@ define(function(require, module, exports) {
 	var ws=null;
 	m.plusReady(function() {
 		ws = plus.webview.currentWebview();
-		aboutVue.platforms=ws.platforms;
-		aboutVue.rowCar=ws.rowCar;
-		aboutVue.getPlatformWarehousing(aboutVue.platforms[0].id);
-		
+		aboutVue.currentPlatformId=ws.platformId;
+		aboutVue.allInfo = ws.allInfo
+		console.log('————————————————————————————————————————————in')
+		console.log(JSON.stringify(ws.allInfo))
 		// 连接websocket
-		craneWebSocketClient();
+		// craneWebSocketClient();
 	});
 	
 	var picker = new mui.PopPicker();
-	
 	var aboutVue = new Vue({
-		el: '#off-canvas',
+		el: '#app',
 		data: {
 			craneShadeShow:false,// 行车定位遮罩显示
 			nocarShadeShow:false,// 运货车辆未到达
@@ -35,62 +49,95 @@ define(function(require, module, exports) {
 			rowCar:{},// 哪个行车
 			currentCraneAddr:'',// 当前行车地址
 			currentPlatformId:'',// 当前月台id
-			platforms:[],// 月台信息
 			proReceiving:{} ,// 入库的数据
-			placeSubList: [] // 全部库位
+			placeSubList: [] ,// 全部库位
+			platforms:[{platformName:'月台3',id:'3'}],
+			tipContent:'',
+			popoverSure:false,
+			popover:false,
+			allInfo:{},
+			compute:{
+				id:'',
+				materialDesc:'',
+				packageNo:'',
+				warehousePlaceId:'',
+				warehousePlaceName:'',
+				col:0,
+				row:0,
+				receivableNum:0,
+				receivableWeight:0,
+				workNum:0,
+				workWeight:0,
+				hangWeight:0,
+			},
+			computeList:[],
+		},
+		computed: {
+			allNum: function () { // 实发总计数量
+				let sum = 0
+				for (let i in this.computeList) {
+					if (!this.computeList[i].realNum) {
+						sum += 0
+					} else {
+						sum += parseInt(this.computeList[i].realNum)
+					}
+				}
+				if (!sum) sum = 0
+				return sum
+			},
+			allWeight: function () { // 应发总计数量
+				let sum = 0
+				for (let i in this.computeList) {
+					if (!this.computeList[i].realWeight) {
+						sum += 0
+					} else {
+						sum += parseInt(this.computeList[i].realWeight)
+					}
+				}
+				if (!sum) sum = 0
+				return sum
+			},
 		},
 		methods:{
+			openComputation:function(material){
+				if (this.popover === false) {
+					this.compute.id = material.id
+					this.compute.materialDesc = material.materialDesc
+					this.compute.packageNo = material.packageNo
+					this.compute.warehousePlaceId = material.warehousePlaceId
+					this.compute.receivableNum = material.receivableNum
+					this.compute.receivableWeight = material.receivableWeight
+					this.popover = true
+					this.getPlaceSubList()
+				} else {
+					this.popover = false
+				}
+			},
+			openTip:function(){
+				if (this.popoverSure === false) {
+					// if(this.allNum!=this.workNum){
+					// 	this.tipContent='实收数量和应收数量不一致，是否确认提交？'
+					// }else{
+						this.tipContent = '是否确认提交？'
+					// }
+					this.popoverSure = true
+				} else {
+					this.popoverSure = false
+				}
+			},
 			// 根据月台查询入库数据
 			getPlatformWarehousing:function(pfId){
 				// 切换月台时，初始化页面效果
-				aboutVue.craneShadeShow=false;
-				aboutVue.nocarShadeShow=false;
-				aboutVue.carnoShadeShow=false;
-				$("#crane").removeClass("craneAddActive");
-				$(".addrBtn").removeClass("addrBtnActive");
-				
+				let self = this
 				swaiting = plus.nativeUI.showWaiting('处理中...');
-				m.ajax(app.api_url + '/api/rowcar/getPlatformWarehousing?_t=' + new Date().getTime(), {
-					data: {platformId:pfId},
+				m.ajax(app.api_url + '/api/rowcar/getPlatformTaskByPlatformId', {
+					data: {platformId:self.currentPlatformId},
 					dataType: 'json', //服务器返回json格式数据
 					type: 'post', //HTTP请求类型
 					timeout: 10000, //超时时间设置为60秒； 
 					success: function(res) {
-						// debugger
-						if(swaiting) {
-							swaiting.close();
-						}
-						aboutVue.proReceiving=res;
-						aboutVue.getPlaceSubList(); // 获取全部库位
-						
-						// 获取行车设备的最新状态，包括定位启停，吊镑启停
-						let deviceList=res.deviceList;
-						if(deviceList&&deviceList.length>0){
-							for(let i=0;i<deviceList.length;i++){
-								if(deviceList[i].id==aboutVue.rowCar.id){
-									aboutVue.rowCar=deviceList[i];
-									break;
-								}
-							}
-						}
-						
-						// 切换标签效果
-						aboutVue.currentPlatformId=pfId;
-						$("#divTag span").removeClass("tagActive")
-						$('#pf_'+pfId).addClass("tagActive");
-						
-						//车牌对比结果
-						var carCheckRet=res.carCheckRet;
-						if(carCheckRet!=null&&carCheckRet!=undefined){
-							// 0未比对 1OK 2NG
-							if(carCheckRet=='0'){
-								aboutVue.nocarShadeShow=true;
-							}else if(carCheckRet=='1'){
-								aboutVue.carnoShadeShow=false;
-							}else if(carCheckRet=='2'){
-								aboutVue.carnoShadeShow=true;
-							}
-						}
+						console.log('_______________________refresh')
+						console.log(JSON.stringify(res))
 					},
 					error: function(xhr, type, errorThrown) {
 						// 切换标签效果
@@ -104,74 +151,168 @@ define(function(require, module, exports) {
 					}
 				});
 			},
-			selectSub: function(item) {
-				// debugger
-				picker.show(function (selectItems) {
-					// debugger
-					item.subPlaceName=selectItems[0].text;
-					item.subPlaceId=selectItems[0].id;
-					$("#subPlaceInputId" + item.id).val(item.subPlaceId);
-					$("#subPlaceInput" + item.id).val(item.subPlaceName);
-					
-				})
-			},
 			// 实收数量增1
-			toAddNum:function(index) {
-				let v1=$("#hangNum").val();
-				if(v1&&v1.length>0){
-					// $("#hangNum").val(parseInt(v1)+1);
-					aboutVue.proReceiving.detailList[index].realNum = parseInt(v1)+1;
+			toAddNum:function() {
+				let self = this
+				if(self.compute.workNum>=self.compute.receivableNum){
+					self.compute.workNum = self.compute.receivableNum
 				}else{
-					// $("#hangNum").val(1);
-					aboutVue.proReceiving.detailList[index].realNum = 1;
+					self.compute.workNum = self.compute.workNum + 1
 				}
 			},
 			// 实收数量减一 
 			toMinusNum:function(index) {
-				let v1=$("#hangNum").val();
-				if(v1&&v1.length>0){
-					if(parseInt(v1)>1){
-						// $("#hangNum").val(parseInt(v1)-1);
-						aboutVue.proReceiving.detailList[index].realNum = parseInt(v1)-1;
-					}
+				let self = this
+				if(self.compute.workNum<=0){
+					self.compute.workNum = 0
+				}else{
+					self.compute.workNum = self.compute.workNum -1
 				}
 			},
-			onSubPlaceChange: function(index) {
-				// debugger
-				let id = $("#subPlaceSelect").val();
-				let text = $("#subPlaceSelect option:checked").text();
-				aboutVue.proReceiving.detailList[index].subPlaceId = id;
-				aboutVue.proReceiving.detailList[index].subPlaceName = text;
-				
+			addCompute:function(){
+				let self = this
+				if(self.compute.workNum>self.compute.receivableNum){
+					m.toast('实发不能大于应发')
+					return
+				}
+				if(self.compute.workNum<=0){
+					m.toast('起吊数量不能为0')
+					return
+				}
+				let obj = {}
+				obj.id = self.compute.id
+				obj.realNum = self.compute.workNum || 0
+				obj.realWeight = self.compute.workWeight || 0
+				obj.materialDesc = self.compute.materialDesc || ''
+				obj.hangTime = timestampToTime(new Date())
+				self.computeList.push(obj)
+			},
+			clearComp:function(){
+				let self = this
+				self.computeList = []
+			},
+			sureCompute:function(){
+				var self = this
+				var relPath = '/api/rowcar/saveProCraneLogList'
+				let list = []
+				for(let i = 0 ; i<self.computeList.length ; i++){
+					let obj = {}
+					obj.deviceId = '1'
+					obj.deviceName = '行车1'
+					obj.operType = '2'
+					obj.taskId = self.allInfo.taskId
+					obj.billCode = self.allInfo.receivingCode
+					obj.billDetailId = self.computeList[i].id
+					obj.weightTime = self.computeList[i].hangTime
+					obj.warehousePlaceName = self.computeList[i].warehousePlaceName
+					obj.warehouseId = self.computeList[i].warehouseId
+					obj.materialDesc = self.computeList[i].materialDesc
+					obj.num = self.computeList[i].realNum
+					obj.weight = self.computeList[i].realWeight
+					obj.status = 2
+					obj.isSingleWarning = '0'
+					obj.isDel = '0'
+					list.push(obj)
+				}
+				m.ajax(app.api_url + relPath, {
+					data:{jsonData:JSON.stringify(list)},
+					dataType: 'json', // 服务器返回json格式数据
+					type: 'POST', // HTTP请求类型
+					timeout: 60000, // 超时时间设置为1分钟
+					success: function (data) {
+						if(data.status){
+							m.toast('保存成功')
+							self.openComputation()
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						m.toast('网络连接失败，请稍后重试')
+					}
+				})
 			},
 			getPlaceSubList: function() { // 全部库位
-				// var self = this;
-				var relPath = '/api/sysBusinessBasis/subPlaceInfos?warehouseId=' +
-				aboutVue.proReceiving.warehouseId;
-				
-				m.getJSON(app.api_url + relPath, function(data) {
-					// debugger
-					aboutVue.placeSubList = data;
-					picker.setData(data);
-					if(aboutVue.proReceiving.detailList !== undefined && 
-						aboutVue.proReceiving.detailList.length > 0) {
-							
-						for (var i = 0; i < aboutVue.proReceiving.detailList.length; i++) {
-							let tmpItem = aboutVue.proReceiving.detailList[i];
-							if(tmpItem.subPlaceId !== undefined) {
-								$("#subPlaceInputId" + tmpItem.id).val(tmpItem.subPlaceId);
-								$("#subPlaceInput" + tmpItem.id).val(tmpItem.subPlaceName);
-							}
-									
+				var self = this
+				var relPath = '/api/tspad/getWarehousePlaceList'
+				console.log('platform:' + self.currentPlatformId)
+				m.ajax(app.api_url + relPath, {
+					data:{ platformId: self.currentPlatformId },
+					dataType: 'json', // 服务器返回json格式数据
+					type: 'POST', // HTTP请求类型
+					timeout: 60000, // 超时时间设置为1分钟
+					success: function (data) {
+						console.log(JSON.stringify(data))
+						let list = []
+						if(Array.isArray(data)){
+							list = data.map((e)=>{
+								return { id:e.id , text:e.warehousePlaceName }
+							})
 						}
+						let instance = $('.q-warehousePlace-id').data('select2')
+						if (instance) {
+							$('.q-warehousePlace-id').select2('destroy').empty()
+						}
+						$('.q-warehousePlace-id').select2({
+							containerCssClass:"select_box_border",
+							templateResult: formatState,
+							data: list ,
+							placeholder: '请选择库位'
+						})
+						$('.q-warehousePlace-id').val(self.compute.warehousePlaceId).trigger("change")
+						$('.q-warehousePlace-id').on("select2:select", function (e) {
+							self.compute.warehousePlaceId = e.params.data.id
+							self.compute.warehousePlaceName = e.params.data.text
+						})
+					},
+					error: function(xhr, type, errorThrown) {
+						m.toast('网络连接失败，请稍后重试')
 					}
-					
-				});
-				
-				
+				})
 			},
-		
+			onSure:function(){
+				let self = this
+				let data = {}
+				data.taskId = self.allInfo.taskId
+				data.platformId = self.currentPlatformId
+				let list = JSON.parse(JSON.stringify(self.allInfo.detailList))
+				for(let i=0 ;i<list.length;i++){
+					list[i].columnId = '1'
+					list[i].storeyNo ='1'
+					list[i].xc=1
+					list[i].yc=1
+					list[i].zc=1
+				}
+				data.jsonData = JSON.stringify(list)
+				let relPath = '/api/rowcar/receiveConfirmComplete'
+				m.ajax(app.api_url + relPath, {
+					data:data,
+					dataType: 'json', // 服务器返回json格式数据
+					type: 'POST', // HTTP请求类型
+					timeout: 60000, // 超时时间设置为1分钟
+					success: function (data) {
+						if(data.status){
+							m.toast('保存成功')
+							self.back();
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						m.toast('网络连接失败，请稍后重试')
+					}
+				})
+			},
 			// 完成确认
+			back:function(){
+				m.openWindow({
+					id: 'openCraneManage',
+					"url": '../../crane-index/html/crane-index.html',
+					show: {
+						aniShow: 'pop-in'
+					},
+					waiting: {
+						autoShow: true
+					},
+					extras: {}
+				});
+			},
 			toComplete:function(){
 				// 数量相等也要提示，防止误点
 				let content='<div style="height:120px;margin:40px 100px;line-height:30px;'+
@@ -290,86 +431,86 @@ define(function(require, module, exports) {
 	});
 	
 	// 行车定位websocket
-	var craneWebSocket;
-	function craneWebSocketClient(){
-		if(typeof(WebSocket) == "undefined") {
-			console.log("您的浏览器不支持WebSocket");
-		}else{
-			var socketUrl=app.ws_url+"craneWebSocket";
-			if(craneWebSocket!=null){
-				craneWebSocket.close();
-				craneWebSocket=null;
-			}
-			craneWebSocket = new WebSocket(socketUrl);
-			//打开事件
-			craneWebSocket.onopen = function() {
-				console.log("websocket已打开");
-				//socket.send("这是来自客户端的消息" + location.href + new Date());
-			};
-			//获得消息事件
-			craneWebSocket.onmessage = function(msg) {
+	// var craneWebSocket;
+	// function craneWebSocketClient(){
+	// 	if(typeof(WebSocket) == "undefined") {
+	// 		console.log("您的浏览器不支持WebSocket");
+	// 	}else{
+	// 		var socketUrl=app.ws_url+"craneWebSocket";
+	// 		if(craneWebSocket!=null){
+	// 			craneWebSocket.close();
+	// 			craneWebSocket=null;
+	// 		}
+	// 		craneWebSocket = new WebSocket(socketUrl);
+	// 		//打开事件
+	// 		craneWebSocket.onopen = function() {
+	// 			console.log("websocket已打开");
+	// 			//socket.send("这是来自客户端的消息" + location.href + new Date());
+	// 		};
+	// 		//获得消息事件
+	// 		craneWebSocket.onmessage = function(msg) {
 				//console.log(msg);
-				var data=JSON.parse(msg.data);
-				if(data instanceof Array){
-					// 行车数据是数组
-					for(var i=0;i<data.length;i++){
-						// 是否这台行车
-						if(aboutVue.rowCar.deviceUid==data[i].tagId){
-							aboutVue.currentCraneAddr=data[i].fenceName;
-							aboutVue.showCraneTargetDiv();
-						}
-					}
-				}else{
-					// 告警数据
-					var billCode=data.billCode;
-					// 月台车牌对比
-					var matchPlatformId=data.matchPlatformId;
-							console.log(billCode+matchPlatformId);			
-					if(billCode!=null&&billCode!=undefined){
-						if(billCode==aboutVue.proReceiving.receivingCode){
-							var dealResult=data.dealResult;
-							// 处理结果(1不作业 2忽略)
-							if('1'==dealResult){
-								aboutVue.carnoShadeShow=true;
-							}else{
-								aboutVue.carnoShadeShow=false;
-							}
-						}
-					}else  if(matchPlatformId!=undefined&&matchPlatformId==aboutVue.currentPlatformId){
-						var matchResultMsg=data.matchResultMsg;
-						console.log(aboutVue.currentPlatformId+"---"+matchResultMsg);
-						// 0未比对 1OK 2NG
-						if(matchResultMsg=='0'){
-							aboutVue.nocarShadeShow=true;
-							aboutVue.carnoShadeShow=false;
-						}else if(matchResultMsg=='1'){
-							aboutVue.carnoShadeShow=false;
-							aboutVue.nocarShadeShow=false;
-						}else if(matchResultMsg=='2'){
-							aboutVue.carnoShadeShow=true;
-							aboutVue.nocarShadeShow=false;
-						}
-					}
-				}
-			};
-			//关闭事件
-			craneWebSocket.onclose = function() {
-				console.log("websocket已关闭");
-			};
-			//发生了错误事件
-			craneWebSocket.onerror = function() {
-				console.log("websocket发生了错误");
-			}
-		}
-	}
+				// var data=JSON.parse(msg.data);
+				// if(data instanceof Array){
+				// 	// 行车数据是数组
+				// 	for(var i=0;i<data.length;i++){
+				// 		// 是否这台行车
+				// 		if(aboutVue.rowCar.deviceUid==data[i].tagId){
+				// 			aboutVue.currentCraneAddr=data[i].fenceName;
+				// 			aboutVue.showCraneTargetDiv();
+				// 		}
+				// 	}
+				// }else{
+				// 	// 告警数据
+				// 	var billCode=data.billCode;
+				// 	// 月台车牌对比
+				// 	var matchPlatformId=data.matchPlatformId;
+				// 			console.log(billCode+matchPlatformId);			
+				// 	if(billCode!=null&&billCode!=undefined){
+				// 		if(billCode==aboutVue.proReceiving.receivingCode){
+				// 			var dealResult=data.dealResult;
+				// 			// 处理结果(1不作业 2忽略)
+				// 			if('1'==dealResult){
+				// 				aboutVue.carnoShadeShow=true;
+				// 			}else{
+				// 				aboutVue.carnoShadeShow=false;
+				// 			}
+				// 		}
+				// 	}else  if(matchPlatformId!=undefined&&matchPlatformId==aboutVue.currentPlatformId){
+				// 		var matchResultMsg=data.matchResultMsg;
+				// 		console.log(aboutVue.currentPlatformId+"---"+matchResultMsg);
+				// 		// 0未比对 1OK 2NG
+				// 		if(matchResultMsg=='0'){
+				// 			aboutVue.nocarShadeShow=true;
+				// 			aboutVue.carnoShadeShow=false;
+				// 		}else if(matchResultMsg=='1'){
+				// 			aboutVue.carnoShadeShow=false;
+				// 			aboutVue.nocarShadeShow=false;
+				// 		}else if(matchResultMsg=='2'){
+				// 			aboutVue.carnoShadeShow=true;
+				// 			aboutVue.nocarShadeShow=false;
+				// 		}
+				// 	}
+				// }
+	// 		};
+	// 		//关闭事件
+	// 		craneWebSocket.onclose = function() {
+	// 			console.log("websocket已关闭");
+	// 		};
+	// 		//发生了错误事件
+	// 		craneWebSocket.onerror = function() {
+	// 			console.log("websocket发生了错误");
+	// 		}
+	// 	}
+	// }
 	
-	setInterval(function() {
-		if (craneWebSocket.readyState == 1) {
-			console.log("连接状态，发送消息保持连接");
-			craneWebSocket.send("ping");
-		} else {
-			console.log("断开状态，尝试重连");
-			craneWebSocketClient();
-		}
-	},40000);
+	// setInterval(function() {
+	// 	if (craneWebSocket.readyState == 1) {
+	// 		console.log("连接状态，发送消息保持连接");
+	// 		craneWebSocket.send("ping");
+	// 	} else {
+	// 		console.log("断开状态，尝试重连");
+	// 		craneWebSocketClient();
+	// 	}
+	// },40000);
 });

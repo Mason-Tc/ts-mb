@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css"  href="../css/group-team-manage.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/new_style.css">
+		<title>班组配置</title>
+	</head>
+	<body style="background-color: white;">
+		<div id="app">
+			<!--导航栏-->
+			<header class="mui-bar mui-bar-nav" style="background: #1566d2;">
+				<button class="mui-action-back mui-btn mui-btn mui-btn-link mui-btn-nav mui-pull-left">
+					<span class="mui-icon mui-icon-left-nav" style="color: #fff;"></span>
+					<span style="color: #fff">班组配置</span>
+			   </button>
+			</header>
+			<div class="new_choose_body">
+				<div class="new_choose_box" v-for="craft in allGroup" :key="craft.id" v-cloak>
+					<div class="new_choose_header">
+						<span class="mui-icon new_mui_icon new_choose_icon mui-icon-loop"></span>
+						<span class="new_choose_text">{{ craft.worktypeName }}</span>
+					</div>
+					<div class="new_choose_content">
+						<ul class="new_choose_ul">
+							<li class="new_choose_li" v-for="clerk in craft.workUserList" :style="chooseStyle(clerk.isSelect)" @click="choose(clerk)">
+								{{ clerk.workUserName }}
+								<div class="new_choose_tip" v-show="chooseStyle(clerk.isSelect)">
+									<span class="mui-icon new_mui_icon mui-icon mui-icon-checkmarkempty new_choose_tip_icon"></span>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="new_bottom_box" style="border: none;">
+				<button class="new_bottom_button new_half_button blue_button" @click="sure">
+					确认
+				</button>
+				<button class="new_bottom_button new_half_button light_blue_button" @click="close">
+					取消
+				</button>
+			</div>
+		</div>
+		<script type="text/javascript" id="seajsnode" src="../../../js/seajs/sea-all.min.js"></script>
+		<script>
+		  	//加载主模板块
+		    seajs.use("../js/group-team-manage.js",function () {
+		      
+		    });
+		</script>
+	</body>
+</html>

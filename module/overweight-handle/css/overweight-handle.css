@@ -1,0 +1,57 @@
+.work_list_box {
+	height: calc(100vh - 106px);
+}
+.type_tag{
+	font-size: 12px;
+	padding: 3px 5px;
+	color: #0091ff;
+	border: 1px solid #0091ff;
+	border-radius: 4px 0 4px 0;
+}
+.list_li {
+	width: 100%;
+	margin-bottom: 10px;
+	box-shadow: 5px 5px 5px #ebebeb;
+}
+.list_li:last-of-type {
+	margin-bottom: 0;
+}
+.list_header {
+	height: 35px;
+	background: #F5F9FE;
+	line-height: 35px;
+	padding-left: 10px;
+}
+.car_num {
+	color: #4989F4;
+	font-size: 16px;
+	font-weight: bold;
+}
+.long_list_property {
+	width: 150px !important;
+}
+.long_list_object {
+	width: 280px;
+}
+.task_button {
+	width: 130px !important;
+	height: 30px !important;
+	/* line-height: 25px !important; */
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	padding: 0 !important;
+}
+.openAndCloseValue{
+	float: left;
+	white-space: pre-wrap;
+}
+.openAndClose{
+	float: left;
+	color: #4989F4;
+	font-size: 14px;
+}
+.openAndCloseHidden{
+	visibility: hidden;
+}

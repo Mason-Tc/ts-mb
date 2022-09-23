@@ -5,7 +5,7 @@
 .mui-bar-nav{height:48px; background: #ffffff;}
 .mui-icon-back:before, .mui-icon-left-nav:before{ margin-top: 30px;}
 .mui-bar .mui-title{right:10px; left:10px; line-height: 56px;}
-.mui-content{margin-top:0px;}{background: #ffffff;} 
+.mui-content{margin-top:0px;padding-top: 48px;}{background: #ffffff;} 
 .mui-content p{padding: 10px;}
 .mui-bar .mui-btn {top: 11px;}
 
@@ -26,7 +26,6 @@
 .mui-table-view .mui-media-object{vertical-align: middle;}
 .zl_logo img{ width: 46%;position: fixed; z-index:2; top:8px; left:9px;}
 .mui-bar-nav .mui-icon-extra-calc:before{ color:#007aff; border: 1px solid #007aff; border-radius:20px; padding: 2px;}
-.mui-bar-nav{height:58px; background: #ffffff;}
 .mui-table-view-cell:after,.mui-table-view:after,.mui-table-view-divider:before,.mui-table-view-divider:after{position: absolute;right: 0;bottom: 0;left:52px;height: 1px;content: '';-webkit-transform: scaleY(.5);transform: scaleY(.5);background-color: #ebebeb}
 @media  screen and (min-width: 640px) {
   .zl_logo img{ width: 25%;position: fixed; z-index:2; top:5px; left:4px;}
@@ -122,16 +121,21 @@
 	text-align: center;
 }
 #btnList button{
-	padding: 8px 30px;
+	padding: 0px;
+	margin: 0px;
+	border: none;
 }
 
 #btnList button.reset {
 	font-size: 14px;
-	background-color: #fff;
 }
 
 #btnList button.sure {
 	font-size: 14px;
 	background-color: #5677fc;
 	color: #fff;
+}
+.mui-action-back{
+	line-height: 48px !important;
+	top: 0px !important;
 }

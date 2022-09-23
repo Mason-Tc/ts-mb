@@ -1,0 +1,54 @@
+body,html,#off-canvas{
+	overflow: hidden;
+	height: 100vh;
+}
+.mui-inner-wrap{
+	height: 100%;
+}
+.mui-bar .mui-icon {
+	padding-top: 12px;
+}
+.nav-tabs{
+	margin-top: 48px;
+	height: 42px;
+	padding-left: 10px;
+	background-color: white;
+	font-size: 0;
+	position: relative;
+}
+.nav-items{
+	display: inline-block;
+	height: 36px;
+	width: 200px;
+	font-size: 20px;
+	margin-top: 6px;
+	border-radius: 5px 5px 0 0;
+	text-align: center;
+	line-height: 36px;
+	border: 1px solid #CCCCCC;
+	background-color: #fafafa;
+}
+.nav-items.active{
+	background-color: rgb(225, 245, 254);
+}
+.container{
+	height: calc(100% - 90px);
+	background-color: #FAFAFA;
+	overflow: hidden;
+}
+#iframe{
+	width: 100%;
+	height: 100%;
+}
+.order{
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 100px;
+	height: 42px;
+	background-color: #4285F4;
+	line-height: 42px;
+	text-align: center;
+	color: white;
+	font-size: 18px;
+}

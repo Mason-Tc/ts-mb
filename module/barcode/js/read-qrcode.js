@@ -13,10 +13,8 @@ define(function(require, module, exports) {
 	var scan = null;
 	var isOpen = false; // 闪光灯是否开始标志 true:闪光灯已经开启 false:闪光灯关闭
 	var source = '';
-//	var sourceView = null;
 
 	m.plusReady(function() {
-		m.init();
 		ws = plus.webview.currentWebview();
 		source = ws.source;
 		startRecognize();
@@ -24,35 +22,18 @@ define(function(require, module, exports) {
 
 	// 条码识别成功事件
 	function onmarked(type, result) {
-		//		var text = '未知: ';
-		//		switch(type) {
-		//			case plus.barcode.QR:
-		//				text = 'QR: '; // 二维码
-		//				break;
-		//			case plus.barcode.EAN13:
-		//				text = 'EAN13: ';
-		//				break;
-		//			case plus.barcode.EAN8:
-		//				text = 'EAN8: ';
-		//				break;
-		//		}
-		//		alert(text + result);
-//		if(source == 'outing-details')
-//			sourceView = plus.webview.getWebviewById('outing-details');
-//		else if(source == 'inventory-register')
-//			sourceView = plus.webview.getWebviewById('inventory-register');
-
-		var sourceView = plus.webview.getWebviewById(source);
-		m.fire(sourceView, "scanner", {
+		// m.toast('扫描成功，作业单号为: ' + result)
+		var webView = plus.webview.currentWebview().opener()
+		mui.fire(webView, 'scanner', {
 			qRCode: result
-		});
-		m.back();
+		})
+		m.back()
 	}
 
 	// 条码识别成功事件
 	function onerror() {
 		var text = '二维码识别失败，试试退出当前页面重进';
-		alert(text);
+		m.toast(text)
 	}
 
 	// 创建扫描控件
