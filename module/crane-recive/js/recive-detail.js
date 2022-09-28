@@ -225,7 +225,10 @@ define(function(require, module, exports) {
 				data.paymentMode = self.allInfo.paymentMode || ''
 				data.receivingType = self.allInfo.receivingType || ''
 				data.initCode = self.allInfo.initCode || ''
-				data.counterpoise = self.allInfo.detailList.map(e=>e.counterpoise||'').join(',')
+				data.contractCode = self.allInfo.detailList.map(e=>e.contractCode||'').join(',')
+				data.thickRatio = self.allInfo.detailList.map(e=>e.thickRatio||'').join(',')
+				data.detailRemarks = self.allInfo.detailList.map(e=>e.remarks||'').join(',')
+				data.counterpoises = self.allInfo.detailList.map(e=>e.counterpoise||'').join(',')
 				data.detailIds = self.allInfo.detailList.map(e=>e.id).join(',')
 				data.sForecastDetailId = self.allInfo.detailList.map(e=>e.forecastDetailId).join(',')
 				data.brandIds = self.allInfo.detailList.map(e=>e.brandId).join(',')
@@ -247,12 +250,8 @@ define(function(require, module, exports) {
 					if(e.newWarehouseId)return e.newWarehouseId
 					return e.warehousePlaceId
 				}).join(',')
-				// data.storeyNos = self.allInfo.detailList.map(e=>e.id).join(',')
-				// data.subPlaceIds = self.allInfo.detailList.map(e=>e.id).join(',')
 				data.isReceiveds = self.allInfo.detailList.map(e=>e.isReceived).join(',')
 				data.attacheFileIds_1 = self.imagesFiles.map(e=>e.id).join(',')
-				
-				console.log(JSON.stringify(data))
 				
 				let relPath = '/api/proReceiving/save'
 				m.ajax(app.api_url + relPath, {
@@ -269,6 +268,8 @@ define(function(require, module, exports) {
 						}
 					},
 					error: function(xhr, type, errorThrown) {
+						console.log(JSON.stringify(type))
+						console.log(JSON.stringify(errorThrown))
 						m.toast('网络连接失败，请稍后重试')
 					}
 				})

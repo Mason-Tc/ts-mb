@@ -39,6 +39,9 @@ define(function(require, module, exports) {
 		aboutVue.allInfo = ws.allInfo;
 		var backDefault = m.back;
 		function detailBack() {
+			if(craneWebSocket){
+				craneWebSocket.close()
+			}
 			aboutVue.back();
 			backDefault();
 		}
@@ -258,7 +261,7 @@ define(function(require, module, exports) {
 					success: function (data) {
 						m.toast('保存成功')
 						self.openComputation()
-						self.toRefresh()
+						self.toRefresh(self.activePlat)
 					},
 					error: function(xhr, type, errorThrown) {
 						m.toast('网络连接失败，请稍后重试')
@@ -301,7 +304,7 @@ define(function(require, module, exports) {
 						if(data.status){
 							m.toast('保存成功')
 							self.openComputation()
-							self.toRefresh()
+							self.toRefresh(self.activePlat)
 						}
 					},
 					error: function(xhr, type, errorThrown) {
@@ -378,33 +381,40 @@ define(function(require, module, exports) {
 			onSure:function(){
 				let self = this
 				let data = {}
-				data.taskId = self.allInfo.taskId
+				data.taskId = self.allInfo.taskId || '' 
 				data.platformId = self.activePlat
-				let list = JSON.parse(JSON.stringify(self.allInfo.detailList))
-				for(let i=0 ;i<list.length;i++){
-					list[i].columnId = '0'
-					list[i].storeyNo ='0'
-					list[i].xc= 0
-					list[i].yc= 0
-					list[i].zc= 0
-				}
-				data.jsonData = JSON.stringify(list)
-				let relPath = '/api/rowcar/receiveConfirmComplete'
-				m.ajax(app.api_url + relPath, {
-					data:data,
-					dataType: 'json', // 服务器返回json格式数据
-					type: 'POST', // HTTP请求类型
-					timeout: 60000, // 超时时间设置为1分钟
-					success: function (data) {
-						if(data.status){
-							m.toast('保存成功')
-							self.back();
-						}
-					},
-					error: function(xhr, type, errorThrown) {
-						m.toast('网络连接失败，请稍后重试')
+				if(self.allInfo.detailList&&self.allInfo.detailList.length>0){
+					let list = JSON.parse(JSON.stringify(self.allInfo.detailList))
+					for(let i=0 ;i<list.length;i++){
+						list[i].columnId = '0'
+						list[i].storeyNo ='0'
+						list[i].xc= 0
+						list[i].yc= 0
+						list[i].zc= 0
 					}
-				})
+					data.jsonData = JSON.stringify(list)
+					let waiting = plus.nativeUI.showWaiting()
+					let relPath = '/api/rowcar/receiveConfirmComplete'
+					m.ajax(app.api_url + relPath, {
+						data:data,
+						dataType: 'json', // 服务器返回json格式数据
+						type: 'POST', // HTTP请求类型
+						timeout: 60000, // 超时时间设置为1分钟
+						success: function (data) {
+							waiting.close();
+							if(data.status){
+								m.toast('保存成功')
+								self.back();
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							waiting.close();
+							m.toast('网络连接失败，请稍后重试')
+						}
+					})
+				}else{
+					m.toast('改月台下无作业')
+				}
 			},
 			setTitle:function(type){
 				this.type = type
@@ -418,17 +428,18 @@ define(function(require, module, exports) {
 				}
 			},
 			// 刷新页面数据
-			toRefresh:function(){
+			toRefresh:function(id){
 				let self = this
 				let waiting = plus.nativeUI.showWaiting()
 				m.ajax(app.api_url + '/api/rowcar/getPlatformTaskByPlatformId', {
-					data: { platformId: self.activePlat },
+					data: { platformId: id },
 					dataType: 'json', //服务器返回json格式数据
 					type: 'post', //HTTP请求类型
 					timeout: 10000, //超时时间设置为60秒
 					success: function(res) {
 						waiting.close();
 						if(res.code==='200'){
+							self.activePlat = id
 							self.allInfo = res.data
 							self.type=res.resultType;
 							aboutVue.setTitle(res.resultType)
@@ -456,8 +467,7 @@ define(function(require, module, exports) {
 				});
 			},
 			gotoNav:function(id){
-				this.activePlat = id
-				this.toRefresh()
+				this.toRefresh(id)
 			},
 		}
 	});
