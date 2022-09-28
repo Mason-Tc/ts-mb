@@ -16,21 +16,406 @@
 	</head>
 	<body>
 		<div id="off-canvas">
+			<div class="new_popover" v-show="hangPover" v-cloak>
+				<div class="new_popover_header">
+					起吊<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openHang"></span>
+				</div>
+				<div class="new_popover_body">
+					<ul class="info_list_ul">
+						<li class="new_disabled_info_list_li rigint_10">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">物料描述</span>
+								<span class="new_list_value" v-text="compute.materialDesc"></span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">捆包号</span>
+								<span class="new_list_value" v-text="compute.packageNo"></span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li rigint_10">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">加工数量/重量</span>
+								<span class="new_list_value" v-text="compute.materialDesc"></span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">原料位置</span>
+								<span class="new_list_value" v-text="compute.packageNo"></span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">加工位置</span>
+								<span class="new_list_value" v-text="compute.packageNo"></span>
+							</div>
+						</li>
+					</ul>
+					<div class="rowCar_nav" v-if=" type=='3' ">导航</div>
+					<div class="comp_button_box" style="margin-top: 0px;">
+						<button class="blue_button comp_button" style="width: 100%;">确定</button>
+					</div>
+				</div>
+			</div>
+			<div class="new_popover" v-show="popover" v-cloak>
+				<div class="new_popover_header">
+					{{'计量（'+compute.countWeightModeDesc+'）'}}<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openComputation"></span>
+				</div>
+				<div class="new_popover_body">
+					<ul class="info_list_ul">
+						<li class="new_disabled_info_list_li rigint_10">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">物料描述</span>
+								<span class="new_list_value" v-text="compute.materialDesc"></span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">捆包号</span>
+								<span class="new_list_value" v-text="compute.packageNo"></span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li full_line" v-if=" type=='2' ">
+							<div class="new_input_select" style="display: flex;">
+								<span class="new_list_property computation_property">位置</span>
+								<span class="new_list_value new_span" style="flex:1;text-align: center;" v-text="compute.packageNo"></span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li pover_li rigint_10" v-if=" type=='1' ">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">库位</span>
+								<select class="new_select2 q-warehousePlace-id" :disabled=" crane.status=='1' ? true : false " ></select>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li pover_li" v-if=" type=='1' ">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property">列</span>
+								<input class="new_input pot_input" type="number" v-model="compute.col" oninput=" value=value.replace(/[-+e.]/g,'') " :disabled=" crane.status=='1' ? true : false "/>
+								<span class="new_list_property computation_property">层</span>
+								<input class="new_input pot_input" type="number" v-model="compute.row" oninput=" value=value.replace(/[-+e.]/g,'') " :disabled=" crane.status=='1' ? true : false "/>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li rigint_10">
+							<div class="new_input_select">
+								<span class="new_list_property computation_property" style="width: 90px;">应收数量/重量</span>
+								<span class="new_list_value">{{compute.receivableNum||0}} 件 / {{compute.receivableWeight||0}} 吨</span>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li pover_li">
+							<div class="new_input_select">
+								<span class="new_list_property">起吊数量</span>
+								<button class="pover_button" @click="toMinusNum">—</button>
+								<input class="pot_input" type="number" style="width: 60px !important;" oninput=" value=value.replace(/[-+e.]/g,'') "  v-model="compute.workNum" />
+								<button class="pover_button" @click="toAddNum">+</button>
+							</div>
+						</li>
+						<li class="new_disabled_info_list_li rigint_10" style="text-align: center;">
+							<span class="pover_line">计重重量</span>
+							<span style="display:inline-block;color: #FF4500;width: 80px;text-align: center;">{{compute.hangWeight}}</span>
+							<span class="pover_line">吨</span>
+						</li>
+						<li class="new_disabled_info_list_li pover_li">
+							<span class="pover_line">计重重量</span>
+							<input class="pot_input" type="number" style="width: 100px !important;border:none !important;" v-model="compute.workWeight" oninput="value=value.match(/^\d+(\.)?\d{0,3}/)[0]" :disabled=" crane.relStatus=='1' ? true : false " />
+							<span class="pover_line">吨</span>
+							<button class="com_sure" @click="addCompute">确认</button>
+						</li>
+					</ul>
+					<div class="comp_table_box">
+						<table class="new_table">
+							<thead class="new_table_thead">
+								<th class="new_table_th">序</th>
+								<th class="new_table_th">过磅时间</th>
+								<th class="new_table_th">物料描述</th>
+								<th class="new_table_th">数量(件)</th>
+								<th class="new_table_th">重量(吨)</th>
+							</thead>
+							<tr class="new_table_tr" v-for="(idx, comp) in computeList">
+								<td class="new_table_td">{{ idx + 1 }}</td>
+								<td class="new_table_td">{{ comp.hangTime }}</td>
+								<td class="new_table_td">{{ comp.materialDesc }}</td>
+								<td class="new_table_td">{{ comp.realNum }}</td>
+								<td class="new_table_td">{{ comp.realWeight }}</td>
+							</tr>
+							<tr class="new_table_tr">
+								<td class="new_table_td">合计</td>
+								<td class="new_table_td"></td>
+								<td class="new_table_td"></td>
+								<td class="new_table_td" v-text="allNum"></td>
+								<td class="new_table_td" v-text="allWeight"></td>
+							</tr>
+						</table>
+					</div>
+					<div class="rowCar_nav" v-if=" type=='2' ">导航</div>
+					<span class="comp_tip">
+						计量明细清除后，计量数据将全部清除
+					</span>
+					<div class="comp_button_box">
+						<button class="light_blue_button comp_button" @click="clearComp">计量明细清除</button>
+						<button class="blue_button comp_button" style="float: right;" @click="sureCompute">确定</button>
+					</div>
+				</div>
+			</div>
+			<div class="new_popover tip_popover" v-show="popoverSure" v-cloak>
+				<div class="new_popover_header">
+					操作提醒
+					<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openTip"></span>
+				</div>
+				<div class="new_popover_body" style="padding-top: 0;">
+					<div class="comp_tip tip_tip" style="margin-bottom: 0;text-align: center;font-size: 16px;padding: 8px 0;">
+						{{ tipContent }}
+					</div>
+					<div class="tip_button_box">
+						<button class="tip_button light_blue_button" @click="openTip">取消</button>
+						<button class="tip_button light_blue_button" @click="onSure" >确认</button>
+					</div>
+				</div>
+			</div>
+			<div class="new_mask" v-show="popover||popoverSure||hangPover" v-cloak></div>
 			<!-- 主页面容器 -->
 			<div class="mui-inner-wrap">
 				<header class="mui-bar mui-bar-nav" style="background: #1566d2;border: none;">
 					<div class="nav-head">
 						<a class="mui-icon mui-icon-left-nav mui-pull-left" @click="back" style="color: white;"></a>
-						<span class="wms-title" @click="back" style="left: 80px;margin: 1px 0px 0px 10px;color:#FFFFFF;line-height: 48px;">行车作业</span>
-						<span style="color:#ffffff;font-weight: 700;margin-right: 0px;" class="mui-icon mui-icon-loop mui-pull-right"></span>	
+						<span class="wms-title" @click="back" style="left: 80px;margin: 1px 0px 0px 10px;color:#FFFFFF;line-height: 48px;">{{pageTitle}}</span>
+						<span @click="toRefresh" style="color:#ffffff;font-weight: 700;margin-right: 0px;" class="mui-icon mui-icon-loop mui-pull-right"></span>	
 					</div>
 				</header>
 				<div class="nav-tabs">
-					<span v-for="plat in platformList" @click="gotoNav(plat.id)" :class="['nav-items',activePlat==plat.id ? 'active':'' ]" >{{plat.name}}</span>
-					<span class="order">叫号</span>
+					<span v-for="plat in platformList" @click="gotoNav(plat.id)" :class="['nav-items',activePlat==plat.id ? 'active':'' ]" >{{plat.platformName}}</span>
+					<button class="order">叫号</button>
 				</div>
 				<div class="container">
-					<iframe :src="src" id="iframe"></iframe>
+					<div class="task_work" v-if=" type=='1' ">
+						<div style="padding-bottom: 5px;background: #ffffff;width:100%;font-size: 14px;">
+							<span class="titleSpan" style="margin-left:10px;"><span>时间：</span><span v-text="allInfo.receivingDate">20180809 10:03</span></span>
+							<span class="titleSpan" style=""><span>收货单号：</span><span v-text="allInfo.receivingCode">TD986543578</span></span>
+							<span class="titleSpan" ><span>货主单位：</span><span v-text="allInfo.ownerName"></span></span>
+							<span class="titleSpan" style="margin-left:10px;"><span>车牌号：</span><span style="color:#4285f4;font-weight: 700;" v-text="allInfo.carPlateNos"></span></span>
+							<span class="titleSpan" ><span>备注：</span><span v-text="allInfo.remarks || '无'"></span></span>
+						</div>
+						<div id="crane" class="craneAdd" style="display: flex;height: 52px;">
+							<div style="flex:2;font-size: 30px;text-align: right;margin-right: 5px;">
+								<div style="line-height: 50px; ">行车当前库位:</div>
+							</div>
+							<span style="flex:2;text-align:left;margin-left: 5px;font-size: 30px;">暂无</span>
+							<button class="nav_btn">进仓导航</button>
+						</div>
+						<div style="overflow-y: auto;height: calc(100vh - 273px);">
+							<ul class="public-list-wrapper">
+								<li style="margin:0 8px 8px 8px;text-align: center;overflow: hidden;" v-for="detail in allInfo.detailList" :key="detail.id">
+									<div style="background: #fff;padding: 5px;border-radius:3px;position: relative;">
+										<button class="addrBtn" @click="openComputation(detail)">计量</button>
+										<button :class="detail.isWeight=='0'?'iscomp_n':'iscomp'" >{{detail.isWeight=='0'?'未计量':'已计量'}}</button>
+										<div>
+											<table style="width:100%;margin-left: 15px;">
+												<tr style="line-height: 24px">
+													<td >
+														<span class="label" style="float: left;">应收数量：</span>
+														<span v-text="detail.materialDesc"></span>
+													</td>
+													<td >
+														<span class="label" style="float: left;">应收数量：</span>
+														<span v-text="detail.receivableNum" style='color:royalblue;font-weight: 700;'></span>
+														<span v-text="detail.receivableNumUnitDesc"></span>
+														<span v-text="detail.receivableWeight" style='color:royalblue;font-weight: 700;'></span>
+														<span v-text="detail.receivableWeightUnitDesc"></span>
+													</td>
+												</tr>
+												<tr style="line-height: 24px;">
+													<td style="text-align: left;width: 33%;">
+														<span class="label" style="float: left;">捆包号：</span>
+														<span v-text="detail.packageNo"></span>
+													</td>
+													<td style="width: 33%;">
+													    <div style="margin-left: 0px;background: #ffffff;text-align: left;">
+													        <span class="label" style="float: left;">实收数量：</span>
+													        <span v-text="detail.realNum" style='color:royalblue;font-weight: 700;'></span>
+															<span v-text="detail.realNumUnitDesc"></span>
+															<span v-text="detail.realWeight" style='color:royalblue;font-weight: 700;'></span>
+															<span v-text="detail.realWeightUnitDesc"></span>
+													    </div>
+													</td>
+													
+													<td style="width: 33%;">
+														<div style="margin-left: 0px;background: #ffffff;text-align: left;">
+														    <span class="label" style="float: left;">位置：</span>
+														    <span >{{detail.warehousePlaceName}}</span>
+														</div>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+						<div class="sure_btn">
+							<div style="flex:3;">
+								<span>总计:</span>
+								<span style="color: #FF8A65;font-size: 22px;">{{allSureNum}}</span>
+								<span>件</span>
+								<span style="color: #FF8A65;font-size: 22px;">{{allSureWeight}}</span>
+								<span>吨</span>
+							</div>
+							<button class="sure_button" @click="openTip">确认完成</button>
+						</div>
+					</div>
+					<div class="task_work" v-if=" type=='2' ">
+						<div style="padding-bottom: 5px;background: #ffffff;width:100%;font-size: 14px;">
+							<span class="titleSpan" style="margin-left:10px;"><span>出库时间：</span><span v-text="allInfo.receivingDate"></span></span>
+							<span class="titleSpan" style=""><span>提单号：</span><span v-text="allInfo.receivingCode"></span></span>
+							<span class="titleSpan" ><span>货主单位：</span><span v-text="allInfo.ownerName"></span></span>
+							<span class="titleSpan" style="margin-left:10px;"><span>提货单位：</span><span style="color:#4285f4;font-weight: 700;" v-text="allInfo.carPlateNos"></span></span>
+							<span class="titleSpan" ><span>车牌号：</span><span v-text="allInfo.remarks || '无'"></span></span>
+							<span class="titleSpan" ><span>备注：</span><span v-text="allInfo.remarks || '无'"></span></span>
+						</div>
+						<div id="crane" class="craneAdd" style="display: flex;height: 52px;">
+							<div style="flex:2;font-size: 30px;text-align: right;margin-right: 5px;">
+								<div style="line-height: 50px; ">行车当前库位:</div>
+							</div>
+							<span style="flex:2;text-align:left;margin-left: 5px;font-size: 30px;">暂无</span>
+						</div>
+						<div style="overflow-y: auto;height: calc(100vh - 273px);">
+							<ul class="public-list-wrapper">
+								<!-- <li style="margin:0 8px 8px 8px;text-align: center;overflow: hidden;" v-for="detail in allInfo.detailList" :key="detail.id"> -->
+								<li style="margin:0 8px 8px 8px;text-align: center;overflow: hidden;">	
+									<div style="background: #fff;padding: 5px;border-radius:3px;position: relative;">
+										<button class="addrBtn" @click="openComputation(detail)">计量</button>
+										<button class="iscomp_n" >未计量</button>
+										<div>
+											<table style="width:100%;">
+												<tr style="line-height: 24px">
+													<td rowspan="3" class="location">
+														<div>位置</div>
+													</td>
+													<td >
+														<span class="label" style="float: left;">货主单位：</span>
+														<span v-text="detail.materialDesc"></span>
+													</td>
+													<td >
+														<span class="label" style="float: left;">提单号：</span>
+														<span v-text="detail.receivableWeightUnitDesc"></span>
+													</td>
+													<td></td>
+												</tr>
+												<tr style="line-height: 24px;">
+													<td style="text-align: left;width: 33%;">
+														<span class="label" style="float: left;">物料描述：</span>
+														<span v-text="detail.packageNo"></span>
+													</td>
+													<td style="width: 33%;">
+													    <div style="margin-left: 0px;background: #ffffff;text-align: left;">
+													        <span class="label" style="float: left;">捆包号：</span>
+															<span v-text="detail.realWeightUnitDesc"></span>
+													    </div>
+													</td>
+													<td style="width: 33%;">
+														
+													</td>
+												</tr>
+												<tr style="line-height: 24px;">
+													<td style="text-align: left;width: 33%;">
+														<span class="label" style="float: left;">应发数量/重量：</span>
+														<span v-text="detail.packageNo"></span>
+													</td>
+													<td style="width: 33%;">
+													    <div style="margin-left: 0px;background: #ffffff;text-align: left;">
+													        <span class="label" style="float: left;">实发数量/重量：</span>
+															<span v-text="detail.realWeightUnitDesc"></span>
+													    </div>
+													</td>
+													<td style="width: 33%;">
+														<div style="margin-left: 0px;background: #ffffff;text-align: left;">
+														    <span class="label" style="float: left;">计量方式：</span>
+															<span v-text="detail.realWeightUnitDesc"></span>
+														</div>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+						<div class="sure_btn">
+							<div style="flex:3;">
+								<span>总计:</span>
+								<span style="color: #FF8A65;font-size: 22px;">{{allSureNum}}</span>
+								<span>件</span>
+								<span style="color: #FF8A65;font-size: 22px;">{{allSureWeight}}</span>
+								<span>吨</span>
+							</div>
+							<button class="sure_button" @click="openTip">确认完成</button>
+						</div>
+					</div>
+					<div class="task_work" v-if=" type=='3' ">
+						<div style="padding-bottom: 5px;background: #ffffff;width:100%;font-size: 14px;">
+							<span class="titleSpan" style="margin-left:10px;"><span>制单时间：</span><span v-text="allInfo.receivingDate"></span></span>
+							<span class="titleSpan" style=""><span>加工单号：</span><span v-text="allInfo.receivingCode"></span></span>
+							<span class="titleSpan" ><span>客户委托号：</span><span v-text="allInfo.ownerName"></span></span>
+							<span class="titleSpan" style="margin-left:10px;"><span>货主单位：</span><span style="color:#4285f4;font-weight: 700;" v-text="allInfo.carPlateNos"></span></span>
+							<span class="titleSpan" ><span>加工类型：</span><span v-text="allInfo.remarks || '无'"></span></span>
+							<span class="titleSpan" ><span>备注：</span><span v-text="allInfo.remarks || '无'"></span></span>
+						</div>
+						<div id="crane" class="craneAdd" style="display: flex;height: 52px;">
+							<div style="flex:2;font-size: 30px;text-align: right;margin-right: 5px;">
+								<div style="line-height: 50px; ">行车当前库位:</div>
+							</div>
+							<span style="flex:2;text-align:left;margin-left: 5px;font-size: 30px;">暂无</span>
+						</div>
+						<div style="overflow-y: auto;height: calc(100vh - 273px);">
+							<ul class="public-list-wrapper">
+								<!-- <li style="margin:0 8px 8px 8px;text-align: center;overflow: hidden;" v-for="detail in allInfo.detailList" :key="detail.id"> -->
+								<li style="margin:0 8px 8px 8px;text-align: center;overflow: hidden;">	
+									<div style="background: #fff;padding: 5px;border-radius:3px;position: relative;">
+										<button class="addrBtn" @click="openHang(detail)">起吊</button>
+										<button class="iscomp_n" >未起吊</button>
+										<div>
+											<table style="width:100%;">
+												<tr style="line-height: 24px">
+													<td rowspan="2" class="direction">
+														<div>
+															<span>原料位置</span>
+															<img style="width:30px;" src="../image/left_arror.png">
+															<span>加工位置</span>
+														</div>
+													</td>
+													<td >
+														<span class="label" style="float: left;">物料描述：</span>
+														<span v-text="detail.materialDesc"></span>
+													</td>
+													<td ></td>
+												</tr>
+												<tr style="line-height: 24px;">
+													<td style="text-align: left;width: 24%;">
+														<span class="label" style="float: left;">加工数量/重量：</span>
+														<span v-text="detail.packageNo"></span>
+													</td>
+													<td style="width: 24%;">
+														<span class="label" style="float: left;">捆包号：</span>
+														<span v-text="detail.receivableWeightUnitDesc"></span>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+						<div class="sure_btn">
+							<div style="flex:3;">
+								<span>总计:</span>
+								<span style="color: #FF8A65;font-size: 22px;">{{allSureNum}}</span>
+								<span>件</span>
+								<span style="color: #FF8A65;font-size: 22px;">{{allSureWeight}}</span>
+								<span>吨</span>
+							</div>
+							<button class="sure_button" @click="openTip">确认完成</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

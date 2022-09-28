@@ -33,8 +33,6 @@ define(function(require, module, exports) {
 		ws = plus.webview.currentWebview();
 		aboutVue.currentPlatformId=ws.platformId;
 		aboutVue.allInfo = ws.allInfo
-		console.log('————————————————————————————————————————————in')
-		console.log(JSON.stringify(ws.allInfo))
 		// 连接websocket
 		// craneWebSocketClient();
 	});

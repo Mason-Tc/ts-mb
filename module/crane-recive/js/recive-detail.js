@@ -182,9 +182,9 @@ define(function(require, module, exports) {
 				}
 				if (this.popoverSure === false) {
 					if(this.allNum!=this.workNum){
-						this.tipContent='实收数量和应收数量不一致，是否确认提交？'
+						this.tipContent='实收数量和应收数量不一致，确认此车已经收货完成了吗？'
 					}else{
-						this.tipContent = '是否确认提交？'
+						this.tipContent = '确认此车已经收货完成了吗？'
 					}
 					this.popoverSure = true
 				} else {
@@ -192,11 +192,11 @@ define(function(require, module, exports) {
 				}
 			},
 			onPlus:function(material){
-				if(material.realNum<material.receivableNum){
+				// if(material.realNum<material.receivableNum){
 					material.realNum = material.realNum+1
-				}else{
-					material.realNum = material.receivableNum
-				}
+				// }else{
+				// 	material.realNum = material.receivableNum
+				// }
 			},
 			onSub:function(material){
 				if(material.realNum<=0){
@@ -220,9 +220,12 @@ define(function(require, module, exports) {
 				data.transporterId = self.allInfo.transporterId || ''
 				data.transportMode = self.allInfo.transportMode || ''
 				data.spenderId = self.allInfo.ownerId || ''
+				data.planeCode = self.allInfo.planeCode || ''
+				data.downCustomerId = self.allInfo.downCustomerId || ''
 				data.paymentMode = self.allInfo.paymentMode || ''
 				data.receivingType = self.allInfo.receivingType || ''
 				data.initCode = self.allInfo.initCode || ''
+				data.counterpoise = self.allInfo.detailList.map(e=>e.counterpoise||'').join(',')
 				data.detailIds = self.allInfo.detailList.map(e=>e.id).join(',')
 				data.sForecastDetailId = self.allInfo.detailList.map(e=>e.forecastDetailId).join(',')
 				data.brandIds = self.allInfo.detailList.map(e=>e.brandId).join(',')
@@ -248,6 +251,9 @@ define(function(require, module, exports) {
 				// data.subPlaceIds = self.allInfo.detailList.map(e=>e.id).join(',')
 				data.isReceiveds = self.allInfo.detailList.map(e=>e.isReceived).join(',')
 				data.attacheFileIds_1 = self.imagesFiles.map(e=>e.id).join(',')
+				
+				console.log(JSON.stringify(data))
+				
 				let relPath = '/api/proReceiving/save'
 				m.ajax(app.api_url + relPath, {
 					data: data,

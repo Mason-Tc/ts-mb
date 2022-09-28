@@ -252,54 +252,58 @@ define(function(require, module, exports) {
 						extras: {}
 					});
 				},
-				// 跳转出入库作业
+				// 跳转行车作业
 				toCraneWork: function() {
 					//查询用户是否已选择了月台
-					// var waiting = plus.nativeUI.showWaiting();
-					// m.ajax(app.api_url + '/api/rowcar/isSelected', {
-					// 	data: {},
-					// 	dataType: 'json',
-					// 	type: 'get',
-					// 	timeout: 10000,
-					// 	success: function(res) {
-					// 		waiting.close();
-					// 		if (res.sysDevice) {
-					// 		} else {
-					// 			layer.msg("请先选择作业月台");
-					// 		}
-					// 	},
-					// 	error: function(xhr, type, errorThrown) {
-					// 		waiting.close();
-					// 		m.toast("网络异常，请重新试试");
-					// 	}
-					// });
 					let waiting = plus.nativeUI.showWaiting()
-					m.ajax(app.api_url + '/api/rowcar/getPlatformTaskByPlatformId', {
-						data: { platformId: '1' },
-						dataType: 'json', //服务器返回json格式数据
-						type: 'post', //HTTP请求类型
-						timeout: 10000, //超时时间设置为60秒
+					m.ajax(app.api_url + '/api/rowcar/isSelected', {
+						data: {},
+						dataType: 'json',
+						type: 'get',
+						timeout: 10000,
 						success: function(res) {
 							waiting.close();
-							if(res.code==='200'){
-								m.openWindow({
-									id: 'crane-task',
-									"url": '../../crane-task/html/crane-task.html',
-									show: {
-										aniShow: 'pop-in'
+							if (res.sysDevice) {
+								m.ajax(app.api_url + '/api/rowcar/getPlatformTaskByPlatformId', {
+									data: { platformId: res.sysPlatformList[0].id },
+									dataType: 'json', //服务器返回json格式数据
+									type: 'post', //HTTP请求类型
+									timeout: 10000, //超时时间设置为60秒
+									success: function(data) {
+										if(data.code==='200'){
+											m.openWindow({
+												id: 'crane-task',
+												"url": '../../crane-task/html/crane-task.html',
+												show: {
+													aniShow: 'pop-in'
+												},
+												createNew:true,
+												waiting: {
+													autoShow: true
+												},
+												extras: { 
+													allInfo: data.data ,
+													platformId: res.sysPlatformList[0].id, 
+													type: data.resultType ,
+													sysPlatformList: res.sysPlatformList ,
+													sysDevice: res.sysDevice,
+												},
+											});
+										}else{
+											m.toast(data.msg)
+										}
 									},
-									waiting: {
-										autoShow: true
-									},
-									extras: { allInfo: res.data , platformId:'1', type:res.resultType }
+									error: function(xhr, type, errorThrown) {
+										m.toast('网络异常，请稍候重试')
+									}
 								});
-							}else{
-								m.toast(res.msg)
+							} else {
+								layer.msg("请先选择作业月台");
 							}
 						},
 						error: function(xhr, type, errorThrown) {
 							waiting.close();
-							m.toast('网络异常，请稍候重试')
+							m.toast("网络异常，请重新试试");
 						}
 					});
 				},
