@@ -60,7 +60,6 @@ define(function(require, module, exports) {
 											//console.log("你启动了开关");
 										  }
 										  globalVue.setPlatCallStatus(globalVue.dataPage.dataList[i]);
-										  
 									});
 									// 相机状态
 									document.getElementById(cameraId).addEventListener("click",function(event){
@@ -94,8 +93,18 @@ define(function(require, module, exports) {
 				// 设置 月台相机 启用停用状态 
 				setPlatCameraStatus:function(item){
 					swaiting = plus.nativeUI.showWaiting('处理中...');
+					let data = {
+						id : item.id,
+						isNewRecord : item.isNewRecord,
+						officeId : item.officeId,
+						platformName : item.platformName,
+						nowStatus : item.nowStatus,
+						isOpenCall : item.isOpenCall,
+						status : item.status,
+						warehouseName : item.warehouseName,
+					}
 					m.ajax(app.api_url + '/api/rowcar/setPlatCameraStatus?_t=' + new Date().getTime(), {
-						data: item,
+						data: data,
 						dataType: 'json', //服务器返回json格式数据
 						type: 'post', //HTTP请求类型
 						success: function(res) {
@@ -115,8 +124,18 @@ define(function(require, module, exports) {
 				},
 				// 设置 月台叫号 启用停用状态 
 				setPlatCallStatus:function(item){
+					let data = {
+						id : item.id,
+						isNewRecord : item.isNewRecord,
+						officeId : item.officeId,
+						platformName : item.platformName,
+						nowStatus : item.nowStatus,
+						isOpenCall : item.isOpenCall,
+						status : item.status,
+						warehouseName : item.warehouseName,
+					}
 					m.ajax(app.api_url + '/api/rowcar/setPlatCallStatus?_t=' + new Date().getTime(), {
-						data: item,
+						data: data,
 						dataType: 'json', //服务器返回json格式数据
 						type: 'post', //HTTP请求类型
 						success: function(res) {
