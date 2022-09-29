@@ -57,7 +57,8 @@ define(function(require, module, exports) {
 			},
 			// 选择行车时的效果
 			cliCrane:function(flag, index){
-				var correspondingPFList =  this.pfList[index].platformVOList;
+				let gIndex =  parseInt(this.rowcarList[index].extend1)
+				var correspondingPFList =  this.pfList[gIndex-1].platformVOList;
 				
 				$("#pfBtns .contentSpan").removeClass("activeBg");
 				$("#pfBtns .contentSpan input[name='platform']").prop('checked', false);
@@ -85,7 +86,7 @@ define(function(require, module, exports) {
 				// 行车
 				let craneId=$(radioEls[0]).val();
 				let craneName=$(radioEls[0]).next().text();
-				craneName=craneName.replace("行车","").replace("北","").replace("南","");
+				craneName=parseInt(craneName.replace("行车",""));
 				var els = $("#pfBtns input:checked");
 				if (els.length > 0) {
 					if (els.length > 2) {
@@ -95,7 +96,8 @@ define(function(require, module, exports) {
 						if (els.length == 2) {
 							let a = $(els[0]).val();
 							let b = $(els[1]).val();
-							let list = this.pfList[parseInt(craneName)-1].platformVOList
+							let gIndex =  parseInt(this.rowcarList[craneName-1].extend1)
+							var list =  this.pfList[gIndex-1].platformVOList;
 							if(a==list[0].id&&b==list[1].id){
 								pfs = a + "," + b;
 							}
@@ -109,7 +111,8 @@ define(function(require, module, exports) {
 						} else {
 							let a = $(els[0]).val();
 							let key = false;
-							let list = this.pfList[parseInt(craneName)-1].platformVOList
+							let gIndex =  parseInt(this.rowcarList[craneName-1].extend1)
+							var list =  this.pfList[gIndex-1].platformVOList;
 							for(let k=0;k<list.length;k++){
 								if(list[k].id===a){
 									key=true
