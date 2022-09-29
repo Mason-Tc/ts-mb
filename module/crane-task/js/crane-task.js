@@ -37,6 +37,7 @@ define(function(require, module, exports) {
 		aboutVue.type=ws.type;
 		aboutVue.setTitle(ws.type)
 		aboutVue.allInfo = ws.allInfo;
+		console.log(JSON.stringify(ws.allInfo))
 		var backDefault = m.back;
 		function detailBack() {
 			if(craneWebSocket){
@@ -64,6 +65,7 @@ define(function(require, module, exports) {
 			popoverSure:false,
 			popover:false,
 			hangPover:false,
+			warningPover:false,
 			allInfo:{},
 			compute:{
 				id:'',
@@ -79,10 +81,13 @@ define(function(require, module, exports) {
 				workWeight:0,
 				hangWeight:'0',
 				counterpoise:0,
+				isSingleWarning:'0',
 				countWeightMode:'',
 				countWeightModeDesc:'',
 			},
 			computeList:[],
+			wRecWeight:0,
+			wReaWeight:0,
 		},
 		computed: {
 			allRecNum: function () { // 总应收数量
@@ -147,7 +152,14 @@ define(function(require, module, exports) {
 			},
 		},
 		methods:{
-			openHang:function(material){
+			openWarn:function(){
+				if(!this.warningPover){
+					this.warningPover = true
+				}else{
+					this.warningPover = false
+				}
+			},
+			openHang:function(){
 				if(!this.hangPover){
 					this.hangPover = true
 				}else{
@@ -231,20 +243,48 @@ define(function(require, module, exports) {
 					m.toast('请先选择库位！')
 					return
 				}
-				// if(self.compute.countWeightMode!='01'){
-					// console.log(self.compute.counterpoise)
-					// console.log(self.compute.workNum)
-				// }
+				if(self.compute.countWeightMode!='01'){
+					let key = self.isWarning(
+						parseFloat(self.compute.counterpoise)*parseFloat(self.compute.workNum),
+						parseFloat(self.compute.workWeight)
+					)
+					if(key){
+						self.openWarn()
+						return
+					}
+				}
 				let obj = {}
 				obj.id = self.compute.id
 				obj.realNum = self.compute.workNum || 0
 				obj.realWeight = self.compute.workWeight || 0
 				obj.materialDesc = self.compute.materialDesc || ''
+				obj.isSingleWarning = '0'
 				obj.hangTime = timestampToTime(new Date())
 				self.computeList.push(obj)
 			},
-			isWarning:function(){
-				
+			sureWarn:function(){
+				let self = this
+				let obj = {}
+				obj.id = self.compute.id
+				obj.realNum = self.compute.workNum || 0
+				obj.realWeight = self.compute.workWeight || 0
+				obj.materialDesc = self.compute.materialDesc || ''
+				obj.isSingleWarning = '1'
+				obj.hangTime = timestampToTime(new Date())
+				self.computeList.push(obj)
+				self.openWarn()
+			},
+			isWarning:function(num,hNum){
+				let self = this
+				num = parseFloat(num) || 0
+				hNUm = parseFloat(hNum) || 0
+				let inc = Math.abs(hNum-num)
+				if(inc>num*0.003){
+					self.wRecWeight = num
+					self.wReaWeight = hNUm
+					return true
+				}
+				return false
 			},
 			clearComp:function(){
 				let self = this
@@ -287,8 +327,8 @@ define(function(require, module, exports) {
 					obj.num = self.computeList[i].realNum
 					obj.weight = self.computeList[i].realWeight
 					obj.status = self.allInfo.status || ''
-					obj.isSingleWarning = '0'
-					obj.isDel = '0'
+					obj.isSingleWarning = self.computeList[i].isSingleWarning
+					// obj.isDel = '0'
 					list.push(obj)
 				}
 				if(list.length<1){

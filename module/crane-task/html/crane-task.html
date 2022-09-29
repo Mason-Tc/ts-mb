@@ -173,7 +173,23 @@
 					</div>
 				</div>
 			</div>
+			<div class="new_popover tip_popover" v-show="warningPover" v-cloak style="z-index: 103;">
+				<div class="new_popover_header">
+					操作提醒
+					<span class="mui-icon mui-icon-closeempty new_popover_close" @click="openWarn"></span>
+				</div>
+				<div class="new_popover_body" style="padding-top: 0;">
+					<div class="comp_tip tip_tip" style="margin-bottom: 0;text-align: center;font-size: 16px;padding: 8px 0;">
+						{{'告警提示：应收重量'+wRecWeight+'吨，吊磅重量'+wReaWeight+'吨，差异'+(wReaWeight-wRecWeight)+'吨，超过千分之三，请确认是否计量入库？'}}
+					</div>
+					<div class="tip_button_box">
+						<button class="tip_button light_blue_button" @click="openWarn">取消</button>
+						<button class="tip_button light_blue_button" @click="sureWarn" >确认</button>
+					</div>
+				</div>
+			</div>
 			<div class="new_mask" v-show="popover||popoverSure||hangPover" v-cloak></div>
+			<div class="new_mask"  style="z-index: 102;" v-show="warningPover" v-cloak></div>
 			<!-- 主页面容器 -->
 			<div class="mui-inner-wrap">
 				<header class="mui-bar mui-bar-nav" style="background: #1566d2;border: none;">
