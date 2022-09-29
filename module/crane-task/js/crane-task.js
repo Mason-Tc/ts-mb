@@ -37,7 +37,6 @@ define(function(require, module, exports) {
 		aboutVue.type=ws.type;
 		aboutVue.setTitle(ws.type)
 		aboutVue.allInfo = ws.allInfo;
-		console.log(JSON.stringify(ws.allInfo))
 		var backDefault = m.back;
 		function detailBack() {
 			if(craneWebSocket){
@@ -180,8 +179,8 @@ define(function(require, module, exports) {
 					this.compute.receivableWeight = material.receivableWeight
 					this.compute.workNum = 0
 					this.compute.workWeight = 0
-					this.compute.col = 0
-					this.compute.row = 0
+					this.compute.col = ''
+					this.compute.row = ''
 					this.popover = true
 					if(this.crane.relStatus=='0'){
 						this.compute.hangWeight = '吊磅异常'
@@ -328,7 +327,6 @@ define(function(require, module, exports) {
 					obj.weight = self.computeList[i].realWeight
 					obj.status = self.allInfo.status || ''
 					obj.isSingleWarning = self.computeList[i].isSingleWarning
-					// obj.isDel = '0'
 					list.push(obj)
 				}
 				if(list.length<1){
@@ -409,6 +407,7 @@ define(function(require, module, exports) {
 								obj.realWeight = data[i].weight
 								obj.materialDesc = data[i].materialDesc
 								obj.hangTime = data[i].createDate
+								obj.isSingleWarning = data[i].isSingleWarning
 								self.computeList.push(obj)
 							}
 						}
@@ -477,6 +476,8 @@ define(function(require, module, exports) {
 					type: 'post', //HTTP请求类型
 					timeout: 10000, //超时时间设置为60秒
 					success: function(res) {
+						console.log('_________________________refresh')
+						console.log(JSON.stringify(res))
 						waiting.close();
 						if(res.code==='200'){
 							self.activePlat = id
