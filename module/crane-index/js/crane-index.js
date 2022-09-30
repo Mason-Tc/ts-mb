@@ -98,6 +98,10 @@ define(function(require, module, exports) {
 						extras: {}
 					})
 				},
+				//跳转加工验收
+				toProcess:function(){
+					
+				},
 				// 跳转容量调整
 				toCapacity: function() {
 					m.openWindow({
@@ -445,6 +449,7 @@ define(function(require, module, exports) {
 		
 		// 设置横屏
 		plus.screen.lockOrientation("landscape-primary");
+		m.toast('请提前进行班组设置！');
 		// 查询用户已选择的月台
 		aboutVue.selectedPlatform();
 		aboutVue.selectedRowCar();

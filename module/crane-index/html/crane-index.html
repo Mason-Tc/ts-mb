@@ -30,8 +30,8 @@
         </div>
     </header>
     <div class="mui-content"
-        style=" background: url(../img/index_bg.jpg) no-repeat;background-size: 100% 100%; height:100%;width: 110%;display: flex;align-items: center;">
-        <div class="mui-row" style="margin:0px auto; margin-top:-58px;">
+        style=" background: url(../img/index_bg.jpg) no-repeat;background-size: 100% 100%; height:100%; display: flex;overflow-y: auto; align-items: center;">
+        <div class="mui-row" style="margin:0px auto; margin-top:-58px; padding: 0 40px;">
             <table style="margin: 0px auto;">
                 <tr style="padding: 0px; margin: 0px;">
 					<td>
@@ -59,8 +59,8 @@
                         </div>
                     </td>
 					<td>
-					    <div v-if="warehouseOutAuth" class="ulli" style="padding-bottom:45px">
-					        <div class="imgDiv"><img src="../img/icon_chuku.png"></div>
+					    <div v-if="warehouseOutAuth" class="ulli" style="padding-bottom:45px" @tap="toProcess">
+					        <div class="imgDiv"><img src="../img/icon_kucuntz.png"></div>
 					        <div style="margin-top:60px;">加工验收作业</div>
 					    </div>
 					</td>
@@ -127,13 +127,23 @@
 					    </div>
 					</td>
 					<td>
+					    <div v-if="guidanceScreenAuth" class=" ulli" >
+					        <div class="imgDiv"><img src="../img/floor.png"></div>
+					        <div style="margin-top:60px;">查货定位</div>
+					    </div>
+					</td>
+					<td>
+					    <div v-if="guidanceScreenAuth" class=" ulli" style="padding-bottom:45px">
+					        <div class="imgDiv"><img src="../img/floor.png"></div>
+					        <div style="margin-top:60px;">定位<br>初始化</div>
+					    </div>
+					</td>
+					<td>
 						<div class=" ulli" @tap="toHangWeight">
-						<!-- <div v-if="hangWeightClear" class=" ulli" @tap="toHangWeight"> -->
 						    <div class="imgDiv"><img src="../img/position.png"></div>
 						    <div style="margin-top:60px;">吊磅清零</div>
 						</div>
 					</td>
-					
                 </tr>
             </table>
         </div>

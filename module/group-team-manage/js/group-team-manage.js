@@ -23,26 +23,25 @@ define(function(require, module, exports) {
 		methods: {
 			getTeamGroupList: function() { // 获取班组信息列表
 				var self = this
-				// var waiting = plus.nativeUI.showWaiting()
-				// m.ajax(app.api_url + '/api/ctpad/getTeamInfo', {
-				// 	dataType: 'json', //服务器返回json格式数据
-				// 	type: 'GET', //HTTP请求类型
-				// 	timeout: 20000, //超时时间设置为2分钟；
-				// 	success: function (data) {
-				// 		let copyData = JSON.parse(JSON.stringify(data))
-				// 		// self.allGroup = copyData
-						self.allGroup = [{worktypeName:'理货员',id:'3',workUserList:[{workUserName:'tc',isSelect:'0'}]}]
-				// 		self.chooseGroup = JSON.parse(JSON.stringify(copyData))
-				// 		for (let i in self.chooseGroup) {
-				// 			self.chooseGroup[i].workUserList = []
-				// 		}
-				// 		waiting.close()
-				// 	},
-				// 	error: function(xhr, type, errorThrown) {
-				// 		waiting.close()
-				// 		m.toast('网络连接失败，请稍后重试')
-				// 	}
-				// })
+				var waiting = plus.nativeUI.showWaiting()
+				m.ajax(app.api_url + '/api/proTeamLog/getTeamInfo', {
+					dataType: 'json', //服务器返回json格式数据
+					type: 'GET', //HTTP请求类型
+					timeout: 20000, //超时时间设置为2分钟；
+					success: function (data) {
+						let copyData = JSON.parse(JSON.stringify(data))
+						self.allGroup = copyData
+						self.chooseGroup = JSON.parse(JSON.stringify(copyData))
+						for (let i in self.chooseGroup) {
+							self.chooseGroup[i].workUserList = []
+						}
+						waiting.close()
+					},
+					error: function(xhr, type, errorThrown) {
+						waiting.close()
+						m.toast('网络连接失败，请稍后重试')
+					}
+				})
 			},
 			chooseStyle: function (isSelect) { // 选择样式
 				if (isSelect === '1') {
@@ -78,7 +77,7 @@ define(function(require, module, exports) {
 				} else {
 					const params = JSON.stringify(self.chooseGroup)
 					var waiting = plus.nativeUI.showWaiting()
-					m.ajax(app.api_url + '/api/ctpad/saveTeamInfo', {
+					m.ajax(app.api_url + '/api/proTeamLog/saveTeamInfo', {
 						data: { jsonData: params },
 						dataType: 'json', //服务器返回json格式数据
 						type: 'POST', //HTTP请求类型
