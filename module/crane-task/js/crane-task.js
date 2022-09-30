@@ -65,6 +65,7 @@ define(function(require, module, exports) {
 			popover:false,
 			hangPover:false,
 			warningPover:false,
+			isRoll:true,
 			allInfo:{},
 			compute:{
 				id:'',
@@ -186,7 +187,6 @@ define(function(require, module, exports) {
 						this.compute.hangWeight = '吊磅异常'
 					}
 					this.getComputeList(material.id)
-					this.getPlaceSubList()
 				} else {
 					this.popover = false
 					this.computeList = []
@@ -259,6 +259,10 @@ define(function(require, module, exports) {
 				obj.materialDesc = self.compute.materialDesc || ''
 				obj.isSingleWarning = '0'
 				obj.hangTime = timestampToTime(new Date())
+				obj.columnId = self.compute.col || ''
+				obj.storeyNo = self.compute.row || ''
+				obj.warehousePlaceId = self.compute.warehousePlaceId||''
+				obj.warehousePlaceName = self.compute.warehousePlaceName|| ''
 				self.computeList.push(obj)
 			},
 			sureWarn:function(){
@@ -270,6 +274,10 @@ define(function(require, module, exports) {
 				obj.materialDesc = self.compute.materialDesc || ''
 				obj.isSingleWarning = '1'
 				obj.hangTime = timestampToTime(new Date())
+				obj.columnId = self.compute.col || ''
+				obj.storeyNo = self.compute.row || ''
+				obj.warehousePlaceId = self.compute.warehousePlaceId||''
+				obj.warehousePlaceName = self.compute.warehousePlaceName|| ''
 				self.computeList.push(obj)
 				self.openWarn()
 			},
@@ -321,12 +329,14 @@ define(function(require, module, exports) {
 					obj.billDetailId = self.computeList[i].id
 					obj.weightTime = self.computeList[i].hangTime
 					obj.warehousePlaceName = self.computeList[i].warehousePlaceName
-					obj.warehouseId = self.computeList[i].warehouseId
+					obj.warehousePlaceId = self.computeList[i].warehousePlaceId
 					obj.materialDesc = self.computeList[i].materialDesc
 					obj.num = self.computeList[i].realNum
 					obj.weight = self.computeList[i].realWeight
 					obj.status = self.allInfo.status || ''
 					obj.isSingleWarning = self.computeList[i].isSingleWarning
+					obj.columnId = self.computeList[i].columnId
+					obj.storeyNo = self.computeList[i].storeyNo
 					list.push(obj)
 				}
 				if(list.length<1){
@@ -362,7 +372,7 @@ define(function(require, module, exports) {
 						let list = []
 						if(Array.isArray(data)){
 							list = data.map((e)=>{
-								return { id:e.id , text:e.warehousePlaceName }
+								return { id:e.id , text:e.warehousePlaceName , isroll:e.placeTemplateType=='1' ? true:false }
 							})
 						}
 						let instance = $('.q-warehousePlace-id').data('select2')
@@ -400,6 +410,10 @@ define(function(require, module, exports) {
 					success: function (data) {
 						if(data&&data.length>0){
 							self.computeList = []
+							self.compute.warehousePlaceId = data[0].warehousePlaceId || ''
+							self.compute.warehousePlaceName = data[0].warehousePlaceName || ''
+							self.compute.col = data[0].columnId || ''
+							self.compute.row = data[0].storeyNo	|| ''
 							for(let i=0;i<data.length;i++){
 								let obj = {}
 								obj.id = data[i].billDetailId
@@ -411,6 +425,7 @@ define(function(require, module, exports) {
 								self.computeList.push(obj)
 							}
 						}
+						self.getPlaceSubList()
 					},
 					error: function(xhr, type, errorThrown) {
 						m.toast('网络连接失败，请稍后重试')
@@ -476,8 +491,6 @@ define(function(require, module, exports) {
 					type: 'post', //HTTP请求类型
 					timeout: 10000, //超时时间设置为60秒
 					success: function(res) {
-						console.log('_________________________refresh')
-						console.log(JSON.stringify(res))
 						waiting.close();
 						if(res.code==='200'){
 							self.activePlat = id

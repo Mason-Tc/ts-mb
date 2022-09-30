@@ -89,7 +89,7 @@
 								<select class="new_select2 q-warehousePlace-id" :disabled=" crane.status=='1' ? true : false " ></select>
 							</div>
 						</li>
-						<li class="new_disabled_info_list_li pover_li" v-if=" type=='1' ">
+						<li class="new_disabled_info_list_li pover_li" v-if=" type=='1'&&isRoll ">
 							<div class="new_input_select">
 								<span class="new_list_property computation_property">列</span>
 								<input class="new_input pot_input" type="number" v-model="compute.col" oninput=" value=value.replace(/[-+e.]/g,'') " :disabled=" crane.status=='1' ? true : false "/>
