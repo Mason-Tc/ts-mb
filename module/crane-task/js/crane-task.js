@@ -372,8 +372,14 @@ define(function(require, module, exports) {
 						let list = []
 						if(Array.isArray(data)){
 							list = data.map((e)=>{
-								return { id:e.id , text:e.warehousePlaceName , isroll:e.placeTemplateType=='1' ? true:false }
+								return { id:e.id , text:e.warehousePlaceName , isRoll:e.placeTemplateType=='1' ? true:false }
 							})
+						}
+						for(let i =0 ;i<list.length;i++){
+							if(list[i].id==self.compute.warehousePlaceId){
+								self.isRoll = list[i].isRoll
+								break;
+							}
 						}
 						let instance = $('.q-warehousePlace-id').data('select2')
 						if (instance) {
@@ -392,6 +398,7 @@ define(function(require, module, exports) {
 						$('.q-warehousePlace-id').on("select2:select", function (e) {
 							self.compute.warehousePlaceId = e.params.data.id
 							self.compute.warehousePlaceName = e.params.data.text
+							self.isRoll = e.params.data.isRoll
 						})
 					},
 					error: function(xhr, type, errorThrown) {
